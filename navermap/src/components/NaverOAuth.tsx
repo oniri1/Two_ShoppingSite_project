@@ -1,17 +1,15 @@
-import { useNavigate } from "react-router-dom";
+import { NavigateFunction, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import axios from "axios";
 
 const callBackUrl: string = `${process.env.REACT_APP_BASE_URL}/NaverLoding`;
 const serverUrl = process.env.REACT_APP_SERVER_URL;
 
-export const NaverOAuth = () => {
-  const clientId: string | undefined = process.env.REACT_APP_CLIENT_ID;
-  const clientSecret: string | undefined = process.env.REACT_APP_CLIENT_SECRET;
+export const NaverOAuth = (): JSX.Element => {
+  const clientId: string | undefined = process.env.REACT_APP_N_CLIENT_ID;
   const state: string = Math.random().toString(36).substring(2);
 
-  console.log(state);
-  const naverOAuthUrl =
+  const naverOAuthUrl: string =
     "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=" +
     clientId +
     "&redirect_uri=" +
@@ -24,26 +22,50 @@ export const NaverOAuth = () => {
   };
 
   return (
-    <div
+    <button
       onClick={loginHandler}
-      className="h-[30px] w-[30px] bg-[url('http://static.nid.naver.com/oauth/small_g_in.PNG')] bg-cover"
-    ></div>
+      className={`flex items-center justify-center p-2 bg-green-500 text-white border rounded shadow hover:bg-green-600`}
+    >
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Naver_logo_initial.svg"
+        alt="Naver Logo"
+        className={`w-6 h-6 mr-2`}
+      />
+      <span className={`font-medium`}>naver 로그인</span>
+    </button>
   );
 };
 
-export const NaverCallback = () => {
-  const navigate = useNavigate();
-  const code = new URL(window.location.href).searchParams.get("code");
-  const state = new URL(window.location.href).searchParams.get("state");
+export const NaverCallback = (): JSX.Element => {
+  const navigate: NavigateFunction = useNavigate();
+  const code: string | null = new URL(window.location.href).searchParams.get(
+    "code"
+  );
+  const state: string | null = new URL(window.location.href).searchParams.get(
+    "state"
+  );
 
-  const naver = async () => {
-    await axios.post(
-      `${serverUrl}/NaverCallback?code=${code}&state=${state}`,
-      { callbackUrl: callBackUrl },
-      {
-        withCredentials: true,
-      }
-    );
+  const naver = async (): Promise<void> => {
+    await axios
+      .post(
+        `${serverUrl}/NaverCallback?code=${code}&state=${state}`,
+        { callbackUrl: callBackUrl },
+        {
+          withCredentials: true,
+        }
+      )
+      .then(() => {
+        //성공시 콜백
+
+        //성공시 URL
+        navigate("/");
+      })
+      .catch(() => {
+        //실패시 URL
+
+        //실패시 URL
+        navigate("/");
+      });
     //
   };
 

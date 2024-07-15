@@ -1,7 +1,7 @@
-import NMap from "./components/NMap";
+import NMap from "./Component/Map/NMap";
 import { Routes, Route, Link } from "react-router-dom";
-import { NaverOAuth, NaverCallback } from "./components/NaverOAuth";
-import { GoogleOAuth, GoogleCallback } from "./components/GoogleOAuth";
+import { NaverOAuth, NaverCallback } from "./Component/OAuth/NaverOAuth";
+import { GoogleOAuth, GoogleCallback } from "./Component/OAuth/GoogleOAuth";
 
 function App() {
   return (

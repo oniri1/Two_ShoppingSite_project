@@ -82,11 +82,6 @@ const NMap = (): JSX.Element => {
   };
   //
 
-  //riderGpsGet
-  useEffect(() => {
-    getRiderLatLng();
-  }, []);
-
   //userMaker
   useEffect(() => {
     if (userPosition !== undefined) {
@@ -144,18 +139,18 @@ const NMap = (): JSX.Element => {
   //mount
   useEffect(() => {
     if (mapRef.current && naver) {
-      //new naver.maps.Map(타겟,옵션)을 넣는다. 타겟이 naverMap 옵션을 가지게 된다.
+      getUserAddress();
+      getRiderLatLng();
+
+      //map set
       setMap(
         new naver.maps.Map(mapRef.current, {
           mapTypeId: naver.maps.MapTypeId.NORMAL,
-          center: riderPosition,
           zoom: 6, // 지도 확대 정도
         })
       );
 
-      //유저 위치 얻기
-      getUserAddress();
-      ///
+      console.log("마운트 끝");
     }
   }, []);
 

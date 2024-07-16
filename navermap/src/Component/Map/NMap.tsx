@@ -11,7 +11,7 @@ const NMap = (): JSX.Element => {
   const [map, setMap] = useState<naver.maps.Map>();
 
   const [riderPosition, setRiderPosition] = useState<naver.maps.LatLng>();
-  const [, setRiderMarker] = useState<naver.maps.Marker>();
+  const [riderMarker, setRiderMarker] = useState<naver.maps.Marker>();
 
   const [userPosition, setUserPosition] = useState<naver.maps.LatLng>();
   const [, setUserMarker] = useState<naver.maps.Marker>();
@@ -103,18 +103,22 @@ const NMap = (): JSX.Element => {
   //riderMaker
   useEffect(() => {
     if (riderPosition !== undefined) {
-      setRiderMarker(
-        new naver.maps.Marker({
-          position: riderPosition,
-          map: map,
-          icon: {
-            content:
-              '<img src="./imgs/HamsterRider.png" alt="" style="margin: 0px; padding: 0px; border: 2px solid blue; border-radius: 100%; display: block; max-width: none; max-height: none; -webkit-user-select: none; position: absolute; width: 35px; height: 35px; left: 0px; top: 0px; overflow: hidden;">',
-            size: new naver.maps.Size(22, 35),
-            anchor: new naver.maps.Point(11, 35),
-          },
-        })
-      );
+      if (riderMarker === undefined) {
+        setRiderMarker(
+          new naver.maps.Marker({
+            position: riderPosition,
+            map: map,
+            icon: {
+              content:
+                '<img src="./imgs/HamsterRider.png" alt="" style="margin: 0px; padding: 0px; border: 2px solid blue; border-radius: 100%; display: block; max-width: none; max-height: none; -webkit-user-select: none; position: absolute; width: 35px; height: 35px; left: 0px; top: 0px; overflow: hidden;">',
+              size: new naver.maps.Size(22, 35),
+              anchor: new naver.maps.Point(11, 35),
+            },
+          })
+        );
+      } else {
+        riderMarker.setPosition(new naver.maps.LatLng(riderPosition));
+      }
     }
   }, [riderPosition]);
 
@@ -149,9 +153,14 @@ const NMap = (): JSX.Element => {
           zoom: 6, // 지도 확대 정도
         })
       );
-
-      console.log("마운트 끝");
     }
+    // 클린업 함수 추가
+    return () => {
+      if (map) {
+        naver.maps.Event.clearInstanceListeners(map);
+        map.destroy();
+      }
+    };
   }, []);
 
   //naverMap으로 바뀐 mapRef을 ref로 참조하여 리턴

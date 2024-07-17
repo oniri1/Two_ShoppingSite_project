@@ -5,7 +5,8 @@ import axios from "axios";
 //구글 OAuth로그인 완료 시 이동할 URL
 const callBackUrl: string = `${process.env.REACT_APP_BASE_URL}/GoogleLoding`;
 //서버 URL 베이스 나는 http://localhost:8001 로 했음
-const serverUrl = process.env.REACT_APP_SERVER_URL;
+
+const serverOAuthCallbackUrl = process.env.REACT_APP_SERVER_OAUTH_CALLBACK_URL;
 
 //구글 OAuth로 로그인하는 버튼을 만드는 Component
 export const GoogleOAuth = (): JSX.Element => {
@@ -52,7 +53,7 @@ export const GoogleCallback = (): JSX.Element => {
     //우리의 서버(express)로 보내기 (난 8001포트)
     await axios
       .post(
-        `${serverUrl}/GoogleCallback?code=${code}`, //서버로 보내는 데이터, 보디에 넣어 처리해도 되긴 함(서버 만드는 사람 마음대로 해도 됌)
+        `${serverOAuthCallbackUrl}/GoogleCallback?code=${code}`, //서버로 보내는 데이터, 보디에 넣어 처리해도 되긴 함(서버 만드는 사람 마음대로 해도 됌)
         { callbackUrl: callBackUrl }, //서버에서 콜백 url이 필요해서 넣어줌
         {
           withCredentials: true, //쿠키, 증명서 이런거 받아오겠다.

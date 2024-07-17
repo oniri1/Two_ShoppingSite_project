@@ -3,7 +3,8 @@ import { useEffect } from "react";
 import axios from "axios";
 
 const callBackUrl: string = `${process.env.REACT_APP_BASE_URL}/NaverLoding`;
-const serverUrl = process.env.REACT_APP_SERVER_URL;
+
+const serverOAuthCallbackUrl = process.env.REACT_APP_SERVER_OAUTH_CALLBACK_URL;
 
 export const NaverOAuth = (): JSX.Element => {
   const clientId: string | undefined = process.env.REACT_APP_N_CLIENT_ID;
@@ -48,7 +49,7 @@ export const NaverCallback = (): JSX.Element => {
   const naver = async (): Promise<void> => {
     await axios
       .post(
-        `${serverUrl}/NaverCallback?code=${code}&state=${state}`,
+        `${serverOAuthCallbackUrl}/NaverCallback?code=${code}&state=${state}`,
         { callbackUrl: callBackUrl },
         {
           withCredentials: true,

@@ -51,12 +51,9 @@ const NMap = (): JSX.Element => {
       )
       .then((data: AxiosResponse<any, any>) => {
         //성공시 콜백
-        //성공시 URL
         console.log(data);
       })
       .catch(() => {
-        //실패시 URL
-        //실패시 URL
         console.error("라이더 위치 실패");
         //유저와 라이더의 위치
         setRiderPosition(new naver.maps.LatLng(36.5, 127.5));

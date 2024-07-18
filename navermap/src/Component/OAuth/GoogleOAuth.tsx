@@ -76,7 +76,7 @@ export const GoogleCallback = (): JSX.Element => {
   //컴포넌트 생성시 naver 실행
   useEffect(() => {
     naver();
-  });
+  }, []);
 
   return <div>loding</div>;
 };

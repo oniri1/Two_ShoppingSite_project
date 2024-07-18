@@ -1,21 +1,10 @@
-import {
-  EventHandler,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useState,
-  ChangeEvent,
-} from "react";
-import { getClip, IIntro } from "../../../InterFace/interFace";
+import { useState, ChangeEvent } from "react";
+import { IIntro } from "../../../lib/interFace";
+import { getClip } from "../../../lib/func";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Value } from "sass";
 
-const rowfont = "text-xs";
-const center = "flex justify-center items-center";
-const outborder = "border-2 border-black";
-const nanoBtn =
-  "flex justify-center items-center text-gray-500 font-semibold border-2 border-gray-300 pl-2 pr-2 rounded-full";
+import { rowfont, center, outborder, nanoBtn } from "../../../lib/styles";
 
 const serverUrl = process.env.REACT_APP_SERVER_URL;
 
@@ -186,7 +175,7 @@ const Intro = ({ intro }: IIntro): JSX.Element => {
                   }: ChangeEvent<HTMLInputElement>) => {
                     setContentValue(value);
                   }}
-                  className={`${outborder} h-[24px]`}
+                  className={`${outborder} h-[24px] ml-2`}
                   type="text"
                 />
                 <button

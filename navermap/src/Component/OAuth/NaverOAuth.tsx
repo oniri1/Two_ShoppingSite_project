@@ -72,7 +72,7 @@ export const NaverCallback = (): JSX.Element => {
 
   useEffect(() => {
     naver();
-  });
+  }, []);
 
   return <div>loding</div>;
 };

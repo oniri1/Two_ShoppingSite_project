@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import Intro from "./Intro/Intro";
+import Content from "./Intro/content";
 import { center } from "../../lib/styles";
-import { IIntro, IMyStoreRes } from "../../InterFace/interFace";
-import axios, { AxiosResponse } from "axios";
+import { IMyStoreRes } from "../../lib/interFace";
+import axios from "axios";
 import { useLocation } from "react-router-dom";
 
 const serverUrl = process.env.REACT_APP_SERVER_URL;
@@ -21,9 +22,9 @@ const MyStore = ({}: IProps): JSX.Element => {
   const [loginCheck, setLoginCheck] = useState<boolean>(false);
 
   const loca = useLocation();
-  const serverCall = serverUrl + "/mystore" + loca.search;
 
   const getPageValues = async () => {
+    const serverCall = serverUrl + "/mystore" + loca.search;
     await axios
       .post(serverCall, {}, { withCredentials: true })
       .then(({ data }: { data: IMyStoreRes }): void => {
@@ -62,6 +63,9 @@ const MyStore = ({}: IProps): JSX.Element => {
     sellCount,
     loginCheck,
   ]);
+  //
+
+  //
 
   //mount
   useEffect(() => {
@@ -69,9 +73,10 @@ const MyStore = ({}: IProps): JSX.Element => {
   });
 
   return (
-    <div className={`${center}`}>
+    <div className={`${center} flex-wrap`}>
       <Intro intro={intro}></Intro>
-      <div></div>
+
+      <Content loginCheck={loginCheck}></Content>
     </div>
   );
 };

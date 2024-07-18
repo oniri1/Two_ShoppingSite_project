@@ -1,27 +1,3 @@
-export interface IIntro {
-  intro: {
-    storeName: string;
-    storePoint: number;
-    storeIntro: string;
-    storeStar: number;
-    storePFImg: string;
-    sellCount: number;
-    loginCheck: boolean;
-  };
-}
-
-export interface IMyStoreRes {
-  store: {
-    nick: string;
-    point: number;
-    Introduction: string;
-    reviewId: { star: number };
-    profileimg: string;
-    sellCount: number;
-  };
-  loginuser: boolean;
-}
-
 export const getClip = (value: number): string => {
   switch (value) {
     case 0.0:

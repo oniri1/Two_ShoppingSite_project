@@ -3,6 +3,7 @@ import { IIntro } from "../../../lib/interFace";
 import { getClip } from "../../../lib/func";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import Star from "../../../Component/Star/Star";
 
 import { rowfont, center, outborder, nanoBtn } from "../../../lib/styles";
 
@@ -27,7 +28,9 @@ const Intro = ({ intro }: IIntro): JSX.Element => {
 
   const navigate = useNavigate();
   const loca = useLocation();
+  const callbackUrl = `${loca.pathname}${loca.search}`;
 
+  console.log(callbackUrl);
   //func
   const nameBtnOpen = () => {
     setNameBtn(true);
@@ -40,11 +43,10 @@ const Intro = ({ intro }: IIntro): JSX.Element => {
       await axios
         .post(serverCall, { name: nameValue }, {})
         .then(() => {
-          navigate("./");
+          navigate(`${callbackUrl}`);
         })
         .catch((error) => {
-          console.log(error);
-          navigate("./");
+          navigate(`${callbackUrl}`);
         })
         .finally(() => {
           setNameValue("");
@@ -64,11 +66,11 @@ const Intro = ({ intro }: IIntro): JSX.Element => {
       await axios
         .post(serverCall, { content: contentValue }, {})
         .then(() => {
-          navigate("./");
+          navigate(`${callbackUrl}`);
         })
         .catch((error) => {
           console.log(error);
-          navigate("./");
+          navigate(`${callbackUrl}`);
         })
         .finally(() => {
           setContentValue("");
@@ -104,16 +106,7 @@ const Intro = ({ intro }: IIntro): JSX.Element => {
             {/* 이름 */}
             <div className={`${center} text-white font-bold`}>{storeName}</div>
             {/* 별, 평점 */}
-            <div className={`${center} relative`}>
-              <div className="flex">
-                {" "}
-                <div className={`text-yellow-300 z-10 ${getClip(storeStar)}`}>
-                  ★★★★★
-                </div>
-                <div className="absolute top-0 text-white">★★★★★</div>
-                <div className={`pl-1 font-medium text-white`}>{storeStar}</div>
-              </div>
-            </div>
+            <Star storeStar={storeStar} />
           </div>
         </div>
         {/*  */}

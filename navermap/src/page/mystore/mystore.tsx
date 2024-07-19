@@ -19,7 +19,7 @@ const MyStore = ({}: IProps): JSX.Element => {
   const [storeStar, setStoreStar] = useState<number>(0);
   const [storePFImg, setStorePFImg] = useState<string>("/imgs/good.png");
   const [sellCount, setSellCount] = useState<number>(0);
-  const [loginCheck, setLoginCheck] = useState<boolean>(false);
+  const [loginCheck, setLoginCheck] = useState<boolean>(true);
 
   const loca = useLocation();
 
@@ -31,7 +31,7 @@ const MyStore = ({}: IProps): JSX.Element => {
         setStoreName(data.store.nick);
         setStorePoint(data.store.point);
         setStoreIntro(data.store.Introduction);
-        setStoreStar(data.store.reviewId.star);
+        setStoreStar(data.store.star.star);
         setStorePFImg(data.store.profileimg);
         setSellCount(data.store.sellCount);
         setLoginCheck(data.loginuser);
@@ -40,7 +40,6 @@ const MyStore = ({}: IProps): JSX.Element => {
         // console.log(error);
         setStoreName("앙 에러띠");
         setStoreStar(3.5);
-        setLoginCheck(true);
       });
   };
 

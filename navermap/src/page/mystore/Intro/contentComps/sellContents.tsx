@@ -25,21 +25,19 @@ const SellContent = ({ data }: IProps) => {
     navigate(`/product/${id}`);
   };
 
-  useEffect(() => {
-    if (imgCurtainActive) {
-      if (data.state === "배송중") {
-        setBoxTextValue("배송현황");
-      }
-      if (data.state === "판매 완료") {
-        setBoxTextValue("배송완료");
-      }
-    }
-  }, [imgCurtainActive]);
+  const imgBase = process.env.REACT_APP_IMG_BASE;
 
   //mount
   useEffect(() => {
-    if (data.state !== "판매중") {
+    if (data.itemState !== "판매중") {
       setImgCurtainActive(true);
+
+      if (data.itemState === "배송중") {
+        setBoxTextValue("배송현황");
+      }
+      if (data.itemState === "판매 완료") {
+        setBoxTextValue("배송완료");
+      }
     }
   }, []);
 
@@ -61,7 +59,7 @@ const SellContent = ({ data }: IProps) => {
         <div
           className={`h-[220px] bg-cover relative ${center}`}
           style={{
-            backgroundImage: `url(${data.img})`,
+            backgroundImage: `url(${imgBase}${data.img})`,
           }}
         >
           {imgCurtainActive && (
@@ -75,7 +73,7 @@ const SellContent = ({ data }: IProps) => {
                 <div
                   className={`flex text-white ${blockTextOver} text-2xl font-medium`}
                 >
-                  {data.state}
+                  {data.itemState}
                 </div>
               </div>
             </>

@@ -10,17 +10,27 @@ export interface IIntro {
   };
 }
 
+//유저 스토어
+
 export interface IMyStoreRes {
+  login?: {
+    id: number;
+    nick: string;
+    point: number;
+  };
   store: {
+    id?: number;
     nick: string;
     point: number;
     Introduction: string;
-    reviewId: { star: number };
+    star: { star: number };
     profileimg: string;
     sellCount: number;
   };
   loginuser: boolean;
 }
+
+// 게시글
 
 export interface IProduct {
   id?: number;
@@ -28,9 +38,31 @@ export interface IProduct {
   discription: string;
   price: number;
   createdAt?: string;
-  state: string;
+  itemState: string;
   prepayment?: boolean;
   img: string;
-  deliveryCostId?: { cost: number };
-  categoryId?: { name: string };
+  DeliveryCost?: { cost: number };
+  Category?: { name: string };
+}
+
+//리뷰관련
+export interface IReviewOne {
+  star: number;
+  reviewContent: string;
+  Store: {
+    nick: string;
+    img: string;
+  };
+  Product: {
+    title: string;
+  };
+}
+
+export interface IReviewRes {
+  reviewCount?: number;
+  reviewAverage?: {
+    star: number;
+  };
+  reviewPercent?: number;
+  reviewlist: IReviewOne[];
 }

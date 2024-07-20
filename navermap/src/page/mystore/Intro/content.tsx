@@ -6,13 +6,15 @@ import axios from "axios";
 import Review from "./contentComps/Review";
 
 const Content = ({ loginCheck }: { loginCheck: boolean }): JSX.Element => {
-  const [value, setValue] = useState<string>("리뷰");
+  //0 리뷰 , 1 판매 , 2 구매
+  const [value, setValue] = useState<number>(0);
+
   const [isReview, setIsReview] = useState<boolean>(true);
 
   //func
-  const valueChanger = (value: string) => {
+  const valueChanger = (value: number) => {
     setValue(value);
-    if (value === "리뷰") {
+    if (value === 0) {
       setIsReview(true);
     } else {
       setIsReview(false);
@@ -24,17 +26,11 @@ const Content = ({ loginCheck }: { loginCheck: boolean }): JSX.Element => {
     <div className={`${outborder} w-[90%] h-[781px] flex flex-wrap pt-5`}>
       <div className={`p-10 w-[100%]`}>
         <div className={`${outborder} w-[100%] h-[54px] flex flex-wrap`}>
-          <CateBtn text="리뷰" click={() => valueChanger("리뷰")}></CateBtn>
+          <CateBtn text="리뷰" click={() => valueChanger(0)}></CateBtn>
           {loginCheck && (
             <>
-              <CateBtn
-                text="판매상품"
-                click={() => valueChanger("판매상품")}
-              ></CateBtn>
-              <CateBtn
-                text="구매상품"
-                click={() => valueChanger("구매상품")}
-              ></CateBtn>
+              <CateBtn text="판매상품" click={() => valueChanger(1)}></CateBtn>
+              <CateBtn text="구매상품" click={() => valueChanger(2)}></CateBtn>
             </>
           )}
         </div>

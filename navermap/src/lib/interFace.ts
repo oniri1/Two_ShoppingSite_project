@@ -30,7 +30,7 @@ export interface IMyStoreRes {
   loginuser: boolean;
 }
 
-// 게시글
+// 게시글 관련
 
 export interface IProduct {
   id?: number;
@@ -43,6 +43,13 @@ export interface IProduct {
   img: string;
   DeliveryCost?: { cost: number };
   Category?: { name: string };
+}
+
+export interface IProductRes {
+  product: {
+    count?: number;
+    rows: IProduct[];
+  };
 }
 
 //리뷰관련

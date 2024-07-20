@@ -41,7 +41,7 @@ const Intro = ({ intro }: IIntro): JSX.Element => {
       const serverCall = serverUrl + "/myStoreNameSet" + loca.search;
 
       await axios
-        .post(serverCall, { name: nameValue }, {})
+        .post(serverCall, { name: nameValue }, { withCredentials: true })
         .then(() => {
           navigate(`${callbackUrl}`);
         })
@@ -64,7 +64,7 @@ const Intro = ({ intro }: IIntro): JSX.Element => {
       const serverCall = serverUrl + "/myStoreContentSet" + loca.search;
 
       await axios
-        .post(serverCall, { content: contentValue }, {})
+        .post(serverCall, { content: contentValue }, { withCredentials: true })
         .then(() => {
           navigate(`${callbackUrl}`);
         })

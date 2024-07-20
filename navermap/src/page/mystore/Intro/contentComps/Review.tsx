@@ -23,7 +23,7 @@ const Review = () => {
   //func
   const getReviews = async () => {
     await axios
-      .post(reviewUrl, {}, {})
+      .post(reviewUrl, {}, { withCredentials: true })
       .then((data: AxiosResponse) => {
         const reviewRes: IReviewRes = data.data;
         setReviewRes(reviewRes);

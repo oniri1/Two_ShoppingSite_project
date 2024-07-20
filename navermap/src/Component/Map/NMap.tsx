@@ -47,7 +47,7 @@ const NMap = (): JSX.Element => {
       .post(
         `${serverUrl}/GpsRiderGet`,
         {}, //아이디 추가해야 함
-        {}
+        { withCredentials: true }
       )
       .then((data: AxiosResponse<any, any>) => {
         //성공시 콜백
@@ -65,7 +65,7 @@ const NMap = (): JSX.Element => {
       .post(
         `${serverUrl}/GpsUserGet`,
         {}, //아이디 추가해야 함
-        {}
+        { withCredentials: true }
       )
       .then((data: AxiosResponse<any, any>) => {
         //성공시 URL

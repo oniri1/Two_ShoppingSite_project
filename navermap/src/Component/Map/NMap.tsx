@@ -150,6 +150,7 @@ const NMap = ({ id }: IProps): JSX.Element => {
     // 클린업 함수 추가
     return () => {
       if (map) {
+        console.log("삭제");
         naver.maps.Event.clearInstanceListeners(map);
         map.destroy();
       }

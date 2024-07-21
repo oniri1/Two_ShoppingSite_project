@@ -17,7 +17,7 @@ const MyStore = ({}: IProps): JSX.Element => {
     "이게 보인다면 무언가 오류가 있습니다. 콘솔을 확인하세요"
   );
   const [storeStar, setStoreStar] = useState<number>(0);
-  const [storePFImg, setStorePFImg] = useState<string>("/imgs/good.png");
+  const [storePFImg, setStorePFImg] = useState<string>("good.png");
   const [sellCount, setSellCount] = useState<number>(0);
   const [loginCheck, setLoginCheck] = useState<boolean>(true);
 

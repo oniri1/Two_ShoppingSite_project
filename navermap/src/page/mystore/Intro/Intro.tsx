@@ -8,6 +8,7 @@ import Star from "../../../Component/Star/Star";
 import { rowfont, center, outborder, nanoBtn } from "../../../lib/styles";
 
 const serverUrl = process.env.REACT_APP_SERVER_URL;
+const imgBase = process.env.REACT_APP_IMG_BASE;
 
 const Intro = ({ intro }: IIntro): JSX.Element => {
   const {
@@ -87,7 +88,7 @@ const Intro = ({ intro }: IIntro): JSX.Element => {
       {/*  */}
       <div
         style={{
-          backgroundImage: "url('/imgs/banner.png')",
+          backgroundImage: `url('${imgBase}banner.png')`,
         }}
         className={`${center} w-[35%] h-[100%] bg-cover relative`}
       >
@@ -96,7 +97,7 @@ const Intro = ({ intro }: IIntro): JSX.Element => {
         <div className={`w-[100px] h-[100px] z-10`}>
           <div
             style={{
-              backgroundImage: `url(${storePFImg})`,
+              backgroundImage: `url(${imgBase}${storePFImg})`,
             }}
             className={`w-[100%] h-[100%] bg-cover rounded-full overflow-hidden`}
           ></div>

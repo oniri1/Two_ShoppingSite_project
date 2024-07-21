@@ -93,7 +93,7 @@ const Intro = ({ intro }: IIntro): JSX.Element => {
       >
         <div className="bg-black bg-opacity-25 w-[100%] h-[100%] absolute"></div>
         {/* 프로파일 이미지 */}
-        <div className={`w-[100px] h-[100px] z-20`}>
+        <div className={`w-[100px] h-[100px] z-10`}>
           <div
             style={{
               backgroundImage: `url(${storePFImg})`,

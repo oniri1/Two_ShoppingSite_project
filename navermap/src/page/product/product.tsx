@@ -1,4 +1,4 @@
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import ButtonComp, { LargeButton } from "../../Component/Button/Button";
 import ProductInfo from "../../Component/Product/Product";
 import { useBreakPoint } from "../../CustomHook/BreakPoint";

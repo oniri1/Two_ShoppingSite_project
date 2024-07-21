@@ -1,16 +1,11 @@
-import {
-  rowfont,
-  center,
-  outborder,
-  nanoBtn,
-  blockTextOver,
-} from "../../../../lib/styles";
-import { FaMapMarkerAlt } from "react-icons/fa";
+import { center, blockTextOver } from "../../../../lib/styles";
 import SCbuttons from "./buttons";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IProduct } from "../../../../lib/interFace";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Modal } from "../../../../Context/Modal";
+import { useSetRecoilState, useRecoilState } from "recoil";
 
 interface IProps {
   data: IProduct;
@@ -18,21 +13,26 @@ interface IProps {
 }
 
 const SellContent = ({ data, isBuyTap = false }: IProps) => {
-  const navigate = useNavigate();
-
+  //state
   const [imgCurtainActive, setImgCurtainActive] = useState<boolean>(false);
   const [boxTextValue, setBoxTextValue] = useState<string>("정보수정");
 
+  //hooks
+  const navigate = useNavigate();
+  const ModalState = useSetRecoilState(Modal);
+
+  //custom
   const serverUrl = process.env.REACT_APP_SERVER_URL;
   const loca = useLocation();
   const callbackUrl = `${loca.pathname}${loca.search}`;
+  const imgBase = process.env.REACT_APP_IMG_BASE;
 
   //funcs
   const moveToProduct = (id: string) => {
     navigate(`/product/${id}`);
   };
 
-  // text = 정보수정 배송현황 리뷰쓰기 구매확정
+  //// text = 정보수정 배송현황 리뷰쓰기 구매확정
   const moveToProductRetouch = () => {
     if (data.id) {
       navigate(`/write/${data.id}`);
@@ -42,11 +42,11 @@ const SellContent = ({ data, isBuyTap = false }: IProps) => {
   };
 
   const showMapModal = () => {
-    console.log("배송현황");
+    ModalState("showMap");
   };
 
   const showReviewModal = () => {
-    console.log("리뷰쓰기");
+    ModalState("reviewWhite");
   };
 
   const confirmation = () => {
@@ -76,8 +76,6 @@ const SellContent = ({ data, isBuyTap = false }: IProps) => {
       };
     }
   };
-
-  const imgBase = process.env.REACT_APP_IMG_BASE;
 
   //mount
   useEffect(() => {

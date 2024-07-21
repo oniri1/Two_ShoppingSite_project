@@ -1,39 +1,40 @@
-import NMap from "./Component/Map/NMap";
-import { Routes, Route, Link } from "react-router-dom";
-import { NaverOAuth, NaverCallback } from "./Component/OAuth/NaverOAuth";
-import { GoogleOAuth, GoogleCallback } from "./Component/OAuth/GoogleOAuth";
-import MyStore from "./page/mystore/mystore";
-import SellPage from "./page/mystore/sell";
+import { useState } from "react";
+import Layout from "./lib/Layout/layout";
+import { List } from "./lib/list";
 
-function App() {
+const App = (): JSX.Element => {
+  const [main, setMain] = useState([
+    new List(1, "자전거", "hamster", 3000, 2024),
+    new List(1, "자전거", "hamster", 3000, 2024),
+    new List(1, "자전거", "hamster", 3000, 2024),
+    new List(1, "자전거", "hamster", 3000, 2024),
+    new List(1, "자전거", "hamster", 3000, 2024),
+    new List(1, "자전거", "hamster", 3000, 2024),
+    new List(1, "자전거", "hamster", 3000, 2024),
+    new List(1, "자전거", "hamster", 3000, 2024),
+  ]);
+
+  const [catepage, setCatePage] = useState([
+    new List(1, "자동차", "good", 3000, 3),
+  ]);
+
+  const [searchpage, setSearchPage] = useState([
+    new List(1, "햄스터", "hamster", 3000, 3),
+  ]);
+
+  const userlogin = true;
   return (
-    <Routes>
-      <Route
-        path="/"
-        element={
-          <div>
-            <GoogleOAuth />
-            <NaverOAuth />
-          </div>
-        }
-      ></Route>
-      <Route path="/GoogleLoding" element={<GoogleCallback />}></Route>
-      <Route path="/NaverLoding" element={<NaverCallback />}></Route>
-      <Route path="/imgTest" element={<SellPage></SellPage>}>
-        {" "}
-      </Route>
-
-      <Route path="/mystore" element={<MyStore />}></Route>
-      <Route
-        path="/map"
-        element={
-          <div className="w-[800px] h-[800px]">
-            <NMap></NMap>
-          </div>
-        }
-      ></Route>
-    </Routes>
+    <div>
+      <div>
+        <Layout
+          userlogin={userlogin}
+          main={main}
+          catepage={catepage}
+          searchpage={searchpage}
+        />
+      </div>
+    </div>
   );
-}
+};
 
 export default App;

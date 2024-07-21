@@ -62,6 +62,7 @@ const Review = () => {
   //   useEffect(() => {}, [reviews]);
 
   useEffect(() => {
+    console.log(reviewRes);
     if (reviewRes) setReviews(reviewRes.reviewlist);
   }, [reviewRes]);
 
@@ -72,7 +73,7 @@ const Review = () => {
 
   return (
     <div className={`mt-4 w-[100%] h-[90%]`}>
-      <Count text="리뷰" number={reviewRes?.reviewCount || 0}></Count>
+      <Count text="리뷰" number={reviewRes?.reviewlist.length || 0}></Count>
       {/* 리뷰 평균 */}
       <div
         className={`border-2 border-[#e5e7eb] rounded-xl ${center} w-[100%] h-[80px] p-[10px]`}

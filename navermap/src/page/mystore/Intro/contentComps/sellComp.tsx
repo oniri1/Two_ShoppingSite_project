@@ -14,6 +14,7 @@ interface IProps {
 const SellComp = ({ value }: IProps) => {
   //State
   const [products, setProducts] = useState<IProduct[]>([]);
+  const [isBuyTap, setIsBuyTap] = useState<boolean>(false);
 
   //env
   const serverUrl = process.env.REACT_APP_SERVER_URL;
@@ -22,6 +23,7 @@ const SellComp = ({ value }: IProps) => {
   const loca = useLocation();
   const navigate = useNavigate();
 
+  //funcs
   const getData = async (value: number) => {
     //판매상품
     if (value === 1) {
@@ -64,25 +66,36 @@ const SellComp = ({ value }: IProps) => {
     navigate("/sell");
   };
 
-  //mount
+  //use
   useEffect(() => {
-    console.log("벨류 : ", value);
-    getData(value);
+    setProducts([]);
   }, [value]);
+
+  useEffect(() => {
+    getData(value);
+    if (value === 2) {
+      setIsBuyTap(true);
+    } else {
+      setIsBuyTap(false);
+    }
+  }, [products]);
 
   return (
     <div className={`mt-4 w-[100%] h-[90%]`}>
-      <Count text="상품" number={products.length}></Count>
-      <div className={`p-3 grid justify-items-end`}>
-        <div className="flex">
-          {value === 1 && (
-            <div
-              onClick={moveToProductWrite}
-              className={`${outborder} ${center} p-1 pl-4 pr-4`}
-            >
-              상품 등록
-            </div>
-          )}
+      {/* 탭 */}
+      <div className={`flex justify-between`}>
+        <Count text="상품" number={products.length}></Count>
+        <div className={`p-3 grid`}>
+          <div className="flex">
+            {value === 1 && (
+              <div
+                onClick={moveToProductWrite}
+                className={`${outborder} ${center} p-1 pl-4 pr-4`}
+              >
+                상품 등록
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -91,8 +104,9 @@ const SellComp = ({ value }: IProps) => {
         className={`h-auto flex flex-nowrap overflow-x-scroll`}
         style={{ scrollbarWidth: "none" }}
       >
+        {/* 상품 */}
         {products.map((data: IProduct, idx: number) => {
-          return <SellContent key={idx} data={data} />;
+          return <SellContent key={idx} data={data} isBuyTap={isBuyTap} />;
         })}
       </div>
     </div>

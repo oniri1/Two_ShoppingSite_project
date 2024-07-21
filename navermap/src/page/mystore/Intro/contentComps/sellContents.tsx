@@ -7,22 +7,74 @@ import {
 } from "../../../../lib/styles";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import SCbuttons from "./buttons";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { IProduct } from "../../../../lib/interFace";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 interface IProps {
   data: IProduct;
+  isBuyTap?: boolean;
 }
 
-const SellContent = ({ data }: IProps) => {
+const SellContent = ({ data, isBuyTap = false }: IProps) => {
   const navigate = useNavigate();
 
   const [imgCurtainActive, setImgCurtainActive] = useState<boolean>(false);
   const [boxTextValue, setBoxTextValue] = useState<string>("정보수정");
 
+  const serverUrl = process.env.REACT_APP_SERVER_URL;
+  const loca = useLocation();
+  const callbackUrl = `${loca.pathname}${loca.search}`;
+
+  //funcs
   const moveToProduct = (id: string) => {
     navigate(`/product/${id}`);
+  };
+
+  // text = 정보수정 배송현황 리뷰쓰기 구매확정
+  const moveToProductRetouch = () => {
+    if (data.id) {
+      navigate(`/write/${data.id}`);
+    } else {
+      console.log("정보수정 error", data.id);
+    }
+  };
+
+  const showMapModal = () => {
+    console.log("배송현황");
+  };
+
+  const showReviewModal = () => {
+    console.log("리뷰쓰기");
+  };
+
+  const confirmation = () => {
+    axios
+      .post(`${serverUrl}/purchase/${data.id}`, {}, { withCredentials: true })
+      .then(() => {
+        navigate(`${callbackUrl}`);
+      })
+      .catch((err) => {
+        navigate(`${callbackUrl}`);
+        console.log(err);
+      });
+  };
+
+  const funcsHandler = (value: string) => {
+    if (value === "정보수정") {
+      return moveToProductRetouch();
+    } else if (value === "배송현황") {
+      return showMapModal();
+    } else if (value === "리뷰쓰기") {
+      return showReviewModal();
+    } else if (value === "구매확정") {
+      return confirmation();
+    } else {
+      return () => {
+        console.log("error");
+      };
+    }
   };
 
   const imgBase = process.env.REACT_APP_IMG_BASE;
@@ -35,8 +87,11 @@ const SellContent = ({ data }: IProps) => {
       if (data.itemState === "배송중") {
         setBoxTextValue("배송현황");
       }
-      if (data.itemState === "판매 완료") {
+      if (data.itemState === "판매 완료" || data.itemState === "판매완료") {
         setBoxTextValue("배송완료");
+      }
+      if (data.itemState === "구매 완료" || data.itemState === "구매완료") {
+        setBoxTextValue("리뷰쓰기");
       }
     }
   }, []);
@@ -101,7 +156,22 @@ const SellContent = ({ data }: IProps) => {
       </div>
       {/* 버튼 */}
       <div className="flex justify-between p-1">
-        <SCbuttons text={boxTextValue} />
+        {isBuyTap && data.itemState === "배송중" && (
+          <SCbuttons
+            text={"구매확정"}
+            click={() => {
+              funcsHandler("구매확정");
+            }}
+          />
+        )}
+        {boxTextValue !== "배송완료" && (
+          <SCbuttons
+            text={boxTextValue}
+            click={() => {
+              funcsHandler(boxTextValue);
+            }}
+          />
+        )}
       </div>
     </div>
   );

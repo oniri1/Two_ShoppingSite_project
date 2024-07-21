@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
 
-const SCbuttons = ({ text }: { text: string }) => {
+interface IProps {
+  text: string;
+  click(): void;
+}
+const SCbuttons = ({ text, click }: IProps) => {
+  //State
   const [colorChange, setColorChange] = useState<boolean>(false);
 
-  // mount
+  // color
   useEffect(() => {
     if (text !== "배송현황") {
       setColorChange(true);
@@ -12,8 +17,13 @@ const SCbuttons = ({ text }: { text: string }) => {
     }
   }, [text]);
 
+  //mount
+
   return (
     <div
+      onClick={() => {
+        click();
+      }}
       className={`p-2 px-4 ${
         colorChange ? "bg-sky-200" : "bg-yellow-500 opacity-50"
       }`}

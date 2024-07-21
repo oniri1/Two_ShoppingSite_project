@@ -30,7 +30,6 @@ const Intro = ({ intro }: IIntro): JSX.Element => {
   const loca = useLocation();
   const callbackUrl = `${loca.pathname}${loca.search}`;
 
-  console.log(callbackUrl);
   //func
   const nameBtnOpen = () => {
     setNameBtn(true);

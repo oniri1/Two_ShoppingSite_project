@@ -1,22 +1,26 @@
-import React, { useRef, useState, useEffect, useCallback } from "react";
+import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
 import axios, { AxiosResponse } from "axios";
+import { SetterOrUpdater } from "recoil";
 
-const serverUrl = process.env.REACT_APP_SERVER_URL;
+interface IProps {
+  id: number | undefined;
+}
 
-const NMap = (): JSX.Element => {
-  console.log("NMapFunc");
+const NMap = ({ id }: IProps): JSX.Element => {
+  console.log(id, "체크하기");
   //맵을 표시할 element를 알려주기 위한 변수
   const mapRef: React.MutableRefObject<null> = useRef(null);
 
+  //state
   const [map, setMap] = useState<naver.maps.Map>();
-
   const [riderPosition, setRiderPosition] = useState<naver.maps.LatLng>();
   const [riderMarker, setRiderMarker] = useState<naver.maps.Marker>();
-
   const [userPosition, setUserPosition] = useState<naver.maps.LatLng>();
   const [, setUserMarker] = useState<naver.maps.Marker>();
-
   const [boundPosition, setBoundPosition] = useState<naver.maps.LatLngBounds>();
+
+  //custom
+  const serverUrl = process.env.REACT_APP_SERVER_URL;
 
   //func
   const userPositionSet = (address: string) => {
@@ -44,11 +48,7 @@ const NMap = (): JSX.Element => {
 
   const getRiderLatLng = async () => {
     await axios
-      .post(
-        `${serverUrl}/GpsRiderGet`,
-        {}, //아이디 추가해야 함
-        { withCredentials: true }
-      )
+      .post(`${serverUrl}/GpsRiderGet`, { id: id }, { withCredentials: true })
       .then((data: AxiosResponse<any, any>) => {
         //성공시 콜백
         console.log(data);
@@ -62,11 +62,7 @@ const NMap = (): JSX.Element => {
 
   const getUserAddress = async () => {
     await axios
-      .post(
-        `${serverUrl}/GpsUserGet`,
-        {}, //아이디 추가해야 함
-        { withCredentials: true }
-      )
+      .post(`${serverUrl}/GpsUserGet`, { id: id }, { withCredentials: true })
       .then((data: AxiosResponse<any, any>) => {
         //성공시 URL
         console.log(data);

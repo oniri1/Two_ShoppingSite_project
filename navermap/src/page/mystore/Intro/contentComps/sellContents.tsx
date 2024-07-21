@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { IProduct } from "../../../../lib/interFace";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Modal } from "../../../../Context/Modal";
+import { Modal, MapId } from "../../../../Context/Modal";
 import { useSetRecoilState, useRecoilState } from "recoil";
 
 interface IProps {
@@ -20,6 +20,7 @@ const SellContent = ({ data, isBuyTap = false }: IProps) => {
   //hooks
   const navigate = useNavigate();
   const ModalState = useSetRecoilState(Modal);
+  const setmapId = useSetRecoilState(MapId);
 
   //custom
   const serverUrl = process.env.REACT_APP_SERVER_URL;
@@ -43,6 +44,7 @@ const SellContent = ({ data, isBuyTap = false }: IProps) => {
 
   const showMapModal = () => {
     ModalState("showMap");
+    setmapId(data.id || 1);
   };
 
   const showReviewModal = () => {

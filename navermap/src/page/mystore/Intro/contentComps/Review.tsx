@@ -62,7 +62,6 @@ const Review = () => {
   //   useEffect(() => {}, [reviews]);
 
   useEffect(() => {
-    console.log(reviewRes);
     if (reviewRes) setReviews(reviewRes.reviewlist);
   }, [reviewRes]);
 

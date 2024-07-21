@@ -158,7 +158,7 @@ const NMap = ({ id }: IProps): JSX.Element => {
   }, []);
 
   //naverMap으로 바뀐 mapRef을 ref로 참조하여 리턴
-  return <div ref={mapRef} className="w-[100%] h-[100%]"></div>;
+  return <div ref={mapRef} className="w-[100%] h-[100%] flex"></div>;
 };
 
 export default NMap;

@@ -59,23 +59,22 @@ const MobileModal = ({}: IProps): JSX.Element => {
         </div>
       </div>
       {/* 콘텐츠 */}
-      {modalValue && (
-        <>
-          {" "}
-          {modalValue !== "showMap" && (
-            <div className={`${outborder} min-w-[50%] min-h-[50%]`}>
-              {modalValue === "mobilemenu" && modal.mobilemenu}
-              {modalValue === "mobilesearch" && modal.mobilesearch}
-              {modalValue === "report" && modal.report}
-              {modalValue === "buy" && modal.buy}
-              {/* {modalContent[0] == "reviewWhite" && modal.reviewWhite} */}
-            </div>
-          )}
-          {modalValue === "showMap" && (
-            <div className="h-[95%] w-[100%]">{modal.showMap(mapIdValue)}</div>
-          )}
-        </>
-      )}
+
+      <div className={`${center}`}>
+        {modalValue === "mobilemenu" && modal.mobilemenu}
+        {modalValue === "mobilesearch" && modal.mobilesearch}
+        {modalValue === "report" && modal.report}
+        {modalValue === "buy" && modal.buy}
+        {/* {modalContent[0] == "reviewWhite" && modal.reviewWhite} */}
+        {modalValue === "showMap" && (
+          <div className={`h-[740px] w-[500px] ${center}`}>
+            {" "}
+            {modal.showMap(mapIdValue)}
+          </div>
+        )}
+      </div>
+
+      {/*  */}
     </div>
   );
 };

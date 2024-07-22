@@ -7,9 +7,9 @@ import { MapId, Modal } from "../../../Context/Modal";
 import Report from "../Report/Report";
 import Buy from "../Buy/Buy";
 import NMap from "../../Map/NMap";
-import { center, outborder } from "../../../lib/styles";
-import { useEffect, useMemo } from "react";
-import { SetterOrUpdater } from "recoil";
+import { center } from "../../../lib/styles";
+import { useMemo } from "react";
+import Addadress from "../Addadress/Addadress";
 
 interface IProps {}
 
@@ -21,6 +21,7 @@ const modal = {
   showMap: (id: number | undefined) => {
     return <NMap id={id} />;
   },
+  addadress: <Addadress />,
   // reviewWhite: <ReviewWrite />,
 };
 
@@ -37,10 +38,6 @@ const MobileModal = ({}: IProps): JSX.Element => {
   };
 
   //hook
-  const modalValue = useMemo(() => {
-    return modalContent;
-  }, [modalContent]);
-
   const mapIdValue = useMemo(() => {
     return mapId;
   }, [mapId]);
@@ -60,17 +57,15 @@ const MobileModal = ({}: IProps): JSX.Element => {
       </div>
       {/* 콘텐츠 */}
 
-      <div className={`${center}`}>
-        {modalValue === "mobilemenu" && modal.mobilemenu}
-        {modalValue === "mobilesearch" && modal.mobilesearch}
-        {modalValue === "report" && modal.report}
-        {modalValue === "buy" && modal.buy}
-        {/* {modalContent[0] == "reviewWhite" && modal.reviewWhite} */}
-        {modalValue === "showMap" && (
-          <div className={`h-[740px] w-[500px] ${center}`}>
-            {" "}
-            {modal.showMap(mapIdValue)}
-          </div>
+      <div>
+        {modalContent === "mobilemenu" && modal.mobilemenu}
+        {modalContent === "mobilesearch" && modal.mobilesearch}
+        {modalContent === "report" && modal.report}
+        {modalContent === "buy" && modal.buy}
+        {modalContent == "addadress" && modal.addadress}
+        {/* {modalContent === "reviewWhite" && modal.reviewWhite} */}
+        {modalContent === "showMap" && (
+          <div className={`${center}`}>{modal.showMap(mapIdValue)}</div>
         )}
       </div>
 

@@ -16,5 +16,6 @@ module.exports = {
 
       addUtilities(clipPathUtilities, ["responsive", "hover"]);
     },
+    require("tailwind-scrollbar-hide"),
   ],
 };

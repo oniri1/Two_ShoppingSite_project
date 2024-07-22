@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
 import axios, { AxiosResponse } from "axios";
 import { SetterOrUpdater } from "recoil";
+import { center } from "../../lib/styles";
 
 interface IProps {
   id: number | undefined;
@@ -158,7 +159,11 @@ const NMap = ({ id }: IProps): JSX.Element => {
   }, []);
 
   //naverMap으로 바뀐 mapRef을 ref로 참조하여 리턴
-  return <div ref={mapRef} className="w-[100%] h-[100%] flex"></div>;
+  return (
+    <div className={`h-[740px] w-[500px] ${center}`}>
+      <div ref={mapRef} className="w-[100%] h-[100%] flex"></div>;
+    </div>
+  );
 };
 
 export default NMap;

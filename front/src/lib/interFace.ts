@@ -32,7 +32,7 @@ export interface IMyStoreRes {
 
 // 게시글 관련
 
-export interface IProduct {
+interface IProductMini {
   id?: number;
   title: string;
   discription: string;
@@ -41,8 +41,23 @@ export interface IProduct {
   itemState: string;
   prepayment?: boolean;
   img: string;
+}
+
+export interface IProduct extends IProductMini {
   DeliveryCost?: { cost: number };
   Category?: { name: string };
+}
+
+export interface IProductPage extends IProduct {
+  categoryId?: number;
+  Sell: {
+    id: number;
+    nick: string;
+    star: {
+      star: string;
+    };
+  };
+  image: string[];
 }
 
 export interface IProductRes {

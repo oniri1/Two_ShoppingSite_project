@@ -51,7 +51,7 @@ const NMap = ({ id }: IProps): JSX.Element => {
       .post(`${serverUrl}/GpsRiderGet`, { id: id }, { withCredentials: true })
       .then((data: AxiosResponse<any, any>) => {
         //성공시 콜백
-        console.log(data);
+        console.log("라이더 겟 데이타 보고 수정", data);
       })
       .catch(() => {
         console.error("라이더 위치 실패");
@@ -65,7 +65,7 @@ const NMap = ({ id }: IProps): JSX.Element => {
       .post(`${serverUrl}/GpsUserGet`, { id: id }, { withCredentials: true })
       .then((data: AxiosResponse<any, any>) => {
         //성공시 URL
-        console.log(data);
+        console.log("유저 겟 데이타 보고 수정", data);
       })
       .catch(() => {
         //실패시 URL

@@ -5,9 +5,9 @@ import Category from "../../page/catgegory/category";
 
 import Point from "../../page/point/point";
 import Product from "../../page/product/product";
-import Sell from "../../page/sell/sell";
 import MyStore from "../../page/mystore/mystore";
 import LoginPage from "../../page/account/login/loginpage";
+import ProductWrite from "../../page/sell/ProductWrite";
 
 import { List } from "../list";
 import NotLogin from "../../Component/LoginInfo/NotLogin";
@@ -36,7 +36,12 @@ interface IProps {
   searchpage: List[];
 }
 
-const Layout = ({ userlogin, main, catepage, searchpage }: IProps): JSX.Element => {
+const Layout = ({
+  userlogin,
+  main,
+  catepage,
+  searchpage,
+}: IProps): JSX.Element => {
   const { isdesktop, ismobile } = useBreakPoint();
   const authority = false;
 
@@ -66,12 +71,16 @@ const Layout = ({ userlogin, main, catepage, searchpage }: IProps): JSX.Element 
                 </div>
               )}
               <Link to={"/"}>
-                <img alt="logo" src="/imgs/hamster.png" className="h-[4rem]"></img>
+                <img
+                  alt="logo"
+                  src="/imgs/hamster.png"
+                  className="h-[4rem]"
+                ></img>
               </Link>
               <div
-                className={`${isdesktop && "text-[2rem] text-white font-bold"} ${
-                  ismobile && "text-[1rem] text-white font-bold"
-                }`}
+                className={`${
+                  isdesktop && "text-[2rem] text-white font-bold"
+                } ${ismobile && "text-[1rem] text-white font-bold"}`}
               >
                 햄스터마켓
               </div>
@@ -87,10 +96,16 @@ const Layout = ({ userlogin, main, catepage, searchpage }: IProps): JSX.Element 
           ) : (
             <Routes>
               <Route path="/" element={<Main list={main} />}></Route>
-              <Route path="/category/:id" element={<Category list={catepage} />}></Route>
-              <Route path={`/search/:id`} element={<Search list={searchpage} />}></Route>
+              <Route
+                path="/category/:id"
+                element={<Category list={catepage} />}
+              ></Route>
+              <Route
+                path={`/search/:id`}
+                element={<Search list={searchpage} />}
+              ></Route>
               <Route path="/product/:id" element={<Product />}></Route>
-              <Route path="/sell" element={<Sell />}></Route>
+              <Route path="/sell" element={<ProductWrite />}></Route>
               <Route path="/mystore" element={<MyStore />}></Route>
               <Route path="/login" element={<LoginPage />}></Route>
               <Route path="/regist" element={<Regist />}></Route>

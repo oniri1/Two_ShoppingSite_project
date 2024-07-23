@@ -7,11 +7,10 @@ import ButtonComp from "../../Button/Button";
 import { Button } from "../../../lib/Button/Button";
 import axios, { AxiosResponse } from "axios";
 import { IProductPage } from "../../../lib/interFace";
-import { error } from "console";
 
 interface IProps {}
 
-interface IAdress {
+export interface IAdress {
   id: number;
   mobile: string;
   detailAddress: string | null;
@@ -22,11 +21,11 @@ interface IAdress {
     name: string;
   };
 }
-interface IData {
+export interface IData {
   extraAddress: IAdress[];
 }
 
-interface IAdressData {
+export interface IAdressData {
   address: string;
   addressId: number;
 }
@@ -97,7 +96,6 @@ const Buy = ({}: IProps): JSX.Element => {
 
   //구매하기 버튼 클릭
   const buyClick = async () => {
-    console.log(id, productid);
     await axios
       .post(
         `${serverUrl}/purchase/${productid}`,

@@ -7,8 +7,13 @@ export default async (req: Request, res: Response) => {
 
   try {
     const reqbody = req.body;
+    console.log(reqbody);
     /// 상위 카테고리
     const selectprecate: number | null = reqbody.precate;
+
+    if (!reqbody.name) {
+      throw Error("err");
+    }
 
     const newcategory: Category = await Category.create(
       {
@@ -18,6 +23,7 @@ export default async (req: Request, res: Response) => {
     );
 
     await transaction.commit();
+
     if (selectprecate) {
       const precate: Category | null = await Category.findOne({
         where: { id: selectprecate },

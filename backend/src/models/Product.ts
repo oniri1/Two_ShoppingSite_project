@@ -6,40 +6,19 @@ import Report from "./Report";
 import DeliveryCost from "./DeliveryCost";
 import ExtraAddress from "./ExtraAddress";
 
-type Constructor<T> = new (...args: any[]) => T;
-
 class Product extends Model {
   public readonly id!: number;
   //category
   public name!: string;
   public preCateId!: number;
-  // addChildren: any;
 
   public title!: string;
   public discription!: string;
   public itemState!: string;
   public price!: number;
-  // public prepayment!: boolean;
   public img!: string;
   public image!: string[];
-
-  // User
-  // public email!: string;
-  // public password!: string;
-  // public mobile!: string;
-  // public delivery!: boolean;
-  // public admin!: boolean;
-  // public Oauth!: string;
-  // // Store
-  // public nick!: string;
-  // public point!: number;
-  // public introduction!: string;
-  // public report_point!: number;
-  // // public mobile!: string;
-  // public block!: boolean;
-  // //
-  // public readonly categoryId!: number;
-  // public readonly storeId!: number;
+  public userCheck!: boolean;
   public sellId!: number;
   public readonly createdAt!: Date;
   public readonly updateAt!: Date;
@@ -71,6 +50,10 @@ class Product extends Model {
         },
         delivery: {
           type: DataTypes.INTEGER,
+        },
+        userCheck: {
+          type: DataTypes.BOOLEAN,
+          defaultValue: false,
         },
       },
       {

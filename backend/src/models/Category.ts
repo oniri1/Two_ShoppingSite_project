@@ -1,8 +1,6 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
 import Product from "./Product";
 
-type Constructor<T> = new (...args: any[]) => T;
-
 class Category extends Model {
   public readonly id!: number;
   public name!: string;
@@ -18,7 +16,6 @@ class Category extends Model {
       {
         name: {
           type: DataTypes.STRING(100),
-          unique: true,
         },
         preCateId: {
           type: DataTypes.INTEGER,

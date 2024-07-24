@@ -36,7 +36,11 @@ const App = (): JSX.Element => {
 
   const mainDataGet = async () => {
     await axios
-      .post(`${process.env.REACT_APP_SERVER_URL}/main`, {}, { withCredentials: true })
+      .post(
+        `${process.env.REACT_APP_SERVER_URL}/main`,
+        {},
+        { withCredentials: true }
+      )
       .then((data: AxiosResponse) => {
         console.log(data);
         const products: IProduct[] = data.data.product;
@@ -55,7 +59,15 @@ const App = (): JSX.Element => {
         setListDatas(listDatas);
       })
       .catch(() => {
-        setListDatas([{ id: 1, title: "자전거", img: "hamster.png", price: 3000, createdAt: 3 }]);
+        setListDatas([
+          {
+            id: 1,
+            title: "자전거",
+            img: "hamster.png",
+            price: 3000,
+            createdAt: 3,
+          },
+        ]);
       });
   };
 
@@ -65,7 +77,13 @@ const App = (): JSX.Element => {
     if (ListDatas[0]) {
       setMain(
         ListDatas.map((data) => {
-          return new List(data.id, data.title, data.img, data.price, data.createdAt);
+          return new List(
+            data.id,
+            data.title,
+            data.img,
+            data.price,
+            data.createdAt
+          );
         })
       );
     }
@@ -76,15 +94,26 @@ const App = (): JSX.Element => {
   }, []);
 
   //
-  const [catepage, setCatePage] = useState([new List(1, "자동차", "good", 3000, 3)]);
+  const [catepage, setCatePage] = useState([
+    new List(1, "자동차", "good", 3000, 3),
+  ]);
 
-  const [searchpage, setSearchPage] = useState([new List(1, "햄스터", "hamster", 3000, 3)]);
+  const [searchpage, setSearchPage] = useState([
+    new List(1, "햄스터", "hamster", 3000, 3),
+  ]);
 
-  const userlogin = false;
+  const [userlogin, setUserLogin] = useState<boolean>(false);
+
   return (
     <div>
       <div>
-        <Layout userlogin={userlogin} main={main} catepage={catepage} searchpage={searchpage} />
+        <Layout
+          setUserLogin={setUserLogin}
+          userlogin={userlogin}
+          main={main}
+          catepage={catepage}
+          searchpage={searchpage}
+        />
       </div>
     </div>
   );

@@ -20,7 +20,8 @@ import MyPage from "../page/mypage";
 const LayOut = (): JSX.Element => {
   const [workstate, SetWorkState] = useState<boolean>();
   const [liststate, SetListState] = useState(0);
-  let intervalGpsGet: any;
+  // let intervalGpsGet: any;
+  const [intervalGpsGet, setIntervalGpsGet] = useState<any>();
 
   //env
   const serverUrl = process.env.REACT_APP_SERVER_URL;
@@ -90,10 +91,13 @@ const LayOut = (): JSX.Element => {
   //mount
 
   useEffect(() => {
+    console.log(workstate);
     if (workstate) {
-      intervalGpsGet = setInterval(getGps, 3000);
+      console.log("gps 인터벌 시작");
+      setIntervalGpsGet(setInterval(getGps, 3000));
     } else {
-      clearInterval(intervalGpsGet);
+      console.log("gps 인터벌 종료");
+      setIntervalGpsGet(clearInterval(intervalGpsGet));
     }
   }, [workstate]);
 

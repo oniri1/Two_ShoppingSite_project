@@ -40,12 +40,13 @@ interface IProductMini {
   createdAt?: string;
   itemState: string;
   prepayment?: boolean;
-  img: string;
+  img?: string;
 }
 
 export interface IProduct extends IProductMini {
   DeliveryCost?: { cost: number };
   Category?: { name: string };
+  image?: string[];
 }
 
 export interface IProductPage extends IProduct {

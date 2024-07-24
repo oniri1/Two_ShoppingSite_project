@@ -30,6 +30,7 @@ import { Modal } from "../../Context/Modal";
 import Regist from "../../page/account/regist/registpage";
 
 interface IProps {
+  setUserLogin: React.Dispatch<React.SetStateAction<boolean>>;
   userlogin: boolean;
   main: List[];
   catepage: List[];
@@ -37,6 +38,7 @@ interface IProps {
 }
 
 const Layout = ({
+  setUserLogin,
   userlogin,
   main,
   catepage,
@@ -108,7 +110,10 @@ const Layout = ({
               <Route path="/sell" element={<ProductWrite />}></Route>
               <Route path="/sell/:id" element={<ProductWrite />}></Route>
               <Route path="/mystore" element={<MyStore />}></Route>
-              <Route path="/login" element={<LoginPage />}></Route>
+              <Route
+                path="/login"
+                element={<LoginPage setUserLogin={setUserLogin} />}
+              ></Route>
               <Route path="/regist" element={<Regist />}></Route>
               <Route path="/point" element={<Point />}></Route>
             </Routes>

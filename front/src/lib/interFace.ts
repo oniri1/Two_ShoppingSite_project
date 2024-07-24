@@ -58,6 +58,7 @@ export interface IProductPage extends IProduct {
     };
   };
   image: string[];
+  islogin: boolean;
 }
 
 export interface IProductRes {

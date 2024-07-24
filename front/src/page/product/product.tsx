@@ -13,7 +13,7 @@ import { productPageDataErr } from "../../lib/errors";
 
 interface IProps {}
 
-interface IData<T> {
+export interface IData<T> {
   product: T;
 }
 

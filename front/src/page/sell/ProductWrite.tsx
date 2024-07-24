@@ -3,28 +3,41 @@ import { center } from "../../lib/styles";
 import axios, { AxiosResponse } from "axios";
 import { IData, IAdress, IAdressData } from "../../Component/Modal/Buy/Buy";
 import AdressItem from "../../Component/Modal/Buy/UserAdressItem";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { IData as IDataProduct } from "../product/product";
+import { IProductPage } from "../../lib/interFace";
+import { productPageDataErr } from "../../lib/errors";
 
 interface IFormData {
   productName: string;
   description: string;
   price: string;
 }
-
 interface ICateMini {
   id: number;
   name: string;
 }
-
 interface ICate extends ICateMini {
   Children?: ICateMini[];
 }
-
 interface IFirstCateRes {
   category: ICate[];
 }
+interface IFiles {
+  fileType: string;
+  fileName: string;
+  fileNameFull: string;
+}
+interface IRowCateFunc {
+  api: string;
+  id: number;
+}
 
 const ProductWrite: React.FC = () => {
+  //hook
+  const navigate = useNavigate();
+  const loca = useLocation();
+
   //state
   const [images, setImages] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
@@ -48,16 +61,24 @@ const ProductWrite: React.FC = () => {
     description: "",
     price: "",
   });
+  const [idPath, setIdPath] = useState<string>("");
+
+  //useMemo
+  const isProductReWrite = useMemo<boolean>(() => {
+    return loca.pathname.lastIndexOf("/") !== 0;
+  }, []);
+  const idStartIdx = useMemo<number>(() => {
+    return loca.pathname.lastIndexOf("/");
+  }, []);
 
   //env
   const serverUrl = process.env.REACT_APP_SERVER_URL;
-
-  //hook
-  const navigate = useNavigate();
+  const imgBaseUrl = process.env.REACT_APP_IMG_BASE;
 
   //funcs
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
+    console.log(files);
     if (files) {
       const newImages = Array.from(files);
       setImages((prev) => [...prev, ...newImages]);
@@ -117,11 +138,93 @@ const ProductWrite: React.FC = () => {
     setcontent(value);
     setId(id);
   };
+  const asyncOperation = async (item: any) => {
+    return new Promise<File>((resolve) =>
+      setTimeout(() => resolve(getImgBlob(item)), 300)
+    );
+  };
 
-  interface IRowCateFunc {
-    api: string;
-    id: number;
-  }
+  const getProductDatas = async () => {
+    await axios
+      .post(`${serverUrl}/product/${id}`, {}, { withCredentials: true })
+      .then(async (data: AxiosResponse<IDataProduct<IProductPage>>) => {
+        console.log(data);
+        const values = data.data.product;
+        const { image, title, discription, categoryId, Category, price } =
+          values;
+
+        setFormData({
+          productName: title,
+          description: discription,
+          price: price + "",
+        });
+        setLastClickCateId(categoryId);
+        setShowCateValue([Category ? Category.name : "에러"]);
+        const newImages = Array.from(image);
+        const newPreviewUrls = newImages.map((file) => `${imgBaseUrl}${file}`);
+        setPreviewUrls(newPreviewUrls);
+
+        //files Get
+
+        const results: File[] = [];
+        console.log(image);
+
+        for (const imgName of image) {
+          const fileNameFull = imgName;
+          const fileType = imgName.slice(imgName.indexOf(".") + 1);
+          const fileName = imgName.slice(0, imgName.indexOf("."));
+
+          const obj: IFiles = {
+            fileName: fileName,
+            fileNameFull: fileType,
+            fileType: fileNameFull,
+          };
+
+          const result: File = await asyncOperation(obj);
+          results.push(result);
+        }
+
+        setImages(results);
+      })
+      .catch(async (err) => {
+        console.log(err);
+        const { image, title, discription, categoryId, Category, price } =
+          productPageDataErr;
+
+        setFormData({
+          productName: title,
+          description: discription,
+          price: price + "",
+        });
+        setLastClickCateId(categoryId);
+        setShowCateValue([Category ? Category.name : "에러"]);
+        const newImages = Array.from(image);
+        const newPreviewUrls = newImages.map((file) => `${imgBaseUrl}${file}`);
+        setPreviewUrls(newPreviewUrls);
+
+        //files Get
+
+        const results: File[] = [];
+        console.log(image);
+
+        for (const imgName of image) {
+          const fileNameFull = imgName;
+          const fileType = imgName.slice(imgName.indexOf(".") + 1);
+          const fileName = imgName.slice(0, imgName.indexOf("."));
+
+          const obj: IFiles = {
+            fileName: fileName,
+            fileNameFull: fileType,
+            fileType: fileNameFull,
+          };
+
+          const result: File = await asyncOperation(obj);
+          results.push(result);
+        }
+
+        setImages(results);
+      });
+  };
 
   const rowCatesGet = async ({ api, id }: IRowCateFunc) => {
     let rowCheck = true;
@@ -194,7 +297,7 @@ const ProductWrite: React.FC = () => {
   const writeClick = async () => {
     await axios
       .post(
-        `${serverUrl}/write`,
+        `${serverUrl}/write${idPath}`,
         {
           title: formData.productName,
           discription: formData.description,
@@ -206,12 +309,37 @@ const ProductWrite: React.FC = () => {
       )
       .then((data) => {
         console.log(data);
-        navigate("/");
+        if (isProductReWrite) {
+          navigate(`/product${idPath}`);
+        } else {
+          navigate("/");
+        }
       })
       .catch((err) => {
         console.log(err);
-        navigate("/");
+        if (isProductReWrite) {
+          navigate(`/product${idPath}`);
+        } else {
+          navigate("/");
+        }
       });
+  };
+
+  const getImgBlob = async (files: IFiles) => {
+    const { fileType, fileName, fileNameFull } = files;
+
+    const response = await fetch(`${imgBaseUrl}${fileNameFull}`);
+    if (!response.ok) {
+      throw new Error("이미지가 없음");
+    }
+    const blob = await response.blob();
+
+    const fileFromBlob: File = new File([blob], fileNameFull, {
+      type: `image/${fileType}`,
+      lastModified: +new Date(),
+    });
+
+    return fileFromBlob;
   };
 
   //mount
@@ -219,6 +347,11 @@ const ProductWrite: React.FC = () => {
   useEffect(() => {
     firstCateGet();
     getUserAddress();
+
+    if (isProductReWrite) {
+      setIdPath(loca.pathname.slice(idStartIdx));
+      getProductDatas();
+    }
   }, []);
 
   return (
@@ -253,7 +386,7 @@ const ProductWrite: React.FC = () => {
                 <img
                   src={url}
                   alt={`Preview ${index}`}
-                  className="w-32 h-32 "
+                  className="w-32 h-32 uploadImgElem"
                 />
                 <button
                   onClick={() => handleRemoveImage(index)}

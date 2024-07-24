@@ -106,6 +106,7 @@ const Layout = ({
               ></Route>
               <Route path="/product/:id" element={<Product />}></Route>
               <Route path="/sell" element={<ProductWrite />}></Route>
+              <Route path="/sell/:id" element={<ProductWrite />}></Route>
               <Route path="/mystore" element={<MyStore />}></Route>
               <Route path="/login" element={<LoginPage />}></Route>
               <Route path="/regist" element={<Regist />}></Route>

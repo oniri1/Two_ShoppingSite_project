@@ -61,4 +61,6 @@ export const productPageDataErr: IProductPage = {
     },
   },
   image: ["hamster.png", "HamsterRider.png", "HamsterWaiter.png"],
+  //아직 서버에서 미추가
+  islogin: true,
 };

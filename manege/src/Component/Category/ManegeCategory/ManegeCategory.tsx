@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import CateItem, { ICate } from "./CateItem";
 import { useQuery } from "react-query";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
+
+interface IData {
+  category: ICate[];
+}
 
 interface IProps {
   settopcate: React.Dispatch<React.SetStateAction<number | undefined>>;
@@ -9,98 +13,97 @@ interface IProps {
 
 const ManegeCategoryList = ({ settopcate }: IProps): JSX.Element => {
   const [cate, setcate] = useState<number>();
-  const [selectcata1, setselectcata1] = useState<number | undefined>(undefined);
-  const [selectcata2, setselectcata2] = useState<number | undefined>(undefined);
+  const [selectcate1, setselectcate1] = useState<number>(0);
+  const [selectcate2, setselectcate2] = useState<number>(0);
+  const [data2, setdata2] = useState<ICate[]>([]);
+  const [data3, setdata3] = useState<ICate[]>([]);
 
-  // const firstcate = useQuery({
-  //   queryKey: "firstcate",
-  //   queryFn: async () => {
-  //     const { data } = await axios.post(
-  //       `${process.env.REACT_APP_AXIOS}/catefirst`,
-  //       {
-  //         withCredentials: true,
-  //       }
-  //     );
-  //     return data;
-  //   },
-  // });
+  const firstcate = useQuery<IData>({
+    queryKey: "firstcate",
+    queryFn: async () => {
+      const { data } = await axios.post(
+        `${process.env.REACT_APP_SERVER_URL}/catefirst`,
+        {
+          withCredentials: true,
+        }
+      );
+      return data;
+    },
+  });
 
-  // const secondcate = useQuery({
-  //   queryKey: "secondcate",
-  //   queryFn: async () => {
-  //     const { data } = await axios.post(
-  //       `${process.env.REACT_APP_AXIOS}/catelist/${selectcate1}`,
-  //       {
-  //         withCredentials: true,
-  //       }
-  //     );
-  //     return data;
-  //   },
-  // });
+  const secondcate = async () => {
+    await axios
+      .post(
+        `${process.env.REACT_APP_SERVER_URL}/catelist/${selectcate1}`,
+        {},
+        { withCredentials: true }
+      )
+      .then((data: AxiosResponse) => {
+        const Children: ICate[] = data.data.category[0].Children;
+        setdata2(Children);
+      })
+      .catch(() => {
+        console.log("안되네");
+      });
+  };
 
-  // const thirdcate = useQuery({
-  //   queryKey: "secondcate",
-  //   queryFn: async () => {
-  //     const { data } = await axios.post(
-  //       `${process.env.REACT_APP_AXIOS}/catelist/${selectcate2}`,
-  //       {
-  //         withCredentials: true,
-  //       }
-  //     );
-  //     return data;
-  //   },
-  // });
+  const thirdcate = async () => {
+    await axios
+      .post(
+        `${process.env.REACT_APP_SERVER_URL}/catelist/${selectcate2}`,
+        {},
+        { withCredentials: true }
+      )
+      .then((data: AxiosResponse) => {
+        const Children: ICate[] = data.data.category[0].Children;
+        setdata3(Children);
+      })
+      .catch(() => {
+        console.log("안되네");
+      });
+  };
 
-  const firstcate: ICate[] = [
-    { id: 1, name: "디지털" },
-    { id: 2, name: "전자제품" },
-  ];
-  const secondcate: ICate[] = [
-    { id: 5, name: "디지털" },
-    { id: 8, name: "전자제품" },
-  ];
-  const thirdcate: ICate[] = [
-    { id: 12, name: "디지털" },
-    { id: 24, name: "전자제품" },
-  ];
   console.log(`cate:${cate}`);
-  console.log(`cate1:${selectcata1}`);
-  console.log(`cate2:${selectcata2}`);
+  console.log(`cate1:${selectcate1}`);
+  console.log(`cate2:${selectcate2}`);
 
   useEffect(() => {
     settopcate(cate);
+    secondcate();
+    thirdcate();
   }, [cate]);
+
   return (
     <div className="w-[60rem] h-[30rem] flex border">
       <div className="h-[100%] flex-1 border-e overflow-y-auto">
         <div className="p-2">
-          {firstcate.map((item: ICate, idx: number) => (
+          {firstcate.data?.category.map((item: ICate, idx: number) => (
             <CateItem
               key={idx}
               item={item}
               setcate={setcate}
-              setselectcate1={setselectcata1}
+              setselectcate1={setselectcate1}
             />
           ))}
         </div>
       </div>
       <div className="h-[100%] flex-1 border-e overflow-y-auto">
         <div className="p-2">
-          {selectcata1 !== undefined &&
-            secondcate.map((item: ICate, idx: number) => (
+          {selectcate1 !== undefined &&
+            data2.map((item: ICate, idx: number) => (
               <CateItem
                 key={idx}
                 item={item}
                 setcate={setcate}
-                setselectcate2={setselectcata2}
+                setselectcate2={setselectcate2}
               />
             ))}
         </div>
       </div>
       <div className="h-[100%] flex-1 overflow-y-auto">
         <div className="p-2">
-          {selectcata2 !== undefined &&
-            thirdcate.map((item: ICate, idx: number) => (
+          {selectcate2 !== undefined &&
+            data3.map((item: ICate, idx: number) => (
               <CateItem key={idx} item={item} setcate={setcate} />
             ))}
         </div>

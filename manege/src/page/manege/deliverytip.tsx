@@ -3,41 +3,44 @@ import { SmallButton } from "../../Component/Button/Button";
 import { Button } from "../../lib/Button/Button";
 import { ChangeEvent, useCallback, useState } from "react";
 import axios from "axios";
-
-interface ICost {
-  cost: number;
-}
+import { useMutation, useQuery, useQueryClient } from "react-query";
 
 interface IProps {}
 
 const ManegeDeliveryTip = ({}: IProps): JSX.Element => {
-  const [tip, settip] = useState<number>(0);
+  const [tip, settip] = useState<number>();
   const changetip = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     settip(Number(e.target.value));
   }, []);
 
-  const submit = useCallback(async () => {
-    try {
+  const queryClient = useQueryClient();
+
+  const { mutate } = useMutation({
+    mutationKey: ["patchdelivery"],
+    mutationFn: async () => {
       await axios.patch(
-        "http://localhost:3000/admin/updatedeliverycost",
+        ` ${process.env.REACT_APP_SERVER_URL}/admin/updatedeliverycost`,
         { cost: tip },
         { withCredentials: true }
       );
-    } catch (err) {
-      console.error(err);
-    }
-  }, []);
+    },
+    onSuccess(data) {
+      queryClient.invalidateQueries({ queryKey: "deliverycost" });
+    },
+  });
 
-  // const { data } = useQuery({
-  //   queryKey: "deliverycost",
-  //   queryFn: async () => {
-  //     const { data } = await axios.post("http://localhost:3000/admin/deliverycost");
-  //     return data;
-  //   },
-  // });
+  const deliverycost = useQuery({
+    queryKey: "deliverycost",
+    queryFn: async () => {
+      const { data } = await axios.post(
+        `${process.env.REACT_APP_SERVER_URL}/admin/deliverycost`
+      );
+      return data;
+    },
+  });
+  console.log(deliverycost.data?.cost.cost);
   const btn = new Button("확인", "bg-orange-500");
 
-  const data: ICost = { cost: 2000 };
   return (
     <div className={`${box}`}>
       <div className={`${center} flex-col`}>
@@ -45,17 +48,26 @@ const ManegeDeliveryTip = ({}: IProps): JSX.Element => {
           <div className="h-[4rem] ">
             <input
               placeholder="배송비 액수"
-              className="p-3 h-[100%] w-[30rem] border border-gray-400 "
-              value={tip}
+              type="number"
+              className="p-3 h-[100%] w-[30rem] border border-gray-400 appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none "
               onInput={changetip}
             ></input>
           </div>
-          <SmallButton btn={btn} />
+          <div
+            onClick={() => {
+              mutate();
+            }}
+          >
+            <SmallButton btn={btn} />
+          </div>
         </div>
         <div className="pb-20 flex w-[45rem] text-[2rem] font-bold gap-10">
           <div>현재 배송비: </div>
           <div>
-            <span className="text-orange-500">{data.cost}</span>원
+            <span className="text-orange-500">
+              {deliverycost.data?.cost.cost}
+            </span>
+            원
           </div>
         </div>
       </div>

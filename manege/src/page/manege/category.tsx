@@ -5,6 +5,7 @@ import ManegeCategoryList from "../../Component/Category/ManegeCategory/ManegeCa
 import { Button } from "../../lib/Button/Button";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import axios from "axios";
+import { Mutation, useMutation, useQueryClient } from "react-query";
 
 interface IProps {}
 
@@ -19,18 +20,24 @@ const ManegeCategory = ({}: IProps): JSX.Element => {
     setcreatecate(e.target.value);
   }, []);
 
-  const sumit = useCallback(async () => {
-    try {
-      await axios.post("http://localhost/admin/createcategory", {
-        precate: topcate,
-        name: createcate,
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  }, []);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {}, []);
+  const { mutate } = useMutation({
+    mutationKey: ["addcate"],
+    mutationFn: async () => {
+      await axios.post(
+        `${process.env.REACT_APP_SERVER_URL}/admin/createcategory`,
+        {
+          precate: topcate,
+          name: createcate,
+        }
+      );
+    },
+    onSuccess(data) {
+      queryClient.invalidateQueries({ queryKey: "firstcate" });
+    },
+  });
+
   return (
     <div className={`$${box} pb-10`}>
       <div className={`${center}`}>
@@ -56,7 +63,12 @@ const ManegeCategory = ({}: IProps): JSX.Element => {
           </div>
         </div>
       </div>
-      <div onClick={sumit} className={`${center}`}>
+      <div
+        onClick={() => {
+          mutate();
+        }}
+        className={`${center}`}
+      >
         <LargeButton btn={btn} />
       </div>
     </div>

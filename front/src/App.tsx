@@ -5,33 +5,29 @@ import { List } from "./lib/list";
 import { useBreakPoint } from "./CustomHook/BreakPoint";
 import axios, { AxiosResponse } from "axios";
 import { title } from "process";
+export interface IProduct {
+  id: number;
+  title: string;
+  discription: string;
+  price: number;
+  createdAt: string;
+  img: string;
+  Category: {
+    name: string;
+  };
+  image: string[];
+}
+
+export interface IListData {
+  id: number;
+  title: string;
+  img: string;
+  price: number;
+  createdAt: number;
+}
 
 const App = (): JSX.Element => {
-  const { ismobile, isdesktop } = useBreakPoint();
-
-  interface IProduct {
-    id: number;
-    title: string;
-    discription: string;
-    price: number;
-    createdAt: string;
-    img: string;
-    Category: {
-      name: string;
-    };
-    image: string[];
-  }
-
-  interface IListData {
-    id: number;
-    title: string;
-    img: string;
-    price: number;
-    createdAt: number;
-  }
-
   const [main, setMain] = useState<List[]>([]);
-
   const [ListDatas, setListDatas] = useState<IListData[]>([]);
 
   const mainDataGet = async () => {
@@ -63,6 +59,13 @@ const App = (): JSX.Element => {
           {
             id: 1,
             title: "자전거",
+            img: "hamster.png",
+            price: 3000,
+            createdAt: 3,
+          },
+          {
+            id: 2,
+            title: "자전건가",
             img: "hamster.png",
             price: 3000,
             createdAt: 3,
@@ -103,17 +106,10 @@ const App = (): JSX.Element => {
   ]);
 
   const [userlogin, setUserLogin] = useState<boolean>(false);
-
   return (
     <div>
       <div>
-        <Layout
-          setUserLogin={setUserLogin}
-          userlogin={userlogin}
-          main={main}
-          catepage={catepage}
-          searchpage={searchpage}
-        />
+        <Layout setUserLogin={setUserLogin} userlogin={userlogin} main={main} />
       </div>
     </div>
   );

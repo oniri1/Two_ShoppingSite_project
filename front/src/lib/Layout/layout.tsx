@@ -5,10 +5,10 @@ import Category from "../../page/catgegory/category";
 
 import Point from "../../page/point/point";
 import Product from "../../page/product/product";
+import Sell from "../../page/sell/sell";
 import MyStore from "../../page/mystore/mystore";
 import LoginPage from "../../page/account/login/loginpage";
 import ProductWrite from "../../page/sell/ProductWrite";
-
 import { List } from "../list";
 import NotLogin from "../../Component/LoginInfo/NotLogin";
 import Maneger from "../../Component/LoginInfo/Maneger";
@@ -22,34 +22,32 @@ import { CgAdd } from "react-icons/cg";
 import { MdOutlineShoppingBag } from "react-icons/md";
 import { IoAccessibility } from "react-icons/io5";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import MobileModal from "../../Component/Modal/ModalBox/Modal";
 import { box, center } from "../styles";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { Modal } from "../../Context/Modal";
 import Regist from "../../page/account/regist/registpage";
+import { useQuery } from "react-query";
+import axios from "axios";
+
+interface IUser {
+  id: number;
+  nick: string;
+  point: number;
+}
 
 interface IProps {
   setUserLogin: React.Dispatch<React.SetStateAction<boolean>>;
   userlogin: boolean;
   main: List[];
-  catepage: List[];
-  searchpage: List[];
 }
 
-const Layout = ({
-  setUserLogin,
-  userlogin,
-  main,
-  catepage,
-  searchpage,
-}: IProps): JSX.Element => {
+const Layout = ({ setUserLogin, userlogin, main }: IProps): JSX.Element => {
   const { isdesktop, ismobile } = useBreakPoint();
   const authority = false;
-
   const getModal = useRecoilState(Modal);
   const setModal = useSetRecoilState(Modal);
-
   const openmenu = () => {
     setModal("mobilemenu");
   };
@@ -57,7 +55,6 @@ const Layout = ({
   useEffect(() => {
     setModal(undefined);
   }, [location, setModal]);
-
   return (
     <div>
       <div className="relative">
@@ -98,14 +95,8 @@ const Layout = ({
           ) : (
             <Routes>
               <Route path="/" element={<Main list={main} />}></Route>
-              <Route
-                path="/category/:id"
-                element={<Category list={catepage} />}
-              ></Route>
-              <Route
-                path={`/search/:id`}
-                element={<Search list={searchpage} />}
-              ></Route>
+              <Route path="/category/:id" element={<Category />}></Route>
+              <Route path={`/search/:id`} element={<Search />}></Route>
               <Route path="/product/:id" element={<Product />}></Route>
               <Route path="/sell" element={<ProductWrite />}></Route>
               <Route path="/sell/:id" element={<ProductWrite />}></Route>

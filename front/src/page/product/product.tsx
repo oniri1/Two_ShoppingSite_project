@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { IProductPage } from "../../lib/interFace";
 import { productPageDataErr } from "../../lib/errors";
+import { useCookies } from "react-cookie";
 
 interface IProps {}
 
@@ -20,6 +21,8 @@ export interface IData<T> {
 const Product = ({}: IProps): JSX.Element => {
   const serverUrl = process.env.REACT_APP_SERVER_URL;
   const { isdesktop, ismobile } = useBreakPoint();
+  const [cookies, setCookie] = useCookies(["Product"]);
+  const [productlog, setproductlog] = useState("");
   const { id } = useParams();
   const btn = new Button("구매하기", "bg-orange-200");
   const ModalState = useSetRecoilState(Modal);
@@ -27,7 +30,6 @@ const Product = ({}: IProps): JSX.Element => {
 
   const [propData, setPropData] = useState<IProductPage>();
 
-  //funcs
   const report = () => {
     ModalState("report");
   };
@@ -49,9 +51,34 @@ const Product = ({}: IProps): JSX.Element => {
       });
   };
 
+  const handleCookie = (product: string) => {
+    const time = 3600; //1시간
+    const expiration = new Date(Date.now() + time * 1000);
+    setCookie(
+      "Product",
+      {
+        product: product,
+      },
+      {
+        path: "/",
+        expires: expiration,
+      }
+    );
+  };
+
   useEffect(() => {
-    Modalproductitem(id);
-    getDatas();
+    if (id !== undefined) {
+      setproductlog(id);
+      Modalproductitem(id);
+      getDatas();
+    }
+    if (cookies.Product == undefined) {
+      if (id !== undefined) {
+        handleCookie(id);
+      }
+    } else {
+      handleCookie(cookies.Product.product + "+" + id);
+    }
   }, []);
 
   return (

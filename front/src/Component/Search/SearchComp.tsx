@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import Category from "../Category/Category";
 import { center } from "../../lib/styles";
 import { Debounce } from "../../CustomHook/Debounce";
@@ -12,7 +12,7 @@ interface IProps {}
 export interface ICategory {
   id: number;
   name: string;
-  children: IChild[];
+  Children: IChild[];
 }
 const SearchComp = ({}: IProps): JSX.Element => {
   const [content, setContent] = useState<string>("");
@@ -24,31 +24,32 @@ const SearchComp = ({}: IProps): JSX.Element => {
   const search = Debounce(content, 800);
 
   const getcategory = async () => {
-    await axios
-      .post(
-        `${process.env.REACT_APP_SERVER_URL}/category`,
-        { category: search },
-        { withCredentials: true }
-      )
-      .then((data: AxiosResponse) => {
-        console.log(data);
-        const category: ICategory = data.data.category;
-        setCateData(category);
-      })
-      .catch(() => {
-        setCateData({
-          id: 5,
-          name: "자동차",
-          children: [{ id: 3, name: "오류임" }],
+    if (search !== "") {
+      await axios
+        .post(
+          `${process.env.REACT_APP_SERVER_URL}/category`,
+          { category: search },
+          { withCredentials: true }
+        )
+        .then((data: AxiosResponse) => {
+          console.log(data);
+          const category: ICategory = data.data.category;
+          setCateData(category);
+        })
+        .catch(() => {
+          setCateData({
+            id: 5,
+            name: "자동차",
+            Children: [{ id: 3, name: "오류임" }],
+          });
         });
-      });
+    }
   };
-  console.log(catedata);
 
   useEffect(() => {
-    getcategory();
-
-    console.log(search);
+    if (search !== undefined) {
+      getcategory();
+    }
   }, [search]);
 
   return (
@@ -76,7 +77,7 @@ const SearchComp = ({}: IProps): JSX.Element => {
             placeholder="카테고리 또는 상품의 이름을 입력하세요"
             onInput={saveContent}
             value={content}
-          ></input>
+          />
           {search ? <Category content={content} category={catedata} /> : ""}
         </div>
         {content ? (

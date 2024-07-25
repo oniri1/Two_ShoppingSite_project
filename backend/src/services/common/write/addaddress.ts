@@ -9,8 +9,9 @@ export default async (req: Request, res: Response) => {
     if (!reqbody.user) {
       throw Error("not login");
     }
-    if (!reqbody.name || !reqbody.address) {
-      throw Error("not name OR address");
+    console.log(reqbody);
+    if (!reqbody.name || !reqbody.address || !reqbody.mobile) {
+      throw Error("not name OR address OR mobile");
     }
 
     const nowuser: Store | null = await Store.findOne({
@@ -22,11 +23,12 @@ export default async (req: Request, res: Response) => {
     const address: Address | null = await Address.findOne({
       where: { address: reqbody.address },
     });
+    const nowmobile = reqbody.mobile.replaceAll("-", "");
 
     const extraaddress: ExtraAddress = await ExtraAddress.create(
       {
         detailAddress: reqbody.detailaddress,
-        mobile: reqbody.mobile,
+        mobile: nowmobile,
       },
       { transaction }
     );
@@ -64,8 +66,8 @@ export default async (req: Request, res: Response) => {
       res.status(400).json({ result: "not login" });
     } else if (err.message == "not find user") {
       res.status(400).json({ result: "not find user" });
-    } else if (err.message == "not name OR address") {
-      res.status(400).json({ result: "not name OR address" });
+    } else if (err.message == "not name OR address OR mobile") {
+      res.status(400).json({ result: "not name OR address OR mobile" });
     } else {
       res.status(500).json({ result: "fail" });
     }

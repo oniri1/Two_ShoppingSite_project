@@ -1,19 +1,13 @@
-import { center } from "../../../lib/styles";
 import React, { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import LargeButton from "../../../Component/Button/Button";
-import { Button } from "../../../lib/Button/Button";
-import { useBreakPoint } from "../../../CustomHook/BreakPoint";
-import { NaverOAuth } from "../../../Component/OAuth/NaverOAuth";
-import { GoogleOAuth } from "../../../Component/OAuth/GoogleOAuth";
+import { box, center } from "../../lib/styles";
+import { LargeButton } from "../../Component/Button/Button";
+import { Button } from "../../lib/Button/Button";
 
-interface IProps {
-  setUserLogin: React.Dispatch<React.SetStateAction<boolean>>;
-}
+interface IProps {}
 
-const LoginPage = ({ setUserLogin }: IProps): JSX.Element => {
-  const { isdesktop, ismobile } = useBreakPoint();
+const AdminLoginPage = ({}: IProps): JSX.Element => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginCheck, setLoginCheck] = useState(false); // 로그인 상태 체크
@@ -33,20 +27,16 @@ const LoginPage = ({ setUserLogin }: IProps): JSX.Element => {
       emailReg.test(email)
     ) {
       try {
-        const response = await axios.post(
-          `${serverUrl}/login`,
-          {
-            email: email,
-            pw: password,
-          },
-          { withCredentials: true }
-        );
+        const response = await axios.post(`${serverUrl}/adminlogin`, {
+          email: email,
+          pw: password,
+        });
 
         const result = response.data;
 
         if (response.status === 200) {
           setLoginCheck(false);
-          setUserLogin(true);
+
           console.log("로그인성공, 이메일주소:" + result.email);
           navigate("/"); // 로그인 성공시 홈으로 이동합니다.
         } else {
@@ -64,12 +54,14 @@ const LoginPage = ({ setUserLogin }: IProps): JSX.Element => {
 
   return (
     <div>
-      <div className={`${ismobile && "px-4 h-[40rem]"} Box ${center}`}>
+      <div className={` ${box} ${center}`}>
         <div className="rounded-lg  w-full m">
           <h2 className="text-2xl font-bold text-center text-orange-500 mt-10">
             햄스터 마켓
           </h2>
-          <h2 className="text-2xl font-bold text-center mb-10">로그인</h2>
+          <h2 className="text-2xl font-bold text-center mb-10">
+            관리자 로그인
+          </h2>
           <form onSubmit={handleLogin}>
             <div className="mb-4">
               <input
@@ -107,43 +99,17 @@ const LoginPage = ({ setUserLogin }: IProps): JSX.Element => {
                   </div>
                 ))}
             </div>
-            <p className="mb-4 flex justify-between">
-              <div>
-                <input type="checkbox" className="mr-2" />
-                자동 로그인
-              </div>
-              <div className="">
-                <Link to={"/findID"}>아이디찾기 /</Link>
-                <Link to={"/findPW"}> 비밀번호찾기</Link>
-              </div>
-            </p>
-            <div className="flex justify-between mb-20">
-              <NaverOAuth></NaverOAuth>
-              <GoogleOAuth></GoogleOAuth>
-            </div>
+            <p className="mb-4 flex justify-between"></p>
+
             {loginCheck && (
               <label style={{ color: "red" }}>
                 이메일 혹은 비밀번호가 틀렸습니다.
               </label>
             )}
-            <div onClick={handleLogin}>
+            <div className="mb-10" onClick={handleLogin}>
               <LargeButton
-                btn={new Button("로그인", "bg-amber-300 w-auto")}
+                btn={new Button("로그인", "bg-orange-500 w-auto")}
               ></LargeButton>
-            </div>
-            <div className="text-center mt-4">
-              햄스터 마켓 계정이 없으신가요?
-            </div>
-            <div className="text-center">
-              지금바로{" "}
-              <div
-                onClick={() => {
-                  navigate("/regist");
-                }}
-                className="text-blue-500"
-              >
-                회원가입
-              </div>
             </div>
           </form>
         </div>
@@ -151,4 +117,4 @@ const LoginPage = ({ setUserLogin }: IProps): JSX.Element => {
     </div>
   );
 };
-export default LoginPage;
+export default AdminLoginPage;

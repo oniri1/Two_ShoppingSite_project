@@ -30,20 +30,29 @@ import { Modal } from "../../Context/Modal";
 import Regist from "../../page/account/regist/registpage";
 import { useQuery } from "react-query";
 import axios from "axios";
+import { IUserDatas } from "../interFace";
 
-interface IUser {
-  id: number;
-  nick: string;
-  point: number;
-}
+// interface IUser {
+//   id: number;
+//   nick: string;
+//   point: number;
+// }
 
 interface IProps {
   setUserLogin: React.Dispatch<React.SetStateAction<boolean>>;
   userlogin: boolean;
   main: List[];
+  userDatas: IUserDatas;
+  userDataCheck: () => void;
 }
 
-const Layout = ({ setUserLogin, userlogin, main }: IProps): JSX.Element => {
+const Layout = ({
+  userDatas,
+  setUserLogin,
+  userlogin,
+  main,
+  userDataCheck,
+}: IProps): JSX.Element => {
   const { isdesktop, ismobile } = useBreakPoint();
   const authority = false;
   const getModal = useRecoilState(Modal);
@@ -85,10 +94,16 @@ const Layout = ({ setUserLogin, userlogin, main }: IProps): JSX.Element => {
               </div>
             </div>
 
-            {!userlogin ? <NotLogin /> : !authority ? <Login /> : <Maneger />}
+            {!userlogin ? (
+              <NotLogin />
+            ) : !authority ? (
+              <Login userDatas={userDatas} setUserLogin={setUserLogin} />
+            ) : (
+              <Maneger />
+            )}
           </div>
         </div>
-
+        {/* 상단 */}
         <div>
           {ismobile && getModal[0] !== undefined ? (
             <div></div>
@@ -109,9 +124,18 @@ const Layout = ({ setUserLogin, userlogin, main }: IProps): JSX.Element => {
               <Route path="/point" element={<Point />}></Route>
             </Routes>
           )}
-          <div>{getModal[0] !== undefined && <MobileModal />}</div>
+          <div>
+            {getModal[0] !== undefined && (
+              <MobileModal
+                setUserLogin={setUserLogin}
+                userlogin={userlogin}
+                userDatas={userDatas}
+                userDataCheck={userDataCheck}
+              />
+            )}
+          </div>
         </div>
-
+        {/* 하단 */}
         {isdesktop && (
           <div>
             <div className="border border-t border-b">

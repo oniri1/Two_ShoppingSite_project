@@ -7,6 +7,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { IData as IDataProduct } from "../product/product";
 import { IProductPage } from "../../lib/interFace";
 import { productPageDataErr } from "../../lib/errors";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { Modal } from "../../Context/Modal";
 
 interface IFormData {
   productName: string;
@@ -40,6 +42,7 @@ const ProductWrite: React.FC = () => {
 
   //state
   const [images, setImages] = useState<File[]>([]);
+  const [modalValue, modalstate] = useRecoilState(Modal);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [lastClickCateId, setLastClickCateId] = useState<number>();
   const [showCateValue, setShowCateValue] = useState<string[]>([]);
@@ -62,11 +65,18 @@ const ProductWrite: React.FC = () => {
     price: "",
   });
   const [idPath, setIdPath] = useState<string>("");
+  const productId = useMemo(() => {
+    return (
+      loca.pathname.lastIndexOf("/") !== 0 &&
+      loca.pathname.slice(loca.pathname.lastIndexOf("/") + 1)
+    );
+  }, []);
 
   //useMemo
   const isProductReWrite = useMemo<boolean>(() => {
     return loca.pathname.lastIndexOf("/") !== 0;
   }, []);
+
   const idStartIdx = useMemo<number>(() => {
     return loca.pathname.lastIndexOf("/");
   }, []);
@@ -103,6 +113,10 @@ const ProductWrite: React.FC = () => {
       [name]: value,
     });
   };
+  interface IImgUpLoaderRes {
+    uploaded: boolean;
+    url: string[];
+  }
   const imgUploader = (files: File[]) => {
     const formData: FormData = new FormData();
 
@@ -115,8 +129,9 @@ const ProductWrite: React.FC = () => {
         withCredentials: true,
         headers: { "Content-type": "multipart/form-data" },
       })
-      .then((data) => {
+      .then((data: AxiosResponse<IImgUpLoaderRes>) => {
         console.log(data);
+        writeClick(data.data.url);
       })
       .catch(() => {
         console.error("error");
@@ -144,9 +159,13 @@ const ProductWrite: React.FC = () => {
     );
   };
 
+  const addadress = () => {
+    modalstate("addadress");
+  };
   const getProductDatas = async () => {
+    console.log(`${serverUrl}/product/${productId}`);
     await axios
-      .post(`${serverUrl}/product/${id}`, {}, { withCredentials: true })
+      .post(`${serverUrl}/product/${productId}`, {}, { withCredentials: true })
       .then(async (data: AxiosResponse<IDataProduct<IProductPage>>) => {
         console.log(data);
         const values = data.data.product;
@@ -170,15 +189,18 @@ const ProductWrite: React.FC = () => {
         console.log(image);
 
         for (const imgName of image) {
+          console.log(imgName);
           const fileNameFull = imgName;
           const fileType = imgName.slice(imgName.indexOf(".") + 1);
           const fileName = imgName.slice(0, imgName.indexOf("."));
 
           const obj: IFiles = {
             fileName: fileName,
-            fileNameFull: fileType,
-            fileType: fileNameFull,
+            fileNameFull: fileNameFull,
+            fileType: fileType,
           };
+
+          console.log(obj);
 
           const result: File = await asyncOperation(obj);
           results.push(result);
@@ -188,41 +210,41 @@ const ProductWrite: React.FC = () => {
       })
       .catch(async (err) => {
         console.log(err);
-        const { image, title, discription, categoryId, Category, price } =
-          productPageDataErr;
+        // const { image, title, discription, categoryId, Category, price } =
+        //   productPageDataErr;
 
-        setFormData({
-          productName: title,
-          description: discription,
-          price: price + "",
-        });
-        setLastClickCateId(categoryId);
-        setShowCateValue([Category ? Category.name : "에러"]);
-        const newImages = Array.from(image);
-        const newPreviewUrls = newImages.map((file) => `${imgBaseUrl}${file}`);
-        setPreviewUrls(newPreviewUrls);
+        // setFormData({
+        //   productName: title,
+        //   description: discription,
+        //   price: price + "",
+        // });
+        // setLastClickCateId(categoryId);
+        // setShowCateValue([Category ? Category.name : "에러"]);
+        // const newImages = Array.from(image);
+        // const newPreviewUrls = newImages.map((file) => `${imgBaseUrl}${file}`);
+        // setPreviewUrls(newPreviewUrls);
 
-        //files Get
+        // //files Get
 
-        const results: File[] = [];
-        console.log(image);
+        // const results: File[] = [];
+        // console.log(image);
 
-        for (const imgName of image) {
-          const fileNameFull = imgName;
-          const fileType = imgName.slice(imgName.indexOf(".") + 1);
-          const fileName = imgName.slice(0, imgName.indexOf("."));
+        // for (const imgName of image) {
+        //   const fileNameFull = imgName;
+        //   const fileType = imgName.slice(imgName.indexOf(".") + 1);
+        //   const fileName = imgName.slice(0, imgName.indexOf("."));
 
-          const obj: IFiles = {
-            fileName: fileName,
-            fileNameFull: fileType,
-            fileType: fileNameFull,
-          };
+        //   const obj: IFiles = {
+        //     fileName: fileName,
+        //     fileNameFull: fileType,
+        //     fileType: fileNameFull,
+        //   };
 
-          const result: File = await asyncOperation(obj);
-          results.push(result);
-        }
+        //   const result: File = await asyncOperation(obj);
+        //   results.push(result);
+        // }
 
-        setImages(results);
+        // setImages(results);
       });
   };
 
@@ -304,7 +326,7 @@ const ProductWrite: React.FC = () => {
       });
   };
 
-  const writeClick = async () => {
+  const writeClick = async (names: string[]) => {
     await axios
       .post(
         `${serverUrl}/write${idPath}`,
@@ -314,6 +336,7 @@ const ProductWrite: React.FC = () => {
           categoryId: lastClickCateId,
           price: +formData.price || 0,
           extraAddressId: id,
+          img: names.join(","),
         },
         { withCredentials: true }
       )
@@ -338,9 +361,10 @@ const ProductWrite: React.FC = () => {
   const getImgBlob = async (files: IFiles) => {
     const { fileType, fileName, fileNameFull } = files;
 
+    console.log(`${imgBaseUrl}${fileNameFull}`);
     const response = await fetch(`${imgBaseUrl}${fileNameFull}`);
     if (!response.ok) {
-      throw new Error("이미지가 없음");
+      throw new Error(`${fileNameFull},이미지 없음`);
     }
     const blob = await response.blob();
 
@@ -355,6 +379,10 @@ const ProductWrite: React.FC = () => {
   //mount
 
   useEffect(() => {
+    getUserAddress();
+  }, [modalValue]);
+
+  useEffect(() => {
     firstCateGet();
     getUserAddress();
 
@@ -365,7 +393,7 @@ const ProductWrite: React.FC = () => {
   }, []);
 
   return (
-    <div className={`${center}`}>
+    <div className={`${center} p-8`}>
       <div className="rounded-lg w-full">
         <label
           htmlFor="productImage"
@@ -548,6 +576,15 @@ const ProductWrite: React.FC = () => {
               selectadress={selectadress}
             />
           ))}
+        <div className={`${center}`}>
+          <div
+            onClick={addadress}
+            className="cursor-pointer p-4 text-center text-blue-500 max-w-100px bg-gray-50 rounded-3xl"
+          >
+            +주소추가
+          </div>
+        </div>
+
         <div className="mb-4">
           <div className="flex"></div>
         </div>
@@ -577,6 +614,13 @@ const ProductWrite: React.FC = () => {
         <div className="relative p-5">
           <div
             onClick={() => {
+              console.log(
+                id,
+                selectcontent,
+                lastClickCateId,
+                formData.productName !== "",
+                images.length > 0
+              );
               if (
                 id &&
                 selectcontent &&
@@ -585,7 +629,6 @@ const ProductWrite: React.FC = () => {
                 images.length > 0
               ) {
                 imgUploader(images);
-                writeClick();
               }
             }}
             className={`absolute right-3 bottom-3 ${center} h-[6rem] text-[1.5rem] text-white border rounded-[1rem] bg-amber-300 hover:bg-yellow-600 w-[10rem]`}

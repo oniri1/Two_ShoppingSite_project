@@ -33,7 +33,9 @@ const ManegeDeliveryTip = ({}: IProps): JSX.Element => {
     queryKey: "deliverycost",
     queryFn: async () => {
       const { data } = await axios.post(
-        `${process.env.REACT_APP_SERVER_URL}/admin/deliverycost`
+        `${process.env.REACT_APP_SERVER_URL}/deliverycost`,
+        {},
+        { withCredentials: true }
       );
       return data;
     },

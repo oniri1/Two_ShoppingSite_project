@@ -3,10 +3,11 @@ import { SmallButton } from "../../Component/Button/Button";
 
 import Report from "../../Component/List/ManegeList/Report/Report";
 import { Button } from "../../lib/Button/Button";
-import { ChangeEvent, useCallback, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { UseMutationResult, useMutation, useQuery, useQueryClient } from "react-query";
 import { IReport } from "../../Component/List/ManegeList/Report/ReportItem";
+import { useLocation } from "react-router-dom";
 
 interface IData {
   report: [
@@ -50,7 +51,8 @@ const ManegeReport = ({}: IProps): JSX.Element => {
         `${process.env.REACT_APP_SERVER_URL}/admin/reportsearch`,
         {
           keyword: user,
-        }
+        },
+        { withCredentials: true }
       );
     },
     onSuccess(data) {
@@ -62,7 +64,9 @@ const ManegeReport = ({}: IProps): JSX.Element => {
     queryKey: "reportlist",
     queryFn: async () => {
       const { data } = await axios.post(
-        `${process.env.REACT_APP_SERVER_URL}/admin/report`
+        `${process.env.REACT_APP_SERVER_URL}/admin/report`,
+        {},
+        { withCredentials: true }
       );
       const reports: IData = data;
       const report: IProduct[] = reports.report;
@@ -84,7 +88,8 @@ const ManegeReport = ({}: IProps): JSX.Element => {
   // const data: IReport[] = [
   //   { id: 1, content: "광고징", username: "신고함", productid: 3 },
   // ];
-
+  const cate = useLocation().pathname.slice(8);
+  useEffect(() => {}, [cate]);
   return (
     <div className={`${box} ${center}`}>
       <div>

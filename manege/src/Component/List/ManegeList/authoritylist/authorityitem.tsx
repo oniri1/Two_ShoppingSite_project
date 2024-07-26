@@ -3,25 +3,46 @@ import { Button } from "../../../../lib/Button/Button";
 import { TinyButton } from "../../../Button/Button";
 import { Link, Navigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "react-query";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 
 interface IProps {
   item: IUser;
   idx: number;
+  setdata: React.Dispatch<React.SetStateAction<IUser | undefined>>;
 }
 
 export interface IUser {
   id: number;
   nick: string;
+  admin: boolean;
+  superAdmin: boolean;
+  delivery: boolean;
 }
 
-const Item = ({ item, idx }: IProps): JSX.Element => {
-  const [superadmin, setsuperadmin] = useState(true);
-
-  const change = () => {
-    setsuperadmin(!superadmin);
+const Item = ({ item, idx, setdata }: IProps): JSX.Element => {
+  const [superstate, setsuper] = useState(item.superAdmin);
+  const [adminstate, setadmin] = useState(item.admin);
+  const [deliverystate, setdelivery] = useState(item.delivery);
+  const [username, setusername] = useState();
+  const superchange = () => {
+    setsuper(!superstate);
   };
-  console.log(superadmin);
+  const adminchange = () => {
+    setadmin(!adminstate);
+  };
+  const deliverychange = () => {
+    setdelivery(!deliverystate);
+  };
+
+  const onclick = () => {
+    setdata({
+      id: item.id,
+      nick: item.nick,
+      admin: adminstate,
+      superAdmin: superstate,
+      delivery: deliverystate,
+    });
+  };
 
   return (
     <div className="px-5 py-2 flex items-center ">
@@ -32,19 +53,32 @@ const Item = ({ item, idx }: IProps): JSX.Element => {
           <input
             className="mx-8"
             type="checkbox"
-            checked={superadmin}
-            onClick={change}
+            defaultChecked={superstate}
+            onClick={superchange}
           ></input>
         }
-        {<input className="mx-8" name="auth" type="checkbox"></input>}
+        {
+          <input
+            className="mx-8"
+            type="checkbox"
+            defaultChecked={adminstate}
+            onClick={adminchange}
+          ></input>
+        }
         {
           <input
             className="ms-12"
-            name="auth"
-            value={"delivery"}
             type="checkbox"
+            defaultChecked={deliverystate}
+            onClick={deliverychange}
           ></input>
         }
+      </div>
+      <div
+        onClick={onclick}
+        className="border px-3 rounded bg-orange-400 text-white"
+      >
+        선택
       </div>
     </div>
   );

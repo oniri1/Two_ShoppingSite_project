@@ -8,9 +8,11 @@ import { useLocation } from "react-router-dom";
 
 const serverUrl = process.env.REACT_APP_SERVER_URL;
 
-interface IProps {}
+interface IProps {
+  userlogin: boolean;
+}
 
-const MyStore = ({}: IProps): JSX.Element => {
+const MyStore = ({ userlogin }: IProps): JSX.Element => {
   const [storeName, setStoreName] = useState<string>("오류따봉스터");
   const [storePoint, setStorePoint] = useState<number>(0);
   const [storeIntro, setStoreIntro] = useState<string>(
@@ -20,6 +22,7 @@ const MyStore = ({}: IProps): JSX.Element => {
   const [storePFImg, setStorePFImg] = useState<string>("good.png");
   const [sellCount, setSellCount] = useState<number>(0);
   const [loginCheck, setLoginCheck] = useState<boolean>(false);
+  const [reCheck, setReCheck] = useState<boolean>(false);
 
   const loca = useLocation();
 
@@ -69,11 +72,15 @@ const MyStore = ({}: IProps): JSX.Element => {
   //mount
   useEffect(() => {
     getPageValues();
-  });
+  }, [userlogin, reCheck]);
+
+  useEffect(() => {
+    getPageValues();
+  }, []);
 
   return (
     <div className={`${center} flex-wrap`}>
-      <Intro intro={intro}></Intro>
+      <Intro intro={intro} getPageValues={getPageValues}></Intro>
 
       <Content loginCheck={loginCheck}></Content>
     </div>

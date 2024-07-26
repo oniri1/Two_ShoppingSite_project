@@ -10,9 +10,10 @@ import axios from "axios";
 
 interface IProps {
   list: ListData[];
+  mainDataGet: () => void;
 }
 
-const Main = ({ list }: IProps): JSX.Element => {
+const Main = ({ list, mainDataGet }: IProps): JSX.Element => {
   const [cookies] = useCookies(["Product"]);
   const { ismobile, isdesktop } = useBreakPoint();
   const [recent, setrecent] = useState<ListData[]>([]);
@@ -53,6 +54,7 @@ const Main = ({ list }: IProps): JSX.Element => {
   useEffect(() => {
     save();
     // getrecent();
+    mainDataGet();
   }, []);
 
   return (
@@ -70,7 +72,7 @@ const Main = ({ list }: IProps): JSX.Element => {
             <List list={list} />
           </div>
         ) : (
-          ""
+          <></>
         )}
         <div className="p-[2rem] text-[1.7rem] font-bold">오늘의 추천상품</div>
         <List list={list} />

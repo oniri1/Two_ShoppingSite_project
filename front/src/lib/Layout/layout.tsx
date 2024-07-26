@@ -31,12 +31,8 @@ import Regist from "../../page/account/regist/registpage";
 import { useQuery } from "react-query";
 import axios from "axios";
 import { IUserDatas } from "../interFace";
-
-// interface IUser {
-//   id: number;
-//   nick: string;
-//   point: number;
-// }
+import { GoogleCallback } from "../../Component/OAuth/GoogleOAuth";
+import { NaverCallback } from "../../Component/OAuth/NaverOAuth";
 
 interface IProps {
   setUserLogin: React.Dispatch<React.SetStateAction<boolean>>;
@@ -44,6 +40,7 @@ interface IProps {
   main: List[];
   userDatas: IUserDatas;
   userDataCheck: () => void;
+  mainDataGet: () => void;
 }
 
 const Layout = ({
@@ -52,6 +49,7 @@ const Layout = ({
   userlogin,
   main,
   userDataCheck,
+  mainDataGet,
 }: IProps): JSX.Element => {
   const { isdesktop, ismobile } = useBreakPoint();
   const authority = false;
@@ -96,10 +94,10 @@ const Layout = ({
 
             {!userlogin ? (
               <NotLogin />
-            ) : !authority ? (
+            ) : !userDatas.login?.admin ? (
               <Login userDatas={userDatas} setUserLogin={setUserLogin} />
             ) : (
-              <Maneger />
+              <Maneger userDatas={userDatas} />
             )}
           </div>
         </div>
@@ -109,19 +107,41 @@ const Layout = ({
             <div></div>
           ) : (
             <Routes>
-              <Route path="/" element={<Main list={main} />}></Route>
+              <Route
+                path="/"
+                element={<Main list={main} mainDataGet={mainDataGet} />}
+              ></Route>
+              <Route
+                path="/GoogleLoding"
+                element={<GoogleCallback setUserLogin={setUserLogin} />}
+              ></Route>
+              <Route
+                path="/NaverLoding"
+                element={<NaverCallback setUserLogin={setUserLogin} />}
+              ></Route>
               <Route path="/category/:id" element={<Category />}></Route>
               <Route path={`/search/:id`} element={<Search />}></Route>
-              <Route path="/product/:id" element={<Product />}></Route>
+              <Route
+                path="/product/:id"
+                element={
+                  <Product mainDataGet={mainDataGet} userdata={userDatas} />
+                }
+              ></Route>
               <Route path="/sell" element={<ProductWrite />}></Route>
               <Route path="/sell/:id" element={<ProductWrite />}></Route>
-              <Route path="/mystore" element={<MyStore />}></Route>
+              <Route
+                path="/mystore"
+                element={<MyStore userlogin={userlogin} />}
+              ></Route>
               <Route
                 path="/login"
                 element={<LoginPage setUserLogin={setUserLogin} />}
               ></Route>
               <Route path="/regist" element={<Regist />}></Route>
-              <Route path="/point" element={<Point />}></Route>
+              <Route
+                path="/point"
+                element={<Point userDataCheck={userDataCheck} />}
+              ></Route>
             </Routes>
           )}
           <div>

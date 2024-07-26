@@ -59,6 +59,7 @@ import GpsUserGet from "../services/common/mystore/GpsUserGet";
 import reviewWrite from "../services/common/mystore/reviewWrite";
 import myStoreNameSet from "../services/common/mystore/myStoreNameSet";
 import myStoreContentSet from "../services/common/mystore/myStoreContentSet";
+import myStoreProfileImg from "../services/common/mystore/myStoreProfileImg";
 import point from "../services/common/mystore/point";
 import purchaseCheck from "../services/common/mystore/purchaseCheck";
 
@@ -72,6 +73,8 @@ import updatepw from "../services/common/user/updatepw";
 /// user 중 OAuth
 import NaverCallback from "../services/common/user/NaverCallback";
 import GoogleCallback from "../services/common/user/GoogleCallback";
+import deliverycost from "../services/common/deliverycost";
+import pointpercent from "../services/common/pointpercent";
 
 router.use(
   session({
@@ -134,6 +137,8 @@ router.post("/GpsUserGet/:id", GpsUserGet);
 router.post("/reviewWrite/:id", reviewWrite);
 router.post("/myStoreNameSet", myStoreNameSet);
 router.post("/myStoreContentSet", myStoreContentSet);
+router.post("/myStoreProfileImg", myStoreProfileImg);
+
 router.post("/point", point);
 router.post("/purchaseCheck/:id", purchaseCheck); /// 구매 확정
 
@@ -148,5 +153,8 @@ router.post("/updatepw", updatepw);
 /// user 중 OAuth
 router.post("/NaverCallback", NaverCallback);
 router.post("/GoogleCallback", GoogleCallback);
+
+router.post("/deliverycost", deliverycost);
+router.post("/pointpercent", pointpercent);
 
 export default router;

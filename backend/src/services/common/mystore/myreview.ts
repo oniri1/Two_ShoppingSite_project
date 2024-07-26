@@ -11,7 +11,7 @@ export default async (req: Request, res: Response) => {
     const reviewlist: Review[] = await Review.findAll({
       attributes: ["star", "reviewContent"],
       include: [
-        { model: Store, as: "Store", attributes: ["nick", "img"] },
+        { model: Store, as: "Store", attributes: ["nick", "profileimg"] },
         { model: Product, as: "Product", attributes: ["title"] },
       ],
     });
@@ -20,7 +20,9 @@ export default async (req: Request, res: Response) => {
       where: { sellId: nowstoreid },
     });
     const reviewcount: number = await Review.count({
-      include: [{ model: Product, as: "Product", where: { sellId: nowstoreid } }],
+      include: [
+        { model: Product, as: "Product", where: { sellId: nowstoreid } },
+      ],
     });
     const reviewpercent = Math.floor((reviewcount / preductcount) * 100);
     res.json({

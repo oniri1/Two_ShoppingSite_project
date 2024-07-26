@@ -26,17 +26,24 @@ const App = (): JSX.Element => {
   //func
   const mainDataGet = async () => {
     await axios
-      .post(`${process.env.REACT_APP_SERVER_URL}/main`, {}, { withCredentials: true })
+      .post(
+        `${process.env.REACT_APP_SERVER_URL}/main`,
+        {},
+        { withCredentials: true }
+      )
       .then((data: AxiosResponse) => {
         const products: IProduct[] = data.data.product;
         const listDatas: IListData[] = products.map((data: IProduct) => {
           const listData: IListData = {
             id: data.id || 9999999,
             title: data.title,
-            img: data.image ? data.image[0] : "hamster.png",
+            img: data.image
+              ? `${process.env.REACT_APP_SERVER_URL}/imgs/${data.image[0]}`
+              : "/imgs/hamster.png",
             price: data.price,
             createdAt: Math.floor(
-              (+new Date() - +new Date(data.createdAt || new Date() + "")) / (1000 * 60 * 60 * 24)
+              (+new Date() - +new Date(data.createdAt || new Date() + "")) /
+                (1000 * 60 * 60 * 24)
             ),
           };
           return listData;
@@ -64,9 +71,10 @@ const App = (): JSX.Element => {
   };
 
   const userDataCheck = async () => {
-    axios
+    await axios
       .post(`${serverUrl}/layout`, {}, { withCredentials: true })
       .then((data: AxiosResponse<IUserDatas>) => {
+        console.log(data.data);
         if (data.data.login) {
           setUserDatas(data.data);
           setUserLogin(true);
@@ -79,13 +87,17 @@ const App = (): JSX.Element => {
 
   //mount
   useEffect(() => {
-    if (ListDatas[0]) {
-      setMain(
-        ListDatas.map((data) => {
-          return new List(data.id, data.title, data.img, data.price, data.createdAt);
-        })
-      );
-    }
+    setMain(
+      ListDatas.map((data) => {
+        return new List(
+          data.id,
+          data.title,
+          data.img,
+          data.price,
+          data.createdAt
+        );
+      })
+    );
   }, [ListDatas]);
 
   useEffect(() => {
@@ -93,10 +105,15 @@ const App = (): JSX.Element => {
     userDataCheck();
   }, []);
 
+  useEffect(() => {
+    if (userlogin) userDataCheck();
+  }, [userlogin]);
+
   return (
     <div>
       <div>
         <Layout
+          mainDataGet={mainDataGet}
           userDatas={userDatas}
           setUserLogin={setUserLogin}
           userlogin={userlogin}

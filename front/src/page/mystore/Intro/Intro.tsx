@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 import { IIntro } from "../../../lib/interFace";
 import { getClip } from "../../../lib/func";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -11,7 +11,7 @@ import { useBreakPoint } from "../../../CustomHook/BreakPoint";
 const serverUrl = process.env.REACT_APP_SERVER_URL;
 const imgBase = process.env.REACT_APP_IMG_BASE;
 
-const Intro = ({ intro }: IIntro): JSX.Element => {
+const Intro = ({ intro, getPageValues }: IIntro): JSX.Element => {
   const { isdesktop, ismobile } = useBreakPoint();
   const {
     storeName,
@@ -32,10 +32,54 @@ const Intro = ({ intro }: IIntro): JSX.Element => {
   const navigate = useNavigate();
   const loca = useLocation();
   const callbackUrl = `${loca.pathname}${loca.search}`;
+  const id = new URL(window.location.href).searchParams.get("id");
 
   //func
   const nameBtnOpen = () => {
     setNameBtn(true);
+  };
+
+  const imgUploader = (files: File) => {
+    const formData: FormData = new FormData();
+    formData.append("img", files);
+
+    axios
+      .post(`${serverUrl}/imgSave`, formData, {
+        withCredentials: true,
+        headers: { "Content-type": "multipart/form-data" },
+      })
+      .then((data) => {
+        console.log("imgsave", data.data.url[0]);
+        imgChangeToServer(data.data.url[0]);
+      })
+      .catch(() => {
+        console.error("error");
+      });
+  };
+
+  const imgChangeToServer = async (name: string) => {
+    if (id !== null) {
+      axios
+        .post(
+          `${serverUrl}/myStoreProfileImg?id=${id}`,
+          { profileimg: name },
+          { withCredentials: true }
+        )
+        .then((data) => {
+          console.log("서버로 잘 보냈다", data);
+          getPageValues();
+        })
+        .catch(() => {
+          console.error("이미지 서버로 보내기에서 에러");
+        });
+    }
+  };
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files ? event.target.files[0] : undefined;
+
+    if (file) {
+      imgUploader(file);
+    }
   };
 
   const storeNameHandler = async () => {
@@ -81,16 +125,14 @@ const Intro = ({ intro }: IIntro): JSX.Element => {
     }
   };
 
-  //
-
   return (
     <div
       className={`${
         isdesktop &&
-        "border-2 border-gray-300 w-[95%] h-[350px] p-5 flex justify-between gap-[4%]"
+        "border-2 border-gray-300 w-[90%] h-[350px] p-5 flex justify-between gap-[4%]"
       } ${
         ismobile &&
-        "mx-3 border-2 border-gray-300 w-[95%] h-[17rem] p-5 flex justify-between gap-[4%]"
+        "mx-3 border-2 border-gray-300 w-[90%] h-[17rem] p-5 flex justify-between gap-[4%]"
       }`}
     >
       {/*  */}
@@ -102,10 +144,14 @@ const Intro = ({ intro }: IIntro): JSX.Element => {
       >
         <div className="bg-black bg-opacity-25 w-[100%] h-[100%] absolute"></div>
         {/* 프로파일 이미지 */}
+
         <div className={`w-[100px] h-[100px] z-10`}>
           <div
             style={{
-              backgroundImage: `url(${imgBase}${storePFImg})`,
+              backgroundImage:
+                storePFImg !== null
+                  ? `url(${imgBase}${storePFImg})`
+                  : `url(${imgBase}good.png)`,
             }}
             className={`w-[100%] h-[100%] bg-cover rounded-full overflow-hidden`}
           ></div>
@@ -122,34 +168,54 @@ const Intro = ({ intro }: IIntro): JSX.Element => {
 
       {/*  */}
       <div className={`w-[65%] h-[100%] p-1 [&>*]:mb-4`}>
-        <div className={`flex gap-2`}>
+        <div className={`flex gap-2 flex-wrap`}>
           <div className="font-bold">{storeName}</div>
-          {loginCheck && (
-            <button className={`${rowfont} ${nanoBtn}`} onClick={nameBtnOpen}>
-              상점명 수정
-            </button>
-          )}
-          {nameBtn && (
-            <>
-              <input
-                value={nameValue}
-                onInput={({
-                  target: { value },
-                }: ChangeEvent<HTMLInputElement>) => {
-                  setNameValue(value);
-                }}
-                className={`${outborder} h-[24px]`}
-                type="text"
-              />
-              <button
-                onClick={storeNameHandler}
-                className={`${rowfont} ${nanoBtn}`}
-              >
-                수정하기
+
+          <div className="flex">
+            {loginCheck && (
+              <button className={`${rowfont} ${nanoBtn}`} onClick={nameBtnOpen}>
+                상점명 수정
               </button>
-            </>
-          )}
+            )}
+            {nameBtn && (
+              <>
+                <input
+                  value={nameValue}
+                  onInput={({
+                    target: { value },
+                  }: ChangeEvent<HTMLInputElement>) => {
+                    setNameValue(value);
+                  }}
+                  className={`${outborder} h-[24px]`}
+                  type="text"
+                />
+                <button
+                  onClick={storeNameHandler}
+                  className={`${rowfont} ${nanoBtn}`}
+                >
+                  수정하기
+                </button>
+              </>
+            )}
+          </div>
+          <div className="flex">
+            {loginCheck && (
+              <>
+                <input
+                  id="imgupload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  style={{ display: "none" }}
+                />
+                <label htmlFor="imgupload" className={`${rowfont} ${nanoBtn}`}>
+                  이미지 수정
+                </label>
+              </>
+            )}{" "}
+          </div>
         </div>
+
         <div className={`flex gap-[2%]`}>
           <div className={`${rowfont} text-gray-400`}>
             상품 판매 {sellCount}

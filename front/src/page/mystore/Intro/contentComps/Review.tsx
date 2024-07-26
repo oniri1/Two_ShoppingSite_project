@@ -11,6 +11,7 @@ import { useLocation } from "react-router-dom";
 
 const Review = () => {
   const serverUrl = process.env.REACT_APP_SERVER_URL;
+  const imgBaseUrl = process.env.REACT_APP_IMG_BASE;
   const loca = useLocation();
 
   const reviewUrl = `${serverUrl}/review${loca.search}`;
@@ -18,13 +19,14 @@ const Review = () => {
   const [reviews, setReviews] = useState<IReviewOne[]>([]);
   const [reviewRes, setReviewRes] = useState<IReviewRes>();
 
-  const errNum = 3.5;
+  const errNum = 0;
 
   //func
   const getReviews = async () => {
     await axios
       .post(reviewUrl, {}, { withCredentials: true })
       .then((data: AxiosResponse) => {
+        console.log(data.data);
         const reviewRes: IReviewRes = data.data;
         setReviewRes(reviewRes);
       })
@@ -36,7 +38,7 @@ const Review = () => {
               reviewContent: "오류가 뜨면 찾아오는 따봉스터",
               Store: {
                 nick: "따봉스터",
-                img: "./imgs/good.png",
+                img: `good.png`,
               },
               Product: {
                 title: "따봉스터를 봤다면 코드를 버려라",
@@ -47,7 +49,7 @@ const Review = () => {
               reviewContent: "오류가 뜨면 찾아오는 따봉스터",
               Store: {
                 nick: "따봉스터",
-                img: "./imgs/good.png",
+                img: `good.png`,
               },
               Product: {
                 title: "따봉스터를 봤다면 코드를 버려라",
@@ -62,7 +64,7 @@ const Review = () => {
   //   useEffect(() => {}, [reviews]);
 
   useEffect(() => {
-    if (reviewRes) setReviews(reviewRes.reviewlist);
+    if (reviewRes?.reviewlist[0]) setReviews(reviewRes.reviewlist);
   }, [reviewRes]);
 
   //mount
@@ -90,7 +92,7 @@ const Review = () => {
         {/* 퍼센트 */}
         <div className="w-[50%]">
           <div className={`${center} ${weightfont}`}>
-            <span>{reviewRes?.reviewPercent || 100}</span>
+            <span>{reviewRes?.reviewPercent || 0}</span>
             <span>%</span>
           </div>
           <div className={`${center} ${rowfont} font-bold text-stone-400`}>

@@ -6,13 +6,21 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Modal, MapId, ReviewId, ImgUrl } from "../../../../Context/Modal";
 import { useSetRecoilState } from "recoil";
+import {
+  Modalcontent,
+  Modalstate,
+} from "../../../../Context/SystemModal/Modal";
 
 interface IProps {
   data: IProduct;
   isBuyTap?: boolean;
+  value: number;
+  getData: (value: number) => Promise<void>;
 }
 
-const SellContent = ({ data, isBuyTap = false }: IProps) => {
+const SellContent = ({ data, isBuyTap = false, getData, value }: IProps) => {
+  const setsystemonoff = useSetRecoilState(Modalstate);
+  const setModalcontent = useSetRecoilState(Modalcontent);
   //state
   const [imgCurtainActive, setImgCurtainActive] = useState<boolean>(false);
   const [boxTextValue, setBoxTextValue] = useState<string>("정보수정");
@@ -27,7 +35,7 @@ const SellContent = ({ data, isBuyTap = false }: IProps) => {
   //custom
   const serverUrl = process.env.REACT_APP_SERVER_URL;
   const loca = useLocation();
-  const callbackUrl = `${loca.pathname}${loca.search}`;
+
   const imgBase = process.env.REACT_APP_IMG_BASE;
 
   //funcs
@@ -68,11 +76,15 @@ const SellContent = ({ data, isBuyTap = false }: IProps) => {
         { withCredentials: true }
       )
       .then((data) => {
+        setModalcontent("checkpurchase");
+        setsystemonoff(true);
         console.log(data);
-        navigate(`${callbackUrl}`);
+        getData(value);
       })
       .catch((err) => {
-        navigate(`${callbackUrl}`);
+        setModalcontent("checkfail");
+        setsystemonoff(true);
+        getData(value);
         console.log(err);
       });
   };
@@ -108,12 +120,12 @@ const SellContent = ({ data, isBuyTap = false }: IProps) => {
         setBoxTextValue("리뷰쓰기");
       }
     }
-  }, []);
+  }, [data.itemState]);
 
   return (
-    <div className={`h-[420px] min-w-[220px]`}>
+    <div className={`h-[420px] min-w-[220px] max-w-[220px]`}>
       <div
-        className={`border-2 mx-2`}
+        className={`border-2 mx-2 cursor-pointer`}
         onClick={() => {
           if (data.id) {
             moveToProduct(data.id + "");
@@ -125,13 +137,15 @@ const SellContent = ({ data, isBuyTap = false }: IProps) => {
       >
         {/* 이미지 */}
         <div
-          className={`h-[220px] bg-cover relative ${center}`}
-          style={{
-            backgroundImage: data.image
-              ? `url(${imgBase}${data.image[0]})`
-              : `url(${imgBase}good.png)`,
-          }}
+          className={`h-[220px]  bg-[length:220px_240px] relative ${center}`}
         >
+          <img
+            src={
+              data.image ? `${imgBase}${data.image[0]}` : `${imgBase}good.png`
+            }
+            alt="이미지 오류"
+            className="absolute h-[100%] w-[100%] top-0"
+          />
           {imgCurtainActive && (
             <>
               <div
@@ -170,8 +184,8 @@ const SellContent = ({ data, isBuyTap = false }: IProps) => {
         </div>
       </div>
       {/* 버튼 */}
-      <div className="flex justify-between p-1">
-        {isBuyTap && data.itemState === "배송중" && (
+      <div className="flex justify-between p-2">
+        {isBuyTap && data.itemState === "배송중" && data.userCheck && (
           <SCbuttons
             text={"구매확정"}
             click={() => {
@@ -179,9 +193,18 @@ const SellContent = ({ data, isBuyTap = false }: IProps) => {
             }}
           />
         )}
-        {boxTextValue !== "배송완료" && (
+        {boxTextValue !== "배송완료" && boxTextValue !== "리뷰쓰기" && (
           <SCbuttons
             text={boxTextValue}
+            click={() => {
+              funcsHandler(boxTextValue);
+            }}
+          />
+        )}
+        {boxTextValue === "리뷰쓰기" && (
+          <SCbuttons
+            text={data.userCheck ? "리뷰완료" : boxTextValue}
+            didReview={data.userCheck}
             click={() => {
               funcsHandler(boxTextValue);
             }}

@@ -7,8 +7,12 @@ import { ChangeEvent, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 import { Debounce } from "../Costomhook/Debounce";
+import { useSetRecoilState } from "recoil";
+import { Modalcontent, Modalstate } from "../Context/Modal/Modal";
 
 const PickupScan = ({}): JSX.Element => {
+  const setsystemonoff = useSetRecoilState(Modalstate);
+  const setModalcontent = useSetRecoilState(Modalcontent);
   const [pickitem, SetPickItem] = useState<string>("");
   const changeitem = (e: ChangeEvent<HTMLInputElement>) => {
     SetPickItem(e.target.value);
@@ -22,11 +26,19 @@ const PickupScan = ({}): JSX.Element => {
     mutationKey: ["pickcomplete"],
     mutationFn: async () => {
       await axios.post(
-        `${process.env.REACT_APP_SERVER_URL}/delivery/pickscan/${item}`
+        `${process.env.REACT_APP_SERVER_URL}/delivery/pickscan/${item}`,
+        {},
+        { withCredentials: true }
       );
     },
     onSuccess(data) {
       queryClient.invalidateQueries(["mypickup"]);
+      setModalcontent("completepick");
+      setsystemonoff(true);
+    },
+    onError() {
+      setModalcontent("failpickscan");
+      setsystemonoff(true);
     },
   });
 

@@ -49,12 +49,12 @@ const PickUpList = ({ liststate, checklist }: IProps): JSX.Element => {
   const mypickup = useMutation({
     mutationKey: ["mypickup"],
     mutationFn: async () => {
-      await axios.post(
+      const { data } = await axios.post(
         `${process.env.REACT_APP_SERVER_URL}/delivery/pickuplist`,
-        { userId: 1 },
+        {},
         { withCredentials: true }
       );
-      const data: IData | undefined = queryClient.getQueryData(["mypickup"]);
+
       const product = data?.product;
       const productlist = product?.map((data: IProduct) => {
         const outData: Picklist = {
@@ -75,7 +75,7 @@ const PickUpList = ({ liststate, checklist }: IProps): JSX.Element => {
   }, []);
   const btn = new Button("확인", "bg-blue-200");
   return (
-    <div className={`${mobilebox} flex flex-col items-center`}>
+    <div className={`${mobilebox} flex flex-col items-center h-[41rem]`}>
       <div className="py-3 text-[1.2rem] font-bold">픽업 목록</div>
       <div className={`mt-5 my-[6rem]`}>
         <List liststate={liststate} list2={lastdata} />

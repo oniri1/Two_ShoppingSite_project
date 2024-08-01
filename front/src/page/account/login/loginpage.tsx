@@ -1,4 +1,4 @@
-import { center } from "../../../lib/styles";
+import { box, center } from "../../../lib/styles";
 import React, { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
@@ -7,17 +7,20 @@ import { Button } from "../../../lib/Button/Button";
 import { useBreakPoint } from "../../../CustomHook/BreakPoint";
 import { NaverOAuth } from "../../../Component/OAuth/NaverOAuth";
 import { GoogleOAuth } from "../../../Component/OAuth/GoogleOAuth";
+import { useSetRecoilState } from "recoil";
+import { Modalcontent, Modalstate } from "../../../Context/SystemModal/Modal";
 
 interface IProps {
   setUserLogin: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const LoginPage = ({ setUserLogin }: IProps): JSX.Element => {
+  const setsystemonoff = useSetRecoilState(Modalstate);
+  const setModalcontent = useSetRecoilState(Modalcontent);
   const { isdesktop, ismobile } = useBreakPoint();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginCheck, setLoginCheck] = useState(false); // 로그인 상태 체크
-
   const serverUrl = process.env.REACT_APP_SERVER_URL;
 
   const navigate = useNavigate();
@@ -49,12 +52,16 @@ const LoginPage = ({ setUserLogin }: IProps): JSX.Element => {
           setUserLogin(true);
           console.log("로그인성공, 이메일주소:" + result.email);
           navigate("/"); // 로그인 성공시 홈으로 이동합니다.
+          setModalcontent("login");
+          setsystemonoff(true);
         } else {
           setLoginCheck(true);
         }
       } catch (error) {
         console.error("오류 발생:", error);
         setLoginCheck(true);
+        setModalcontent("not login");
+        setsystemonoff(true);
       }
     }
   };
@@ -64,7 +71,7 @@ const LoginPage = ({ setUserLogin }: IProps): JSX.Element => {
 
   return (
     <div>
-      <div className={`${ismobile && "px-4 h-[40rem]"} Box ${center}`}>
+      <div className={`${ismobile && "px-4 h-[40rem]"} ${box} ${center}`}>
         <div className="rounded-lg  w-full m">
           <h2 className="text-2xl font-bold text-center text-orange-500 mt-10">
             햄스터 마켓
@@ -126,11 +133,11 @@ const LoginPage = ({ setUserLogin }: IProps): JSX.Element => {
                 이메일 혹은 비밀번호가 틀렸습니다.
               </label>
             )}
-            <div onClick={handleLogin}>
+            <button className="w-[100%]" onClick={handleLogin}>
               <LargeButton
                 btn={new Button("로그인", "bg-amber-300 w-auto")}
               ></LargeButton>
-            </div>
+            </button>
             <div className="text-center mt-4">
               햄스터 마켓 계정이 없으신가요?
             </div>

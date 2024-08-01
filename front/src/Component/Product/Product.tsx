@@ -4,14 +4,15 @@ import User from "./User";
 import { center } from "../../lib/styles";
 import { useBreakPoint } from "../../CustomHook/BreakPoint";
 import { IProductPage, IUserDatas } from "../../lib/interFace";
-import { useMutation } from "react-query";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import { IListData } from "../../App";
 
 interface IProps {
   data: IProductPage;
   userdata: IUserDatas;
-  mainDataGet: () => void;
+  mainDataGet: (i: IListData[]) => void;
 }
 
 interface IUser {
@@ -42,7 +43,7 @@ const ProductInfo = ({ data, userdata, mainDataGet }: IProps): JSX.Element => {
     name: data.Sell.nick,
     adress: "",
     star: +data.Sell.star.star,
-    img: "good.png",
+    img: data.Sell.profileimg ? data.Sell.profileimg : "good.png",
   };
 
   //게시글
@@ -73,7 +74,7 @@ const ProductInfo = ({ data, userdata, mainDataGet }: IProps): JSX.Element => {
         })
         .then(() => {
           console.log("@@@@@@@@@@@@@@@@@");
-          mainDataGet();
+          mainDataGet([]);
         });
     },
   });

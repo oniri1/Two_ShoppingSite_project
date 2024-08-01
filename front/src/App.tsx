@@ -1,17 +1,27 @@
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Layout from "./lib/Layout/layout";
 import { List } from "./lib/list";
 
-import { useBreakPoint } from "./CustomHook/BreakPoint";
 import axios, { AxiosResponse } from "axios";
 import { IUserDatas, IProduct } from "./lib/interFace";
 import { errUserDatas } from "./lib/errors";
+import {
+  useMutation,
+  useQueries,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { IData } from "./page/main/main";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { mainobserver } from "./Context/Modal";
+import { keepPreviousData } from "@tanstack/react-query";
 
 export interface IListData {
   id: number;
   title: string;
   img: string;
   price: number;
+  category?: string;
   createdAt: number;
 }
 
@@ -22,59 +32,67 @@ const App = (): JSX.Element => {
 
   const [userlogin, setUserLogin] = useState<boolean>(false);
   const [userDatas, setUserDatas] = useState<IUserDatas>(errUserDatas);
+  const obServerOn = useRecoilValue(mainobserver);
+  const setObserverOn = useSetRecoilState(mainobserver);
 
   //func
-  const mainDataGet = async () => {
-    await axios
-      .post(
-        `${process.env.REACT_APP_SERVER_URL}/main`,
-        {},
-        { withCredentials: true }
-      )
-      .then((data: AxiosResponse) => {
-        const products: IProduct[] = data.data.product;
-        const listDatas: IListData[] = products.map((data: IProduct) => {
-          const listData: IListData = {
-            id: data.id || 9999999,
-            title: data.title,
-            img: data.image
-              ? `${process.env.REACT_APP_SERVER_URL}/imgs/${data.image[0]}`
-              : "/imgs/hamster.png",
-            price: data.price,
-            createdAt: Math.floor(
-              (+new Date() - +new Date(data.createdAt || new Date() + "")) /
-                (1000 * 60 * 60 * 24)
-            ),
-          };
-          return listData;
-        });
-        setListDatas(listDatas);
-      })
-      .catch(() => {
-        setListDatas([
-          {
-            id: 1,
-            title: "자전거",
-            img: "hamster.png",
-            price: 3000,
-            createdAt: 3,
-          },
-          {
-            id: 2,
-            title: "자전건가",
-            img: "hamster.png",
-            price: 3000,
-            createdAt: 3,
-          },
-        ]);
-      });
-  };
+  const queryclient = useQueryClient();
 
-  const userDataCheck = async () => {
+  const getmain: any = useQuery({
+    queryKey: ["getmain"],
+    queryFn: async () => {
+      const { data } = await axios.post(
+        `${process.env.REACT_APP_SERVER_URL}/main`,
+        { idx: idxValue },
+        { withCredentials: true }
+      );
+
+      const products = keepPreviousData(data);
+
+      if (data.product.length === 0) {
+        setObserverOn(false);
+      } else {
+        setObserverOn(true);
+      }
+
+      const product = products.product;
+
+      const lastdata = product?.map((item: IData) => {
+        const listdata = {
+          id: item.id,
+          title: item.title,
+          img: item.image
+            ? `${process.env.REACT_APP_SERVER_URL}/imgs/${item.image[0]}`
+            : "/imgs/hamster.png",
+          price: item.price,
+          createdAt: Math.floor(
+            (+new Date() - +new Date(item.createdAt || new Date() + "")) /
+              (1000 * 60 * 60 * 24)
+          ),
+        };
+        return listdata;
+      });
+      if (getmain.data && data.product[0] ? true : false) {
+        return [...getmain.data, ...lastdata];
+      } else if (getmain.data) {
+        return getmain.data;
+      } else {
+        return lastdata;
+      }
+    },
+    placeholderData: keepPreviousData,
+  });
+
+  const idxValue = useMemo(() => {
+    return getmain.data?.length;
+  }, [getmain.data?.length]);
+
+  console.log(idxValue);
+
+  const userDataCheck = useCallback(async () => {
     await axios
       .post(`${serverUrl}/layout`, {}, { withCredentials: true })
       .then((data: AxiosResponse<IUserDatas>) => {
-        console.log(data.data);
         if (data.data.login) {
           setUserDatas(data.data);
           setUserLogin(true);
@@ -83,26 +101,16 @@ const App = (): JSX.Element => {
       .catch((err) => {
         console.log("layOut userDataCheck func Err", err);
       });
-  };
+  }, []);
 
   //mount
-  useEffect(() => {
-    setMain(
-      ListDatas.map((data) => {
-        return new List(
-          data.id,
-          data.title,
-          data.img,
-          data.price,
-          data.createdAt
-        );
-      })
-    );
-  }, [ListDatas]);
+  const mainDataGet = useCallback(() => {
+    queryclient.invalidateQueries({ queryKey: ["getmain"] });
+  }, []);
 
   useEffect(() => {
-    mainDataGet();
     userDataCheck();
+    mainDataGet();
   }, []);
 
   useEffect(() => {
@@ -117,8 +125,11 @@ const App = (): JSX.Element => {
           userDatas={userDatas}
           setUserLogin={setUserLogin}
           userlogin={userlogin}
-          main={main}
+          main={getmain.data}
           userDataCheck={userDataCheck}
+          obToggleValue={obServerOn}
+          dataCheckIdxValue={idxValue}
+          setListDatas={setListDatas}
         />
       </div>
     </div>

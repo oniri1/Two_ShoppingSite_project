@@ -1,4 +1,11 @@
-import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import {
+  Link,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import ManegeReport from "../../page/manege/report";
 import ManegeCategory from "../../page/manege/category";
 import ManegeBenKeyword from "../../page/manege/benkeyword";
@@ -16,6 +23,9 @@ import AdminLoginPage from "../../page/manege/adminlogin";
 import { useCallback, useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
+import ModalBox from "../../Component/Modal/Modalbox/ModalBox";
+import { useRecoilValue } from "recoil";
+import { Modalstate } from "../../Context/Modal/Modal";
 
 interface IUser {
   id: number;
@@ -28,6 +38,7 @@ interface IUser {
 interface IProps {}
 
 const ManegeLayout = ({}: IProps): JSX.Element => {
+  const Modal = useRecoilValue(Modalstate);
   const [userlogin, setUserLogin] = useState<boolean>(false);
   const queryClient = useQueryClient();
 
@@ -61,11 +72,10 @@ const ManegeLayout = ({}: IProps): JSX.Element => {
   });
 
   const log: IUser = logcheck.data?.login;
-
+  const { id } = useParams();
   useEffect(() => {
     logcheck.mutate();
-  }, []);
-  useEffect(() => {}, [userlogin]);
+  }, [id]);
 
   return (
     <div>
@@ -74,14 +84,27 @@ const ManegeLayout = ({}: IProps): JSX.Element => {
           <div className={`${box} h-[100%] flex justify-between items-center `}>
             <div className={`${center}`}>
               <img src="/imgs/hamster.png" className="h-[4rem]"></img>
-              <div>
-                <div className="text-[2rem] text-white font-bold">
-                  햄스터마켓
+              {log?.admin ? (
+                <Link to={"/manege/report"}>
+                  <div>
+                    <div className="text-[2rem] text-white font-bold">
+                      햄스터마켓
+                    </div>
+                    <div className="text-[1rem] text-white font-bold">
+                      관리자 페이지
+                    </div>
+                  </div>
+                </Link>
+              ) : (
+                <div>
+                  <div className="text-[2rem] text-white font-bold">
+                    햄스터마켓
+                  </div>
+                  <div className="text-[1rem] text-white font-bold">
+                    관리자 페이지
+                  </div>
                 </div>
-                <div className="text-[1rem] text-white font-bold">
-                  관리자 페이지
-                </div>
-              </div>
+              )}
             </div>
             <div className={`${center} gap-3`}>
               <div className="h-[3rem] w-[3rem]">
@@ -155,11 +178,11 @@ const ManegeLayout = ({}: IProps): JSX.Element => {
           </div>
         </div>
       </div>
-      {/* {
-        <div className="absolute z-40 top-0 h-[100%] w-[100%] bg-black opacity-[0.2]">
-          <div className="">123</div>
+      {Modal && (
+        <div className="fixed top-[30%] start-[35%]  z-200">
+          <ModalBox />
         </div>
-      } */}
+      )}
     </div>
   );
 };

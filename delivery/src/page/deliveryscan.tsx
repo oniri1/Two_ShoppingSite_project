@@ -8,7 +8,11 @@ import { ChangeEvent, useState } from "react";
 import { Debounce } from "../Costomhook/Debounce";
 import { useMutation } from "react-query";
 import axios from "axios";
+import { useSetRecoilState } from "recoil";
+import { Modalcontent, Modalstate } from "../Context/Modal/Modal";
 const DeliveryScan = (): JSX.Element => {
+  const setsystemonoff = useSetRecoilState(Modalstate);
+  const setModalcontent = useSetRecoilState(Modalcontent);
   const [pickitem, SetPickItem] = useState<string>("");
   const changeitem = (e: ChangeEvent<HTMLInputElement>) => {
     SetPickItem(e.target.value);
@@ -19,14 +23,26 @@ const DeliveryScan = (): JSX.Element => {
     mutationKey: ["pickcomplete"],
     mutationFn: async () => {
       await axios.post(
-        `${process.env.REACT_APP_SERVER_URL}/delivery/deliverycomplete/${item}`
+        `${process.env.REACT_APP_SERVER_URL}/delivery/deliverycomplete/${item}`,
+        {},
+        { withCredentials: true }
       );
+    },
+    onSuccess() {
+      setModalcontent("completedelivery");
+      setsystemonoff(true);
+    },
+    onError() {
+      setModalcontent("falideliveryscan");
+      setsystemonoff(true);
     },
   });
 
   const btn = new Button("확인", "bg-blue-200");
   return (
-    <div className={`${mobilebox} flex flex-col items-center`}>
+    <div
+      className={`${mobilebox} flex flex-col items-center h-[41rem] overflow-auto`}
+    >
       <div className="py-3 text-[1.2rem] font-bold">배송완료 스캔</div>
       <div className={`my-5 `}>
         <Scan />

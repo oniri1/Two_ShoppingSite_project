@@ -1,10 +1,12 @@
 import { Request, Response } from "express";
 import { Category, Product } from "../../../models";
-import { Op } from "sequelize";
+import { JSON, Op } from "sequelize";
+import { formToJSON } from "axios";
 
 export default async (req: Request, res: Response) => {
   try {
     const reqbody = req.body;
+    console.log("ㅁㄴㅇㅁㄴㅇㅁㅊㅋㅌㅊㅋㅌ", req.body);
     const productlist: Product[] = await Product.findAll({
       attributes: [
         "id",
@@ -18,6 +20,8 @@ export default async (req: Request, res: Response) => {
       ],
       where: { title: { [Op.like]: `%${reqbody.keyword}%` } },
       include: [{ model: Category, as: "Category", attributes: ["name"] }],
+      offset: reqbody.idx,
+      limit: 6,
     });
 
     for (let i = 0; i < productlist.length; i++) {

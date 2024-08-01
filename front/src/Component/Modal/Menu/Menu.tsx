@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { Button } from "../../../lib/Button/Button";
 import { TinyButton } from "../../Button/Button";
 import MenuCategory from "./MenuCategory";
-import { useQuery } from "react-query";
 import axios, { AxiosResponse } from "axios";
 import { useSetRecoilState } from "recoil";
 import { Modal } from "../../../Context/Modal";
@@ -11,6 +10,7 @@ import { useEffect, useState } from "react";
 import { useBreakPoint } from "../../../CustomHook/BreakPoint";
 import { IUserDatas } from "../../../lib/interFace";
 import { errUserDatas } from "../../../lib/errors";
+import { mobilebox } from "../../../lib/styles";
 
 interface IProps {
   setUserLogin: React.Dispatch<React.SetStateAction<boolean>>;
@@ -58,7 +58,7 @@ const Menu = ({
     userDataCheck();
   }, []);
   return (
-    <div className="MobileBox">
+    <div className={`${mobilebox}`}>
       {userlogin && (
         <div className="flex items-center justify-between">
           <div>

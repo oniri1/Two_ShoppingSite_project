@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { center } from "../../lib/styles";
+import { box, center } from "../../lib/styles";
 import axios, { AxiosResponse } from "axios";
 import { IData, IAdress, IAdressData } from "../../Component/Modal/Buy/Buy";
 import AdressItem from "../../Component/Modal/Buy/UserAdressItem";
@@ -7,8 +7,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { IData as IDataProduct } from "../product/product";
 import { IProductPage } from "../../lib/interFace";
 import { productPageDataErr } from "../../lib/errors";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { Modal } from "../../Context/Modal";
+import { Modalcontent, Modalstate } from "../../Context/SystemModal/Modal";
 
 interface IFormData {
   productName: string;
@@ -35,12 +36,19 @@ interface IRowCateFunc {
   id: number;
 }
 
-const ProductWrite: React.FC = () => {
+interface IProps {
+  mainDataGet: (i: number) => void;
+  dataCheckIdxValue: number;
+}
+
+const ProductWrite = ({ mainDataGet, dataCheckIdxValue }: IProps): JSX.Element => {
   //hook
   const navigate = useNavigate();
   const loca = useLocation();
 
   //state
+  const setsystemonoff = useSetRecoilState(Modalstate);
+  const setModalcontent = useSetRecoilState(Modalcontent);
   const [images, setImages] = useState<File[]>([]);
   const [modalValue, modalstate] = useRecoilState(Modal);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
@@ -102,9 +110,7 @@ const ProductWrite: React.FC = () => {
     setPreviewUrls((prev) => prev.filter((_, i) => i !== index));
   };
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
 
@@ -154,9 +160,7 @@ const ProductWrite: React.FC = () => {
     setId(id);
   };
   const asyncOperation = async (item: any) => {
-    return new Promise<File>((resolve) =>
-      setTimeout(() => resolve(getImgBlob(item)), 300)
-    );
+    return new Promise<File>((resolve) => setTimeout(() => resolve(getImgBlob(item)), 300));
   };
 
   const addadress = () => {
@@ -169,8 +173,7 @@ const ProductWrite: React.FC = () => {
       .then(async (data: AxiosResponse<IDataProduct<IProductPage>>) => {
         console.log(data);
         const values = data.data.product;
-        const { image, title, discription, categoryId, Category, price } =
-          values;
+        const { image, title, discription, categoryId, Category, price } = values;
 
         setFormData({
           productName: title,
@@ -249,19 +252,22 @@ const ProductWrite: React.FC = () => {
   };
 
   const rowCatesGet = async ({ api, id }: IRowCateFunc) => {
-    let rowCheck = true;
+    let rowCheck: boolean;
 
-    if (api !== "/catelist") {
+    if (api === "/catelist") {
+      rowCheck = true;
+    } else {
       rowCheck = false;
     }
 
     await axios
       .post(`${serverUrl}${api}/${id}`, {}, {})
-      .then((data: AxiosResponse<ICate>) => {
-        const childrens = data.data.Children;
+      .then((data: AxiosResponse<IFirstCateRes>) => {
+        const childrens = data.data.category[0].Children;
         if (childrens) {
           if (rowCheck) {
             setRowOneCates(childrens);
+            setRowTwoCates(undefined);
           } else {
             setRowTwoCates(childrens);
           }
@@ -343,8 +349,10 @@ const ProductWrite: React.FC = () => {
       .then((data) => {
         console.log(data);
         if (isProductReWrite) {
+          mainDataGet(dataCheckIdxValue);
           navigate(`/product${idPath}`);
         } else {
+          mainDataGet(dataCheckIdxValue);
           navigate("/");
         }
       })
@@ -393,15 +401,15 @@ const ProductWrite: React.FC = () => {
   }, []);
 
   return (
-    <div className={`${center} p-8`}>
+    <div className={`${center} p-8 ${box}`}>
       <div className="rounded-lg w-full">
         <label
           htmlFor="productImage"
-          className="block text-sm font-medium text-gray-700"
+          className="py-2 block text-[1.3rem] font-bold text-gray-700 border-b border-gray-500"
         >
           상품이미지
         </label>
-        <div className="flex flex-col items-stretch mb-4">
+        <div className="mt-4 flex flex-col items-stretch mb-4">
           <input
             id="imgupload"
             type="file"
@@ -412,23 +420,19 @@ const ProductWrite: React.FC = () => {
           />
           <label
             htmlFor="imgupload"
-            className={`bg-gray-300 text-gray-500 w-32 h-32 ${center} text-5xl`}
+            className={`bg-gray-300 text-gray-500 w-[7rem] h-[7rem] ${center} text-5xl mb-4`}
           >
             +
           </label>
 
-          <div className="grid grid-cols-4 overflow-hidden">
+          <div className="flex grid grid-cols-4 overflow-hidden gap-10 min-w-[35rem] max-w-[35rem]">
             {previewUrls.map((url, index) => (
-              <div key={index} className="relative">
+              <div key={index} className="relative border ">
                 {/* <div className="w-32 h-32" /> */}
-                <img
-                  src={url}
-                  alt={`Preview ${index}`}
-                  className="w-32 h-32 uploadImgElem"
-                />
+                <img src={url} alt={`Preview ${index}`} className="w-32 h-32 uploadImgElem" />
                 <button
                   onClick={() => handleRemoveImage(index)}
-                  className="absolute top-0 right-20 bg-red-500 text-white p-1 rounded"
+                  className="absolute top-0 right-[0rem] bg-red-500 text-white p-1 rounded"
                 >
                   X
                 </button>
@@ -439,7 +443,7 @@ const ProductWrite: React.FC = () => {
         <div className="mb-4">
           <label
             htmlFor="productName"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-[1.3rem] font-bold text-gray-700 border-b border-gray-500"
           >
             상품명
           </label>
@@ -449,15 +453,15 @@ const ProductWrite: React.FC = () => {
             name="productName"
             value={formData.productName}
             onChange={handleChange}
-            className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+            className="mt-5 p-2 w-full border border-gray-300 rounded-md  h-[3rem]"
             required
             placeholder="상품명을 입력해주세요."
           />
         </div>
-        <div>
-          <h2 className="text-xl font-bold mb-4">카테고리</h2>
+        <div className="mt-3">
+          <h2 className="text-xl font-bold mb-4 border-b border-gray-500">카테고리</h2>
           <div className="flex space-x-4">
-            <div className="w-1/3 border p-4">
+            <div className="w-1/3 border p-4 h-[27rem] overflow-auto">
               <h3 className="font-semibold">선택</h3>
               <ul className="mt-2">
                 {categories &&
@@ -478,7 +482,7 @@ const ProductWrite: React.FC = () => {
                   ))}
               </ul>
             </div>
-            <div className="w-1/3 border p-4">
+            <div className="w-1/3 border p-4 h-[27rem] overflow-auto">
               <h3 className="font-semibold">중분류 선택</h3>
               <ul className="mt-2">
                 {rowOneCates &&
@@ -493,10 +497,7 @@ const ProductWrite: React.FC = () => {
                           });
                           setLastClickCateId(category.id);
                           if (showCateValue.length < 2) {
-                            setShowCateValue((data) => [
-                              ...data,
-                              category.name,
-                            ]);
+                            setShowCateValue((data) => [...data, category.name]);
                           } else {
                             setShowCateValue((data) => {
                               return [...data.slice(0, 1), category.name];
@@ -511,7 +512,7 @@ const ProductWrite: React.FC = () => {
                   ))}
               </ul>
             </div>
-            <div className="w-1/3 border p-4">
+            <div className="w-1/3 border p-4 h-[27rem] overflow-auto">
               <h3 className="font-semibold">소분류 선택</h3>
               <ul className="mt-2">
                 {rowTwoCates &&
@@ -522,10 +523,7 @@ const ProductWrite: React.FC = () => {
                         if (category.id) {
                           setLastClickCateId(category.id);
                           if (showCateValue.length < 3) {
-                            setShowCateValue((data) => [
-                              ...data,
-                              category.name,
-                            ]);
+                            setShowCateValue((data) => [...data, category.name]);
                           } else {
                             setShowCateValue((data) => {
                               return [...data.slice(0, 2), category.name];
@@ -544,14 +542,14 @@ const ProductWrite: React.FC = () => {
           <div className="mt-4">
             <h3 className="font-semibold">선택:</h3>
             <div className="flex">
-              <span>{showCateValue.join(" → ")}</span>
+              <span className="text-orange-500">{showCateValue.join(" → ")}</span>
             </div>
           </div>
         </div>
         <div className="mb-4">
           <label
             htmlFor="description"
-            className="block text-sm font-medium text-gray-700"
+            className="mt-7 block text-[1.3rem] font-medium text-gray-700 border-b border-gray-500"
           >
             상품설명
           </label>
@@ -560,23 +558,28 @@ const ProductWrite: React.FC = () => {
             name="description"
             value={formData.description}
             onChange={handleChange}
-            className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+            className="mt-5 p-2 w-full border border-gray-300 rounded-md resize-none"
             rows={4}
             placeholder="상품에 대한 설명을 입력하세요"
             required
           />
         </div>
-        {adress &&
-          adress.map((item: IAdressData, idx: number) => (
-            <AdressItem
-              key={idx}
-              detail={item.detailAddress}
-              item={item.address}
-              id={item.addressId}
-              selectadress={selectadress}
-            />
-          ))}
-        <div className={`${center}`}>
+        <div>
+          <div className="text-[1.3rem] font-bold border-b border-gray-500">주소</div>
+          <div className="mt-5 h-[20rem] border overflow-auto">
+            {adress &&
+              adress.map((item: IAdressData, idx: number) => (
+                <AdressItem
+                  key={idx}
+                  detail={item.detailAddress}
+                  item={item.address}
+                  id={item.addressId}
+                  selectadress={selectadress}
+                />
+              ))}
+          </div>
+        </div>
+        <div className={`${center} mt-5`}>
           <div
             onClick={addadress}
             className="cursor-pointer p-4 text-center text-blue-500 max-w-100px bg-gray-50 rounded-3xl"
@@ -584,56 +587,56 @@ const ProductWrite: React.FC = () => {
             +주소추가
           </div>
         </div>
-
-        <div className="mb-4">
-          <div className="flex"></div>
-        </div>
-        <div className="mb-4">
-          <div className="flex">
-            <label
-              htmlFor="price"
-              className="block text-sm font-medium text-gray-700"
-            >
-              가격 :
-            </label>
-            <input
-              type="number"
-              id="price"
-              name="price"
-              value={formData.price}
-              onChange={handleChange}
-              className="w-6/12 border border-gray-300 rounded-md"
-              placeholder="원하는 가격을 입력하세요"
-              required
-            />
-            <div></div>
-          </div>
-        </div>
-
-        {/* 등록 버튼 */}
-        <div className="relative p-5">
-          <div
-            onClick={() => {
-              console.log(
-                id,
-                selectcontent,
-                lastClickCateId,
-                formData.productName !== "",
-                images.length > 0
-              );
-              if (
-                id &&
-                selectcontent &&
-                lastClickCateId &&
-                formData.productName !== "" &&
-                images.length > 0
-              ) {
-                imgUploader(images);
-              }
-            }}
-            className={`absolute right-3 bottom-3 ${center} h-[6rem] text-[1.5rem] text-white border rounded-[1rem] bg-amber-300 hover:bg-yellow-600 w-[10rem]`}
-          >
-            등록하기
+        <div className="mt-10">
+          <div className="mb-4">
+            <div className="flex items-center">
+              <label htmlFor="price" className="me-4 block text-[1.3rem] font-medium text-gray-700">
+                가격 :
+              </label>
+              <input
+                type="number"
+                id="price"
+                name="price"
+                value={formData.price}
+                onChange={handleChange}
+                className="w-6/12 h-[3rem] px-4  border border-gray-300 rounded-md appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                placeholder="원하는 가격을 입력하세요"
+                required
+              />
+              <div></div>
+            </div>
+            {/* 등록 버튼 */}
+            <div className="relative p-5">
+              <div
+                onClick={() => {
+                  console.log(
+                    id,
+                    selectcontent,
+                    lastClickCateId,
+                    formData.productName !== "",
+                    images.length > 0
+                  );
+                  if (
+                    id &&
+                    selectcontent &&
+                    lastClickCateId &&
+                    formData.productName !== "" &&
+                    images.length > 0
+                  ) {
+                    imgUploader(images);
+                    navigate("/");
+                    setModalcontent("sucessproduct");
+                    setsystemonoff(true);
+                  } else {
+                    setModalcontent("notdata");
+                    setsystemonoff(true);
+                  }
+                }}
+                className={`absolute right-3 bottom-3 ${center} h-[6rem] text-[1.5rem] text-white border rounded-[1rem] bg-amber-300 hover:bg-yellow-600 w-[10rem]`}
+              >
+                등록하기
+              </div>
+            </div>
           </div>
         </div>
       </div>

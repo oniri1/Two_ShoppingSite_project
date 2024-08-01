@@ -3,25 +3,50 @@ import List from "../../Component/List/List";
 import { List as ListData } from "../../lib/list";
 import { useBreakPoint } from "../../CustomHook/BreakPoint";
 import { box, mobilebox } from "../../lib/styles";
-import { IListData } from "../../App";
-import { useCallback, useEffect, useState } from "react";
+
+import { useEffect, useMemo, useState } from "react";
 import { useCookies } from "react-cookie";
 import axios from "axios";
+import Observer from "../../Component/Observer/Observer";
+import { useMutation } from "@tanstack/react-query";
+import { useParams } from "react-router-dom";
+import { IList } from "../../Component/List/ListItem";
 
 interface IProps {
-  list: ListData[];
-  mainDataGet: () => void;
+  list: IList[];
+  mainDataGet: (i: number) => void;
+  obToggleValue: boolean;
+  idxValue: number;
 }
 
-const Main = ({ list, mainDataGet }: IProps): JSX.Element => {
+export interface IData {
+  Category: { name: string };
+  categoryId: number;
+  createdAt: Date;
+  discription: string;
+  id: number;
+  image: [string];
+  img: string;
+  itemState: string;
+  price: number;
+  title: string;
+}
+
+const Main = ({
+  idxValue,
+  list,
+  mainDataGet,
+  obToggleValue,
+}: IProps): JSX.Element => {
   const [cookies] = useCookies(["Product"]);
   const { ismobile, isdesktop } = useBreakPoint();
-  const [recent, setrecent] = useState<ListData[]>([]);
-  const [recentlist, setresent] = useState<number[]>([]);
+  const [recent, setrecent] = useState<IList[]>([]);
 
-  const save = () => {
+  // console.log(cookies);
+
+  const procookie = useMemo(() => {
     if (cookies.Product) {
-      const products = cookies.Product.product;
+      const products = cookies.Product?.product;
 
       const recentproduct = products
         .split("+")
@@ -34,48 +59,78 @@ const Main = ({ list, mainDataGet }: IProps): JSX.Element => {
               .indexOf(item) === idx
           );
         });
-      const pre: number[] = recentproduct.map((item: string) => {
+      const data: number[] = recentproduct.map((item: string) => {
         return Number(item);
       });
-      setresent(pre);
+      return data;
     }
-  };
+  }, []);
 
-  // const getrecent = async () => {
-  //   await axios.post(
-  //     `${process.env.REACT_APP_SERVER_URL}/recent`,
-  //     { productlist: [1, 2] },
-  //     { withCredentials: true }
-  //   );
-  // };
+  const getrecent = useMutation({
+    mutationKey: ["recentitems"],
+    mutationFn: async () => {
+      const { data } = await axios.post(
+        `${process.env.REACT_APP_SERVER_URL}/recent`,
+        { productlist: procookie },
+        { withCredentials: true }
+      );
 
-  const cookie = false;
+      const products = data;
+      console.log(products);
+
+      const product = products.productlist;
+      const lastdata = product.map((item: IData) => {
+        const listdata = {
+          id: item.id,
+          title: item.title,
+          img: item.image
+            ? `${process.env.REACT_APP_SERVER_URL}/imgs/${item.image[0]}`
+            : "/imgs/hamster.png",
+          price: item.price,
+          createdAt: Math.floor(
+            (+new Date() - +new Date(item.createdAt || new Date() + "")) /
+              (1000 * 60 * 60 * 24)
+          ),
+        };
+        return listdata;
+      });
+      return lastdata;
+    },
+  });
 
   useEffect(() => {
-    save();
-    // getrecent();
-    mainDataGet();
+    mainDataGet(idxValue);
+    // console.log("?");
   }, []);
+
+  useEffect(() => {
+    if (procookie) {
+      getrecent.mutate();
+      setrecent(getrecent.data);
+    }
+  }, [procookie]);
 
   return (
     <div>
       {isdesktop && <SearchComp />}
       <div className={`${isdesktop && `${box}`} ${ismobile && mobilebox}`}>
-        {cookie ? (
+        {getrecent?.data && (
           <div>
-            <div className="mx-auto w-[10rem] flex justify-evenly bg-red-200">
-              <div></div>
-              <div></div>
-              <div></div>
-            </div>
             <div className="p-[2rem] text-[1.7rem] font-bold">최근 본 상품</div>
-            <List list={list} />
+            <List list={getrecent.data} />
           </div>
-        ) : (
-          <></>
         )}
-        <div className="p-[2rem] text-[1.7rem] font-bold">오늘의 추천상품</div>
-        <List list={list} />
+        <div>
+          <div className="p-[2rem] text-[1.7rem] font-bold">
+            오늘의 추천상품
+          </div>
+          <List
+            list={list}
+            func={mainDataGet}
+            funcValue={idxValue}
+            toggleValue={obToggleValue}
+          />
+        </div>
       </div>
     </div>
   );

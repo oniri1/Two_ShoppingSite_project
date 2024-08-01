@@ -22,25 +22,34 @@ import { CgAdd } from "react-icons/cg";
 import { MdOutlineShoppingBag } from "react-icons/md";
 import { IoAccessibility } from "react-icons/io5";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import MobileModal from "../../Component/Modal/ModalBox/Modal";
 import { box, center } from "../styles";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { Modal } from "../../Context/Modal";
 import Regist from "../../page/account/regist/registpage";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { IUserDatas } from "../interFace";
 import { GoogleCallback } from "../../Component/OAuth/GoogleOAuth";
 import { NaverCallback } from "../../Component/OAuth/NaverOAuth";
+import { IListData } from "../../App";
+import { IList } from "../../Component/List/ListItem";
+import { Modalcontent, Modalstate } from "../../Context/SystemModal/Modal";
+import ModalBox from "../../Component/Modal/SystemModal/ModalBox";
+import FindID from "../../page/account/findid/findID";
+import FindPW from "../../page/account/findpw/findPW";
 
 interface IProps {
   setUserLogin: React.Dispatch<React.SetStateAction<boolean>>;
   userlogin: boolean;
-  main: List[];
+  main: IList[];
   userDatas: IUserDatas;
   userDataCheck: () => void;
-  mainDataGet: () => void;
+  dataCheckIdxValue: number;
+  mainDataGet: (i: number) => void;
+  setListDatas: (i: IListData[]) => void;
+  obToggleValue: boolean;
 }
 
 const Layout = ({
@@ -50,11 +59,17 @@ const Layout = ({
   main,
   userDataCheck,
   mainDataGet,
+  setListDatas,
+  dataCheckIdxValue,
+  obToggleValue,
 }: IProps): JSX.Element => {
+  const [value, setValue] = useState<number>(0);
+  const [isReview, setIsReview] = useState<boolean>(true);
   const { isdesktop, ismobile } = useBreakPoint();
-  const authority = false;
   const getModal = useRecoilState(Modal);
   const setModal = useSetRecoilState(Modal);
+
+  const systemModal = useRecoilValue(Modalstate);
   const openmenu = () => {
     setModal("mobilemenu");
   };
@@ -62,9 +77,19 @@ const Layout = ({
   useEffect(() => {
     setModal(undefined);
   }, [location, setModal]);
+
+  const valueChanger = (value: number) => {
+    setValue(value);
+    if (value === 0) {
+      setIsReview(true);
+    } else {
+      setIsReview(false);
+    }
+  };
+
   return (
     <div>
-      <div className="relative">
+      <div className="relative h-[100%] ">
         <div className="p-1 h-[6rem] bg-orange-200">
           <div className={`${box} h-[100%] flex justify-between items-center`}>
             <div className={`${center}`}>
@@ -91,14 +116,15 @@ const Layout = ({
                 햄스터마켓
               </div>
             </div>
-
-            {!userlogin ? (
-              <NotLogin />
-            ) : !userDatas.login?.admin ? (
-              <Login userDatas={userDatas} setUserLogin={setUserLogin} />
-            ) : (
-              <Maneger userDatas={userDatas} />
-            )}
+            <div>
+              {!userlogin && <NotLogin />}
+              {userlogin &&
+                (!userDatas.login?.admin ? (
+                  <Login userDatas={userDatas} setUserLogin={setUserLogin} />
+                ) : (
+                  <Maneger userDatas={userDatas} />
+                ))}
+            </div>
           </div>
         </div>
         {/* 상단 */}
@@ -109,7 +135,14 @@ const Layout = ({
             <Routes>
               <Route
                 path="/"
-                element={<Main list={main} mainDataGet={mainDataGet} />}
+                element={
+                  <Main
+                    idxValue={dataCheckIdxValue}
+                    list={main}
+                    mainDataGet={mainDataGet}
+                    obToggleValue={obToggleValue}
+                  />
+                }
               ></Route>
               <Route
                 path="/GoogleLoding"
@@ -124,23 +157,55 @@ const Layout = ({
               <Route
                 path="/product/:id"
                 element={
-                  <Product mainDataGet={mainDataGet} userdata={userDatas} />
+                  <Product mainDataGet={setListDatas} userdata={userDatas} />
                 }
               ></Route>
-              <Route path="/sell" element={<ProductWrite />}></Route>
-              <Route path="/sell/:id" element={<ProductWrite />}></Route>
+              <Route
+                path="/sell"
+                element={
+                  <ProductWrite
+                    mainDataGet={mainDataGet}
+                    dataCheckIdxValue={dataCheckIdxValue}
+                  />
+                }
+              ></Route>
+              <Route
+                path="/sell/:id"
+                element={
+                  <ProductWrite
+                    mainDataGet={mainDataGet}
+                    dataCheckIdxValue={dataCheckIdxValue}
+                  />
+                }
+              ></Route>
               <Route
                 path="/mystore"
-                element={<MyStore userlogin={userlogin} />}
+                element={
+                  <MyStore
+                    userlogin={userlogin}
+                    value={value}
+                    setvalue={setValue}
+                    isReview={isReview}
+                    setIsReview={setIsReview}
+                    valueChanger={valueChanger}
+                  />
+                }
               ></Route>
               <Route
                 path="/login"
                 element={<LoginPage setUserLogin={setUserLogin} />}
               ></Route>
+              <Route path="/findID" element={<FindID />}></Route>
+              <Route path="/findPW" element={<FindPW />}></Route>
               <Route path="/regist" element={<Regist />}></Route>
               <Route
                 path="/point"
-                element={<Point userDataCheck={userDataCheck} />}
+                element={
+                  <Point
+                    points={userDatas.login?.point ? userDatas.login.point : 0}
+                    userDataCheck={userDataCheck}
+                  />
+                }
               ></Route>
             </Routes>
           )}
@@ -152,6 +217,15 @@ const Layout = ({
                 userDatas={userDatas}
                 userDataCheck={userDataCheck}
               />
+            )}
+            {systemModal && (
+              <div
+                className={`${
+                  isdesktop && "fixed top-[30%] start-[35%]  z-200"
+                } ${ismobile && "fixed top-[30%] start-[10%]  z-200"}`}
+              >
+                <ModalBox />
+              </div>
             )}
           </div>
         </div>
@@ -176,40 +250,103 @@ const Layout = ({
             </div>
           </div>
         )}
-        {ismobile && getModal[0] === undefined && (
-          <div className="h-[6em] flex justify-evenly items-center sticky bottom-0 bg-gray-300 border border-t">
-            <Link to={"/"}>
-              <div className="flex flex-col items-center ">
-                <IoHome size={30} />
-                <div>홈</div>
+        {userlogin
+          ? ismobile &&
+            getModal[0] === undefined && (
+              <div className=" h-[6em] sticky flex justify-evenly items-center  bg-gray-300 border border-t bottom-0">
+                <Link to={"/"}>
+                  <div className="flex flex-col items-center ">
+                    <IoHome size={30} />
+                    <div>홈</div>
+                  </div>
+                </Link>
+                <Link to={`/mystore?id=${userDatas.login?.id}`}>
+                  <div
+                    className="flex flex-col items-center "
+                    onClick={() => {
+                      valueChanger(2);
+                    }}
+                  >
+                    <BiPurchaseTag size={30} />
+                    <div>구매상품</div>
+                  </div>
+                </Link>
+                <Link to={"/sell"}>
+                  <div className="flex flex-col items-center ">
+                    <CgAdd size={30} />
+                    <div>등록</div>
+                  </div>
+                </Link>
+                <Link to={`/mystore?id=${userDatas.login?.id}`}>
+                  <div
+                    className="flex flex-col items-center "
+                    onClick={() => {
+                      valueChanger(1);
+                    }}
+                  >
+                    <MdOutlineShoppingBag size={30} />
+                    <div>판매상품</div>
+                  </div>
+                </Link>
+                <Link to={`/mystore?id=${userDatas.login?.id}`}>
+                  <div
+                    className="flex flex-col items-center"
+                    onClick={() => {
+                      valueChanger(0);
+                    }}
+                  >
+                    <IoAccessibility size={30} />
+                    <div>내상점</div>
+                  </div>
+                </Link>
               </div>
-            </Link>
-            <Link to={"/mystore"}>
-              <div className="flex flex-col items-center ">
-                <BiPurchaseTag size={30} />
-                <div>구매상품</div>
+            )
+          : ismobile &&
+            getModal[0] === undefined && (
+              <div className=" h-[6em] sticky flex justify-evenly items-center  bg-gray-300 border border-t bottom-0">
+                <Link to={"/"}>
+                  <div className="flex flex-col items-center ">
+                    <IoHome size={30} />
+                    <div>홈</div>
+                  </div>
+                </Link>
+
+                <div
+                  className="flex flex-col items-center "
+                  onClick={() => {
+                    valueChanger(2);
+                  }}
+                >
+                  <BiPurchaseTag size={30} />
+                  <div>구매상품</div>
+                </div>
+
+                <div className="flex flex-col items-center ">
+                  <CgAdd size={30} />
+                  <div>등록</div>
+                </div>
+
+                <div
+                  className="flex flex-col items-center "
+                  onClick={() => {
+                    valueChanger(1);
+                  }}
+                >
+                  <MdOutlineShoppingBag size={30} />
+                  <div>판매상품</div>
+                </div>
+
+                <div
+                  className="flex flex-col items-center"
+                  onClick={() => {
+                    valueChanger(0);
+                  }}
+                >
+                  <IoAccessibility size={30} />
+                  <div>내상점</div>
+                </div>
               </div>
-            </Link>
-            <Link to={"/sell"}>
-              <div className="flex flex-col items-center ">
-                <CgAdd size={30} />
-                <div>등록</div>
-              </div>
-            </Link>
-            <Link to={"/mystore"}>
-              <div className="flex flex-col items-center ">
-                <MdOutlineShoppingBag size={30} />
-                <div>판매상품</div>
-              </div>
-            </Link>
-            <Link to={"/mystore"}>
-              <div className="flex flex-col items-center ">
-                <IoAccessibility size={30} />
-                <div>내상점</div>
-              </div>
-            </Link>
-          </div>
-        )}
+            )}
       </div>
     </div>
   );

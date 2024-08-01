@@ -60,6 +60,7 @@ export interface IProduct extends IProductMini {
   DeliveryCost?: { cost: number };
   Category?: { name: string };
   image?: string[];
+  userCheck?: boolean;
 }
 
 export interface IProductPage extends IProduct {
@@ -70,6 +71,8 @@ export interface IProductPage extends IProduct {
     star: {
       star: string;
     };
+
+    profileimg?: string;
   };
   image: string[];
   islogin: boolean;
@@ -88,7 +91,7 @@ export interface IReviewOne {
   reviewContent: string;
   Store: {
     nick: string;
-    img: string;
+    profileimg: string;
   };
   Product: {
     title: string;

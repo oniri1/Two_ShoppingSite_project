@@ -4,6 +4,7 @@ import axios from "axios";
 import { Modal } from "../../../Context/Modal";
 import { useSetRecoilState } from "recoil";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Modalcontent, Modalstate } from "../../../Context/SystemModal/Modal";
 
 interface IProps {
   id: number | undefined;
@@ -11,6 +12,8 @@ interface IProps {
 }
 
 const ReviewWrite = ({ id, img }: IProps): JSX.Element => {
+  const setsystemonoff = useSetRecoilState(Modalstate);
+  const setModalcontent = useSetRecoilState(Modalcontent);
   const imgbase = process.env.REACT_APP_IMG_BASE;
   const navigate = useNavigate();
   const loca = useLocation();
@@ -21,6 +24,8 @@ const ReviewWrite = ({ id, img }: IProps): JSX.Element => {
 
   const ModalState = useSetRecoilState(Modal);
 
+  const serverUrl = process.env.REACT_APP_SERVER_URL;
+
   //func
 
   const reviewWrite = async (
@@ -30,7 +35,7 @@ const ReviewWrite = ({ id, img }: IProps): JSX.Element => {
     if (contentValue) {
       axios
         .post(
-          `/reviewWrite/${id}`,
+          `${serverUrl}/reviewWrite/${id}`,
           {
             star: starValue,
             content: contentValue,
@@ -42,6 +47,8 @@ const ReviewWrite = ({ id, img }: IProps): JSX.Element => {
           setStarValue(1);
           setContentValue(undefined);
           ModalState(undefined);
+          setModalcontent("sucsessreview");
+          setsystemonoff(true);
           navigate(`${callbackUrl}`);
         })
         .catch((err) => {
@@ -49,6 +56,8 @@ const ReviewWrite = ({ id, img }: IProps): JSX.Element => {
           setStarValue(1);
           setContentValue(undefined);
           ModalState(undefined);
+          setModalcontent("failreview");
+          setsystemonoff(true);
           navigate(`${callbackUrl}`);
         });
     }

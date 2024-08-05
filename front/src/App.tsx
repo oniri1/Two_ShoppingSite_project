@@ -20,8 +20,9 @@ export interface IListData {
 }
 
 const App = (): JSX.Element => {
-  const serverUrl = process.env.REACT_APP_SERVER_URL;
-  const [, setListDatas] = useState<IListData[]>([]);
+  const serverUrl = useMemo(() => process.env.REACT_APP_SERVER_URL, []);
+
+  const setListDatas = useState<IListData[]>([])[1];
 
   const [userlogin, setUserLogin] = useState<boolean>(false);
   const [userDatas, setUserDatas] = useState<IUserDatas>(errUserDatas);
@@ -59,7 +60,8 @@ const App = (): JSX.Element => {
             : "/imgs/hamster.png",
           price: item.price,
           createdAt: Math.floor(
-            (+new Date() - +new Date(item.createdAt || new Date() + "")) / (1000 * 60 * 60 * 24)
+            (+new Date() - +new Date(item.createdAt || new Date() + "")) /
+              (1000 * 60 * 60 * 24)
           ),
         };
         return listdata;
@@ -93,21 +95,23 @@ const App = (): JSX.Element => {
       .catch((err) => {
         console.log("layOut userDataCheck func Err", err);
       });
-  }, []);
+  }, [serverUrl]);
 
   //mount
   const mainDataGet = useCallback(() => {
     queryclient.invalidateQueries({ queryKey: ["getmain"] });
-  }, []);
+  }, [queryclient]);
 
   useEffect(() => {
     userDataCheck();
     mainDataGet();
-  }, []);
+  }, [userDataCheck, mainDataGet]);
+
+  console.log("무한 돌기 체크");
 
   useEffect(() => {
     if (userlogin) userDataCheck();
-  }, [userlogin]);
+  }, [userlogin, userDataCheck]);
 
   return (
     <div>

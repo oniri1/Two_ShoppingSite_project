@@ -1,8 +1,6 @@
 import { Link } from "react-router-dom";
 
-interface IProps {}
-
-const NotLogin = ({}: IProps): JSX.Element => {
+const NotLogin = (): JSX.Element => {
   return (
     <div className="flex me-1 gap-1 ">
       {/* <div>
@@ -14,7 +12,9 @@ const NotLogin = ({}: IProps): JSX.Element => {
         </div>
       </div> */}
       <Link to={"/login"}>
-        <div className="px-4 py-2 border bg-blue-100 rounded text-[1.2rem]">로그인</div>
+        <div className="px-4 py-2 border bg-blue-100 rounded text-[1.2rem]">
+          로그인
+        </div>
       </Link>
     </div>
   );

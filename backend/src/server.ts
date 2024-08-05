@@ -18,7 +18,8 @@ app.use(cookieParser(process.env.COOKIE || "test"));
 
 app.set("port", process.env.PORT || 3000);
 app.set("url", process.env.MONGURL || "mongodb://localhost:27017");
-sequelize.sync({ force: true });
+
+sequelize.sync({ force: false });
 
 app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: false }));
@@ -45,9 +46,13 @@ mongoose.connection.on("connected", () => {
   console.log("mongoose connection");
 });
 
+const checkFirstStart = async () => {
+  return (await User.findOne()) == null;
+};
+
 const basicvalue = async () => {
   try {
-    if (!(await User.findOne())) {
+    if (await checkFirstStart()) {
       mongoose.connection.dropCollection("deliveries");
       mongoose.connection.dropCollection("points");
       mongoose.connection.dropCollection("bankeywords");

@@ -4,16 +4,14 @@ import ButtonComp from "../../Button/Button";
 import Radioitem from "./RadioItem";
 import { Modal, Modalproduct } from "../../../Context/Modal";
 import { useBreakPoint } from "../../../CustomHook/BreakPoint";
-import { ChangeEvent, useCallback, useState } from "react";
+import { ChangeEvent, useCallback, useMemo, useState } from "react";
 import axios from "axios";
 
-interface IProps {}
-
-const Report = ({}: IProps): JSX.Element => {
+const Report = (): JSX.Element => {
   const [select, setselect] = useState<string>();
   const [check, setCheck] = useState<boolean>(false);
 
-  const serverUrl = process.env.REACT_APP_SERVER_URL;
+  const serverUrl = useMemo(() => process.env.REACT_APP_SERVER_URL, []);
 
   const selectinput = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setselect(e.target.value);
@@ -60,7 +58,9 @@ const Report = ({}: IProps): JSX.Element => {
   return (
     <div>
       <div className="m-auto w-[40rem] flex flex-col justify-center">
-        <div className={`p-4 text-[1.5rem] font-bold text-center`}>신고하기</div>
+        <div className={`p-4 text-[1.5rem] font-bold text-center`}>
+          신고하기
+        </div>
         <div className={`text-[1.2rem] h-[35rem] ${ismobile && "px-5"} `}>
           {selectreport.map((item: string, idx: number) => (
             <Radioitem key={idx} item={item} selectinput={selectinput} />

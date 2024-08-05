@@ -19,7 +19,12 @@ interface IProps {
   userDataCheck: () => void;
 }
 
-const Menu = ({ setUserLogin, userlogin, userDatas, userDataCheck }: IProps): JSX.Element => {
+const Menu = ({
+  setUserLogin,
+  userlogin,
+  userDatas,
+  userDataCheck,
+}: IProps): JSX.Element => {
   const { isdesktop } = useBreakPoint();
   const logoutBtn = new Button("로그아웃", "bg-orange-200");
   const pointBtn = new Button("포인트충전", "bg-orange-200");
@@ -39,17 +44,22 @@ const Menu = ({ setUserLogin, userlogin, userDatas, userDataCheck }: IProps): JS
       });
   };
 
-  const { id, nick, point } = userDatas.login ? userDatas.login : errUserDatas.login;
+  const { id, nick, point } = userDatas.login
+    ? userDatas.login
+    : errUserDatas.login;
 
   useEffect(() => {
     if (isdesktop) {
       Modalstate(undefined);
     }
-  }, [isdesktop]);
+  }, [isdesktop, Modalstate]);
 
   useEffect(() => {
     userDataCheck();
-  }, []);
+  }, [userDataCheck]);
+
+  console.log("무한 돌기 체크");
+
   return (
     <div className={`${mobilebox}`}>
       {userlogin && (

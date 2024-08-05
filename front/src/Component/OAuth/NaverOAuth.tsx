@@ -1,22 +1,27 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import axios from "axios";
 
 const callBackUrl: string = `${process.env.REACT_APP_BASE_URL}/NaverLoding`;
-
 const serverOAuthCallbackUrl = process.env.REACT_APP_SERVER_OAUTH_CALLBACK_URL;
+const clientId: string | undefined = process.env.REACT_APP_N_CLIENT_ID;
 
 export const NaverOAuth = (): JSX.Element => {
-  const clientId: string | undefined = process.env.REACT_APP_N_CLIENT_ID;
-  const state: string = Math.random().toString(36).substring(2);
+  const state: string = useMemo(
+    () => Math.random().toString(36).substring(2),
+    []
+  );
 
-  const naverOAuthUrl: string =
-    "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=" +
-    clientId +
-    "&redirect_uri=" +
-    callBackUrl +
-    "&state=" +
-    state;
+  const naverOAuthUrl: string = useMemo(() => {
+    return (
+      "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=" +
+      clientId +
+      "&redirect_uri=" +
+      callBackUrl +
+      "&state=" +
+      state
+    );
+  }, [state]);
 
   const loginHandler = () => {
     window.location.href = naverOAuthUrl;
@@ -43,10 +48,16 @@ interface INCProp {
 
 export const NaverCallback = ({ setUserLogin }: INCProp): JSX.Element => {
   const navigate = useNavigate();
-  const code: string | null = new URL(window.location.href).searchParams.get("code");
-  const state: string | null = new URL(window.location.href).searchParams.get("state");
+  const code: string | null = useMemo(
+    () => new URL(window.location.href).searchParams.get("code"),
+    []
+  );
+  const state: string | null = useMemo(
+    () => new URL(window.location.href).searchParams.get("state"),
+    []
+  );
 
-  const naver = async () => {
+  const naver = useCallback(async () => {
     await axios
       .post(
         `${serverOAuthCallbackUrl}/NaverCallback?code=${code}&state=${state}`,
@@ -71,11 +82,13 @@ export const NaverCallback = ({ setUserLogin }: INCProp): JSX.Element => {
         navigate("/");
       });
     //
-  };
+  }, [navigate, code, state, setUserLogin]);
 
   useEffect(() => {
     naver();
-  }, []);
+  }, [naver]);
+
+  console.log("무한돌기 체크");
 
   return <div>loding</div>;
 };

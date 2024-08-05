@@ -10,9 +10,7 @@ import { useSetRecoilState } from "recoil";
 import { Modalcontent, Modalstate } from "../../../Context/SystemModal/Modal";
 import { useNavigate } from "react-router-dom";
 
-interface IProps {}
-
-const FindPW = ({}: IProps): JSX.Element => {
+const FindPW = (): JSX.Element => {
   const setsystemonoff = useSetRecoilState(Modalstate);
   const setModalcontent = useSetRecoilState(Modalcontent);
   const { ismobile, isdesktop } = useBreakPoint();
@@ -79,10 +77,18 @@ const FindPW = ({}: IProps): JSX.Element => {
   console.log(changepw);
   return (
     <div>
-      <div className={`${isdesktop && `${box} ${center}`} ${ismobile && `${mobilebox}`}`}>
+      <div
+        className={`${isdesktop && `${box} ${center}`} ${
+          ismobile && `${mobilebox}`
+        }`}
+      >
         <div className="rounded-lg w-full h-[41rem] ">
-          <h2 className="text-2xl font-bold text-center text-orange-500 mt-10">햄스터 마켓</h2>
-          <h2 className="text-2xl font-bold text-center mb-10">비밀번호 찾기</h2>
+          <h2 className="text-2xl font-bold text-center text-orange-500 mt-10">
+            햄스터 마켓
+          </h2>
+          <h2 className="text-2xl font-bold text-center mb-10">
+            비밀번호 찾기
+          </h2>
           <form onSubmit={handleFindPW}>
             <div className="p-2 mb-4 border rounded">
               <input
@@ -94,7 +100,9 @@ const FindPW = ({}: IProps): JSX.Element => {
               />
             </div>
             {userId !== "" && emailReg.test(userId) === false && (
-              <div className="text-red-500">이메일 형식에 맞추어 입력해 주세요</div>
+              <div className="text-red-500">
+                이메일 형식에 맞추어 입력해 주세요
+              </div>
             )}
             <div className=" p-2 mb-4 border rounded">
               <input
@@ -145,7 +153,9 @@ const FindPW = ({}: IProps): JSX.Element => {
                 }
               }}
             >
-              <LargeButton btn={new Button("비밀번호 찾기", "bg-amber-300 w-auto")}></LargeButton>
+              <LargeButton
+                btn={new Button("비밀번호 찾기", "bg-amber-300 w-auto")}
+              ></LargeButton>
             </div>
           </form>
         </div>

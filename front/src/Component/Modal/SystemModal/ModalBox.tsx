@@ -1,9 +1,7 @@
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { Modalcontent, Modalstate } from "../../../Context/SystemModal/Modal";
 
-interface IProps {}
-
-const ModalBox = ({}: IProps): JSX.Element => {
+const ModalBox = (): JSX.Element => {
   const modalvalue = useRecoilValue(Modalcontent);
   const onoffModal = useSetRecoilState(Modalstate);
 
@@ -15,9 +13,15 @@ const ModalBox = ({}: IProps): JSX.Element => {
         {modalvalue === "logout" && <div>로그아웃 성공. </div>}
         {modalvalue === "not logout" && <div>로그아웃 실패. </div>}
         {modalvalue === "oncharge" && <div>포인트 충전이 완료되었습니다. </div>}
-        {modalvalue === "failcharge" && <div>포인트 충전에 실패하엿습니다. </div>}
-        {modalvalue === "chargeerror" && <div>충전 요청 중 오류가 발생하엿습니다. </div>}
-        {modalvalue === "findpwfalil" && <div>입력된정보가 일치하는 대상이 없습니다.</div>}
+        {modalvalue === "failcharge" && (
+          <div>포인트 충전에 실패하엿습니다. </div>
+        )}
+        {modalvalue === "chargeerror" && (
+          <div>충전 요청 중 오류가 발생하엿습니다. </div>
+        )}
+        {modalvalue === "findpwfalil" && (
+          <div>입력된정보가 일치하는 대상이 없습니다.</div>
+        )}
         {modalvalue === "changesucsess" && <div>비밀번호 변경 성공.</div>}
         {modalvalue === "changefail" && <div>비밀번호 변경 실패.</div>}
         {modalvalue === "sucsessid" && <div>아이디찾기 성공.</div>}
@@ -33,7 +37,9 @@ const ModalBox = ({}: IProps): JSX.Element => {
         )}
         {modalvalue === "checkpurchase" && <div>구매가 확정되었습니다.</div>}
 
-        {modalvalue === "sucsessreview" && <div>리뷰작성을 완료하엿습니다.</div>}
+        {modalvalue === "sucsessreview" && (
+          <div>리뷰작성을 완료하엿습니다.</div>
+        )}
         {modalvalue === "checkfail" && <div>구매확정 실패.</div>}
       </div>
       <div

@@ -11,9 +11,8 @@ import { box, mobilebox } from "../../lib/styles";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { categoryobserver } from "../../Context/Modal";
-interface IProps {}
 
-const Category = ({}: IProps): JSX.Element => {
+const Category = (): JSX.Element => {
   const { isdesktop, ismobile } = useBreakPoint();
   const obServerOn = useRecoilValue(categoryobserver);
   const setObserverOn = useSetRecoilState(categoryobserver);
@@ -47,7 +46,8 @@ const Category = ({}: IProps): JSX.Element => {
             : "/imgs/hamster.png",
           price: data.price,
           createdAt: Math.floor(
-            (+new Date() - +new Date(data.createdAt || new Date() + "")) / (1000 * 60 * 60 * 24)
+            (+new Date() - +new Date(data.createdAt || new Date() + "")) /
+              (1000 * 60 * 60 * 24)
           ),
         };
         return listdata;
@@ -65,7 +65,7 @@ const Category = ({}: IProps): JSX.Element => {
 
   console.log(obServerOn);
 
-  const getcatename = useMutation({
+  const { data, mutate } = useMutation({
     mutationKey: ["catename"],
     mutationFn: async () => {
       const { data } = await axios.post(
@@ -90,13 +90,13 @@ const Category = ({}: IProps): JSX.Element => {
 
   const DataGet = useCallback(() => {
     queryclient.invalidateQueries({ queryKey: ["catelistdata", id] });
-  }, []);
+  }, [queryclient, id]);
 
   useEffect(() => {
     // cateDataGet.data = [];
     DataGet();
-    getcatename.mutate();
-  }, [id]);
+    mutate();
+  }, [DataGet, id, mutate]);
 
   console.log(idxValue);
   return (
@@ -104,7 +104,7 @@ const Category = ({}: IProps): JSX.Element => {
       {isdesktop && <SearchComp />}
       <div className={`${isdesktop && box} ${ismobile && mobilebox} h-screen `}>
         <div className="p-[2rem] text-[1.7rem] font-bold">
-          <span className="text-orange-500">{getcatename.data}</span> 추천상품
+          <span className="text-orange-500">{data}</span> 추천상품
         </div>
         {cateDataGet.data?.length !== 0 ? (
           <div>
@@ -120,11 +120,14 @@ const Category = ({}: IProps): JSX.Element => {
             <div>
               <div className="p-[2rem] text-[1.7rem] font-bold flex flex-col items-center">
                 <div>
-                  <span className="pe-2 text-orange-500">{getcatename.data}</span>
+                  <span className="pe-2 text-orange-500">{data}</span>
                   항목에 해당하는 상품이 없습니다.
                 </div>
                 <div>
-                  <img src={`${process.env.REACT_APP_IMG_BASE}hamster.png`} alt="hamster"></img>
+                  <img
+                    src={`${process.env.REACT_APP_IMG_BASE}hamster.png`}
+                    alt="hamster"
+                  ></img>
                 </div>
               </div>
             </div>

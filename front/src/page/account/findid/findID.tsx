@@ -9,9 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { Modalcontent, Modalstate } from "../../../Context/SystemModal/Modal";
 
-interface IProps {}
-
-const FindID = ({}: IProps): JSX.Element => {
+const FindID = (): JSX.Element => {
   const setsystemonoff = useSetRecoilState(Modalstate);
   const setModalcontent = useSetRecoilState(Modalcontent);
   const navigate = useNavigate();
@@ -50,7 +48,9 @@ const FindID = ({}: IProps): JSX.Element => {
         }`}
       >
         <div className="rounded-lg w-full m">
-          <h2 className="text-2xl font-bold text-center text-orange-500 mt-10">햄스터 마켓</h2>
+          <h2 className="text-2xl font-bold text-center text-orange-500 mt-10">
+            햄스터 마켓
+          </h2>
           <h2 className="text-2xl font-bold text-center mb-10">아이디 찾기</h2>
           <label>
             <div className="p-2 mb-4 static border">
@@ -86,7 +86,9 @@ const FindID = ({}: IProps): JSX.Element => {
               <div className="my-[4rem]">
                 <div className="text-[1.3rem]">
                   유저아이디:
-                  <span className="p-3 text-orange-500">{response.data?.email}</span>
+                  <span className="p-3 text-orange-500">
+                    {response.data?.email}
+                  </span>
                 </div>
                 <span
                   onClick={() => {

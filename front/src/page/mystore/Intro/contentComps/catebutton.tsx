@@ -14,9 +14,9 @@ const CateBtn = ({ text, click }: IProps) => {
       onClick={() => {
         click();
       }}
-      className={`${isdesktop && `${center} bg-gray-100 border-2 p-3 pl-16 pr-16`} ${
-        ismobile && `${center} pe-5 font-bold  `
-      } `}
+      className={`${
+        isdesktop && `${center} bg-gray-100 border-2 p-3 pl-16 pr-16`
+      } ${ismobile && `${center} pe-5 font-bold  `} `}
     >
       {text}
     </div>

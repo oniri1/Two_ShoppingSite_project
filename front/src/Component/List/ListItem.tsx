@@ -24,7 +24,11 @@ const Item = ({ item }: IProps): JSX.Element => {
         }`}
       >
         <div className={`${center}`}>
-          <img className="w-[100%] h-[190px] flex" src={`${item.img}`} alt="itemimg"></img>
+          <img
+            className="w-[100%] h-[190px] flex"
+            src={`${item.img}`}
+            alt="itemimg"
+          ></img>
         </div>
         <div className=" border-t">
           <div className="p-3 text-[1.1rem]">{item.title}</div>
@@ -32,7 +36,9 @@ const Item = ({ item }: IProps): JSX.Element => {
             <div>
               <span className="text-[1.2rem] font-bold">{item.price}</span> 원
             </div>
-            <div className="text-[0.8rem] text-gray-500">{item.createdAt}일 전</div>
+            <div className="text-[0.8rem] text-gray-500">
+              {item.createdAt}일 전
+            </div>
           </div>
         </div>
       </div>

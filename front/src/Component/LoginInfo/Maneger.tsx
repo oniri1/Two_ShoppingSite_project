@@ -21,7 +21,9 @@ const Maneger = ({ userDatas }: IProps): JSX.Element => {
         </div>
         <div>
           <Link to={`/mystore?id=${userDatas.login?.id}`}>
-            <div className="ms-2 px-3 py-1 border rounded bg-blue-200 text-white">내정보</div>
+            <div className="ms-2 px-3 py-1 border rounded bg-blue-200 text-white">
+              내정보
+            </div>
           </Link>
         </div>
       </div>

@@ -10,9 +10,7 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { Searchobserver } from "../../Context/Modal";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-interface IProps {}
-
-const Search = ({}: IProps): JSX.Element => {
+const Search = (): JSX.Element => {
   const { isdesktop, ismobile } = useBreakPoint();
 
   const observerOn = useRecoilValue(Searchobserver);
@@ -47,7 +45,8 @@ const Search = ({}: IProps): JSX.Element => {
             : "/imgs/hamster.png",
           price: data.price,
           createdAt: Math.floor(
-            (+new Date() - +new Date(data.createdAt || new Date() + "")) / (1000 * 60 * 60 * 24)
+            (+new Date() - +new Date(data.createdAt || new Date() + "")) /
+              (1000 * 60 * 60 * 24)
           ),
         };
         return listData;
@@ -70,12 +69,13 @@ const Search = ({}: IProps): JSX.Element => {
 
   const DataGet = useCallback(() => {
     queryclient.invalidateQueries({ queryKey: ["searchlistdata", id] });
-  }, []);
+  }, [queryclient, id]);
 
   useEffect(() => {
-    // searchDataGet.data = [];
     DataGet();
-  }, [id]);
+  }, [id, DataGet]);
+
+  console.log("서치 무한 체크");
 
   return (
     <div>
@@ -98,16 +98,23 @@ const Search = ({}: IProps): JSX.Element => {
           <div className="pb-20 center">
             <div>
               <div className="p-[2rem] text-[1.7rem] font-bold">
-                <span className="text-orange-500">{id}</span>에 대한 검색결과를 찾을수 없습니다
+                <span className="text-orange-500">{id}</span>에 대한 검색결과를
+                찾을수 없습니다
               </div>
               <div className="h-[1px] flex border "></div>
 
-              <div className="p-1 text-center font-bold">-단어의 철자가 정확한지 확인해 보세요</div>
+              <div className="p-1 text-center font-bold">
+                -단어의 철자가 정확한지 확인해 보세요
+              </div>
               <div className="p-1 text-center font-bold">
                 - 보다 일반적인 검색어로 다시 검색해 보세요
               </div>
-              <div className="p-1 text-center font-bold">- 검색어의 띄어쓰기를 다르게 해보세요</div>
-              <div className="p-1 text-center font-bold">- 유해/금지어가 아닌지 확인해주세요</div>
+              <div className="p-1 text-center font-bold">
+                - 검색어의 띄어쓰기를 다르게 해보세요
+              </div>
+              <div className="p-1 text-center font-bold">
+                - 유해/금지어가 아닌지 확인해주세요
+              </div>
             </div>
           </div>
         )}

@@ -12,7 +12,15 @@ const imgBase = process.env.REACT_APP_IMG_BASE;
 
 const Intro = ({ intro, getPageValues }: IIntro): JSX.Element => {
   const { isdesktop, ismobile } = useBreakPoint();
-  const { storeName, storePoint, storeIntro, storeStar, storePFImg, sellCount, loginCheck } = intro;
+  const {
+    storeName,
+    storePoint,
+    storeIntro,
+    storeStar,
+    storePFImg,
+    sellCount,
+    loginCheck,
+  } = intro;
 
   const [nameBtn, setNameBtn] = useState<boolean>(false);
   const [nameValue, setNameValue] = useState<string>("");
@@ -119,7 +127,8 @@ const Intro = ({ intro, getPageValues }: IIntro): JSX.Element => {
   return (
     <div
       className={`${
-        isdesktop && "border-2 border-gray-300 w-[90%] h-[350px] p-5 flex justify-between gap-[4%]"
+        isdesktop &&
+        "border-2 border-gray-300 w-[90%] h-[350px] p-5 flex justify-between gap-[4%]"
       } ${
         ismobile &&
         "mx-3 border-2 border-gray-300 w-[90%] min-w-[35rem] h-[17rem] p-5 flex justify-between gap-[4%]"
@@ -139,7 +148,9 @@ const Intro = ({ intro, getPageValues }: IIntro): JSX.Element => {
           <div
             style={{
               backgroundImage:
-                storePFImg !== null ? `url(${imgBase}${storePFImg})` : `url(${imgBase}good.png)`,
+                storePFImg !== null
+                  ? `url(${imgBase}${storePFImg})`
+                  : `url(${imgBase}good.png)`,
             }}
             className={`w-[100%] h-[100%] bg-cover rounded-full overflow-hidden`}
           ></div>
@@ -169,13 +180,18 @@ const Intro = ({ intro, getPageValues }: IIntro): JSX.Element => {
               <>
                 <input
                   value={nameValue}
-                  onInput={({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
+                  onInput={({
+                    target: { value },
+                  }: ChangeEvent<HTMLInputElement>) => {
                     setNameValue(value);
                   }}
                   className={`${outborder} h-[24px]`}
                   type="text"
                 />
-                <button onClick={storeNameHandler} className={`${rowfont} ${nanoBtn}`}>
+                <button
+                  onClick={storeNameHandler}
+                  className={`${rowfont} ${nanoBtn}`}
+                >
                   수정하기
                 </button>
               </>
@@ -200,17 +216,27 @@ const Intro = ({ intro, getPageValues }: IIntro): JSX.Element => {
         </div>
 
         <div className={`flex gap-[2%]`}>
-          <div className={`${rowfont} text-gray-400`}>상품 판매 {sellCount}</div>
-          {loginCheck && <div className={`${rowfont}`}>보유 포인트:{storePoint}</div>}
+          <div className={`${rowfont} text-gray-400`}>
+            상품 판매 {sellCount}
+          </div>
+          {loginCheck && (
+            <div className={`${rowfont}`}>보유 포인트:{storePoint}</div>
+          )}
         </div>
-        <div className={`${isdesktop && `${rowfont} h-[65%]`} ${ismobile && `${rowfont} h-[40%]`}`}>
+        <div
+          className={`${isdesktop && `${rowfont} h-[65%]`} ${
+            ismobile && `${rowfont} h-[40%]`
+          }`}
+        >
           {storeIntro}
         </div>
         {loginCheck && (
           <div className={`flex items-center`}>
             <button
               onClick={contentBtnOpen}
-              className={`${isdesktop && `${center} ${rowfont} ${nanoBtn} h-[24px]`}
+              className={`${
+                isdesktop && `${center} ${rowfont} ${nanoBtn} h-[24px]`
+              }
               ${ismobile && " text-[0.5rem] w-[3rem] "}`}
             >
               소개글 수정
@@ -219,7 +245,9 @@ const Intro = ({ intro, getPageValues }: IIntro): JSX.Element => {
               <>
                 <input
                   value={contentValue}
-                  onInput={({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
+                  onInput={({
+                    target: { value },
+                  }: ChangeEvent<HTMLInputElement>) => {
                     setContentValue(value);
                   }}
                   className={`${isdesktop && `${outborder} h-[24px] ml-2`} ${

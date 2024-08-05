@@ -20,7 +20,9 @@ const Login = ({ setUserLogin, userDatas }: IProps): JSX.Element => {
   const serverUrl = process.env.REACT_APP_SERVER_URL;
   const setModal = useSetRecoilState(Modal);
 
-  const { id, nick, point } = userDatas.login ? userDatas.login : errUserDatas.login;
+  const { id, nick, point } = userDatas.login
+    ? userDatas.login
+    : errUserDatas.login;
 
   //funcs
   const opensearch = () => {
@@ -62,18 +64,31 @@ const Login = ({ setUserLogin, userDatas }: IProps): JSX.Element => {
       {ismobile && (
         <div className="flex items-center gap-3">
           <div className="text-white">{nick}</div>
-          <div className="h-[3rem] w-[3rem] border rounded-]" onClick={opensearch}>
-            <img className="h-[100%]" src="/imgs/listsearch.png" alt="listseatch"></img>
+          <div
+            className="h-[3rem] w-[3rem] border rounded-]"
+            onClick={opensearch}
+          >
+            <img
+              className="h-[100%]"
+              src="/imgs/listsearch.png"
+              alt="listseatch"
+            ></img>
           </div>
         </div>
       )}
       {isdesktop && (
         <div className="flex gap-3">
           <Link to={"/point"}>
-            <div className="px-2 py-3 w-[5.5rem] bg-blue-100 border rounded">포인트충전</div>
+            <div className="px-2 py-3 w-[5.5rem] bg-blue-100 border rounded">
+              포인트충전
+            </div>
           </Link>
           <Link to={`/mystore?id=${id}`}>
-            <div className={`${center} px-2 py-3 w-[5rem] bg-blue-200 border rounded`}>내상점</div>
+            <div
+              className={`${center} px-2 py-3 w-[5rem] bg-blue-200 border rounded`}
+            >
+              내상점
+            </div>
           </Link>
         </div>
       )}

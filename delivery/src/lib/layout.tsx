@@ -11,7 +11,7 @@ import PickupScan from "../page/pickupscan";
 import DeliveryScan from "../page/deliveryscan";
 import PickupCheck from "../page/pickupcheck";
 import PickUpList from "../page/pickuplist";
-import DeliveryList from "../page/deliverylist";
+
 import SelectCamp from "../page/selectcamp";
 import MyPage from "../page/mypage";
 import DeliveryLoginPage from "../page/deliverylogin";
@@ -43,7 +43,7 @@ const LayOut = (): JSX.Element => {
   const [camp, setcamp] = useState<string>("");
   const [workstate, SetWorkState] = useState<boolean>(false);
   const [liststate, SetListState] = useState(0);
-  // let intervalGpsGet: any;
+
   const [intervalGpsGet, setIntervalGpsGet] = useState<any>();
 
   //env
@@ -242,12 +242,6 @@ const LayOut = (): JSX.Element => {
                   path="/pickuplist"
                   element={
                     <PickUpList liststate={liststate} checklist={saveList} />
-                  }
-                ></Route>
-                <Route
-                  path="/deliverylist"
-                  element={
-                    <DeliveryList liststate={liststate} checklist={saveList} />
                   }
                 ></Route>
                 <Route path="/deliveryscan" element={<DeliveryScan />}></Route>

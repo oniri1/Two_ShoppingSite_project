@@ -1,11 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Link, Route, Routes } from "react-router-dom";
 import { mobilebox } from "./styles";
 import { IoIosHome } from "react-icons/io";
-import { MdLocalShipping } from "react-icons/md";
 import { BsPersonFill } from "react-icons/bs";
-import { FaTag } from "react-icons/fa";
 
 import axios from "axios";
 import Main from "../page/main";
@@ -23,6 +21,7 @@ import ModalBox from "../Component/Modal/ModalBox";
 import { useBreakPoint } from "../Costomhook/BreakPoint";
 import { Modalcontent, Modalstate } from "../Context/Modal/Modal";
 import { useRecoilValue, useSetRecoilState } from "recoil";
+
 export interface IUser {
   id: number;
   nick: string;
@@ -30,12 +29,17 @@ export interface IUser {
   admin: boolean;
   delivery: boolean;
 }
+
+interface IDatas {
+  login: IUser;
+}
+
 const LayOut = (): JSX.Element => {
   const setsystemonoff = useSetRecoilState(Modalstate);
   const setModalcontent = useSetRecoilState(Modalcontent);
   const systemModal = useRecoilValue(Modalstate);
   const { isdesktop, ismobile } = useBreakPoint();
-  const [userlogin, setUserLogin] = useState<boolean>(false);
+  const setUserLogin = useState<boolean>(false)[1];
   const [camp, setcamp] = useState<string>("");
   const [workstate, SetWorkState] = useState<boolean>(false);
   const [liststate, SetListState] = useState(0);
@@ -43,7 +47,7 @@ const LayOut = (): JSX.Element => {
   const [intervalGpsGet, setIntervalGpsGet] = useState<any>();
 
   //env
-  const serverUrl = process.env.REACT_APP_SERVER_URL;
+  const serverUrl = useMemo(() => process.env.REACT_APP_SERVER_URL, []);
 
   const start = useCallback(() => {
     SetWorkState(true);
@@ -54,24 +58,27 @@ const LayOut = (): JSX.Element => {
   const saveList = useCallback((item: number) => {
     SetListState(item);
   }, []);
-  const gpsToServer = async (x: number, y: number) => {
-    await axios
-      .post(
-        `${serverUrl}/delivery/nowspot`,
-        {
-          spotX: x,
-          spotY: y,
-        },
-        { withCredentials: true }
-      )
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((err) => {
-        console.log(err);
-        console.log();
-      });
-  };
+  const gpsToServer = useCallback(
+    async (x: number, y: number) => {
+      await axios
+        .post(
+          `${serverUrl}/delivery/nowspot`,
+          {
+            spotX: x,
+            spotY: y,
+          },
+          { withCredentials: true }
+        )
+        .then((data) => {
+          console.log(data);
+        })
+        .catch((err) => {
+          console.log(err);
+          console.log();
+        });
+    },
+    [serverUrl]
+  );
 
   //func
 
@@ -79,7 +86,7 @@ const LayOut = (): JSX.Element => {
   const [y, setY] = useState<number>();
   const [gpsDidRes, setGpsDidRes] = useState<boolean>(true);
 
-  const getGps = async () => {
+  const getGps = useCallback(async () => {
     if (gpsDidRes) {
       setGpsDidRes(false);
       navigator.geolocation.getCurrentPosition(
@@ -105,21 +112,23 @@ const LayOut = (): JSX.Element => {
     } else {
       console.log("아직 응답 안함");
     }
-  };
+  }, [gpsDidRes]);
 
-  const logcheck = useMutation({
+  const { data, isError, mutate } = useMutation({
     mutationKey: "userlogin",
     mutationFn: async () => {
-      const { data } = await axios.post(
+      const { data }: { data: IDatas } = await axios.post(
         `${serverUrl}/layout`,
         {},
         { withCredentials: true }
       );
-      return data;
+      return data as IDatas;
     },
   });
 
-  console.log(logcheck);
+  const logcheck = useMemo(() => {
+    return { data: data, isError: isError, mutate: mutate };
+  }, [data, isError, mutate]);
 
   const logOut = async () => {
     await axios
@@ -137,12 +146,15 @@ const LayOut = (): JSX.Element => {
       });
   };
 
-  const log: IUser = logcheck.data?.login;
-  console.log(log);
+  const log: IUser | undefined = useMemo(() => {
+    if (logcheck.data?.login !== data) {
+      return logcheck.data?.login;
+    }
+  }, [logcheck.data?.login, data]);
+
   //mount
 
   useEffect(() => {
-    console.log(workstate);
     if (workstate) {
       console.log("gps 인터벌 시작");
       setIntervalGpsGet(setInterval(getGps, 3000));
@@ -150,17 +162,17 @@ const LayOut = (): JSX.Element => {
       console.log("gps 인터벌 종료");
       setIntervalGpsGet(clearInterval(intervalGpsGet));
     }
-  }, [workstate]);
+  }, [workstate, getGps, intervalGpsGet]);
 
   //
 
   useEffect(() => {
     if (x && y) gpsToServer(x, y);
-  }, [x, y]);
+  }, [x, y, gpsToServer]);
 
   useEffect(() => {
-    logcheck.mutate();
-  }, []);
+    mutate();
+  }, [mutate]);
 
   return (
     <div className="h-[50rem] ">

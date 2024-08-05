@@ -32,7 +32,7 @@ const DeliveryList = ({ liststate, checklist }: IProps): JSX.Element => {
 
   useEffect(() => {
     checklist(3);
-  }, []);
+  }, [checklist]);
 
   useEffect(() => {
     if (isMounted) {

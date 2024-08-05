@@ -1,4 +1,4 @@
-import { NavigateFunction, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import axios from "axios";
 
@@ -43,12 +43,8 @@ interface INCProp {
 
 export const NaverCallback = ({ setUserLogin }: INCProp): JSX.Element => {
   const navigate = useNavigate();
-  const code: string | null = new URL(window.location.href).searchParams.get(
-    "code"
-  );
-  const state: string | null = new URL(window.location.href).searchParams.get(
-    "state"
-  );
+  const code: string | null = new URL(window.location.href).searchParams.get("code");
+  const state: string | null = new URL(window.location.href).searchParams.get("state");
 
   const naver = async () => {
     await axios

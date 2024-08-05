@@ -1,7 +1,6 @@
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
-import { center } from "../../../lib/styles";
+import { useCallback, useEffect, useState } from "react";
 import AdressItem from "./UserAdressItem";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { Modal, Modalproduct } from "../../../Context/Modal";
 import ButtonComp from "../../Button/Button";
@@ -193,10 +192,7 @@ const Buy = ({ userDataCheck }: IProps): JSX.Element => {
           )}
           <div>
             총 금액:
-            <span className="text-orange-400">
-              {deliveryCost ? deliveryCost + price : "err"}
-            </span>
-            원
+            <span className="text-orange-400">{deliveryCost ? deliveryCost + price : "err"}</span>원
           </div>
         </div>
       </div>

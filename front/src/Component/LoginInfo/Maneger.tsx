@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "../../lib/Button/Button";
 import { TinyButton } from "../Button/Button";
 import { IUserDatas } from "../../lib/interFace";
@@ -8,7 +8,6 @@ interface IProps {
 }
 
 const Maneger = ({ userDatas }: IProps): JSX.Element => {
-  const navigate = useNavigate();
   const manege = () => {
     window.location.replace("http://localhost:8000/manege/report");
   };
@@ -22,9 +21,7 @@ const Maneger = ({ userDatas }: IProps): JSX.Element => {
         </div>
         <div>
           <Link to={`/mystore?id=${userDatas.login?.id}`}>
-            <div className="ms-2 px-3 py-1 border rounded bg-blue-200 text-white">
-              내정보
-            </div>
+            <div className="ms-2 px-3 py-1 border rounded bg-blue-200 text-white">내정보</div>
           </Link>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import Star from "../../../../Component/Star/Star";
-import { center, outborder, rowfont, weightfont } from "../../../../lib/styles";
+import { center, rowfont, weightfont } from "../../../../lib/styles";
 import Count from "../../../../Component/jabs/Count";
 import ReviewOne from "./ReviewOne";
 
@@ -12,14 +12,13 @@ import { useBreakPoint } from "../../../../CustomHook/BreakPoint";
 
 const Review = () => {
   const serverUrl = process.env.REACT_APP_SERVER_URL;
-  const imgBaseUrl = process.env.REACT_APP_IMG_BASE;
   const loca = useLocation();
 
   const reviewUrl = `${serverUrl}/review${loca.search}`;
 
   const [reviews, setReviews] = useState<IReviewOne[]>([]);
   const [reviewRes, setReviewRes] = useState<IReviewRes>();
-  const { ismobile, isdesktop } = useBreakPoint();
+  const { isdesktop } = useBreakPoint();
   const errNum = 0;
 
   //func

@@ -1,4 +1,4 @@
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import ButtonComp, { LargeButton } from "../../Component/Button/Button";
 import ProductInfo from "../../Component/Product/Product";
 import { useBreakPoint } from "../../CustomHook/BreakPoint";
@@ -26,7 +26,7 @@ const Product = ({ userdata, mainDataGet }: IProps): JSX.Element => {
   const serverUrl = process.env.REACT_APP_SERVER_URL;
   const { isdesktop, ismobile } = useBreakPoint();
   const [cookies, setCookie] = useCookies(["Product"]);
-  const [productlog, setproductlog] = useState("");
+  const [, setproductlog] = useState("");
   const { id } = useParams();
   const btn = new Button("구매하기", "bg-orange-200");
   const ModalState = useSetRecoilState(Modal);
@@ -76,7 +76,7 @@ const Product = ({ userdata, mainDataGet }: IProps): JSX.Element => {
       Modalproductitem(id);
       getDatas();
     }
-    if (cookies.Product == undefined) {
+    if (cookies.Product === undefined) {
       if (id !== undefined) {
         handleCookie(id);
       }

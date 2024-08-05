@@ -1,5 +1,5 @@
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
-import { box, center, mobilebox } from "../../../lib/styles";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { center, mobilebox } from "../../../lib/styles";
 import { Link } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import { useSetRecoilState } from "recoil";
@@ -9,7 +9,7 @@ import { useBreakPoint } from "../../../CustomHook/BreakPoint";
 interface IProps {}
 
 const Search = ({}: IProps): JSX.Element => {
-  const { ismobile, isdesktop } = useBreakPoint();
+  const { isdesktop } = useBreakPoint();
   const [cookies, setCookie, removeCookie] = useCookies(["search"]);
   const [content, setContent] = useState<string>("");
   const [searchlog, setSearchLog] = useState("");
@@ -42,12 +42,12 @@ const Search = ({}: IProps): JSX.Element => {
 
   const recentsearch = searchlog
     .split("+")
-    .filter((item) => item != "")
+    .filter((item) => item !== "")
     .filter((item, idx) => {
       return (
         searchlog
           .split("+")
-          .filter((item) => item != "")
+          .filter((item) => item !== "")
           .indexOf(item) === idx
       );
     });
@@ -108,10 +108,7 @@ const Search = ({}: IProps): JSX.Element => {
         </div>
       </div>
       <div className="pe-5 flex justify-end">
-        <div
-          onClick={remove}
-          className="p-1 border rounded bg-orange-200 text-white"
-        >
+        <div onClick={remove} className="p-1 border rounded bg-orange-200 text-white">
           검색어 초기화
         </div>
       </div>

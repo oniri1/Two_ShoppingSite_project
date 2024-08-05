@@ -1,5 +1,5 @@
-import { useEffect, useLayoutEffect, useState } from "react";
-import { rowfont, center, outborder, nanoBtn } from "../../../../lib/styles";
+import { useEffect, useState } from "react";
+import { center } from "../../../../lib/styles";
 import SellContent from "./sellContents";
 import { IProduct, IProductRes } from "../../../../lib/interFace";
 import Count from "../../../../Component/jabs/Count";
@@ -32,11 +32,7 @@ const SellComp = ({ value }: IProps) => {
     //판매상품
     if (value === 1) {
       await axios
-        .post(
-          `${serverUrl}/mysell${loca.search}`,
-          {},
-          { withCredentials: true }
-        )
+        .post(`${serverUrl}/mysell${loca.search}`, {}, { withCredentials: true })
         .then((data: AxiosResponse) => {
           console.log(data);
           const res: IProductRes = data.data;
@@ -51,11 +47,7 @@ const SellComp = ({ value }: IProps) => {
     //구매상품
     if (value === 2) {
       await axios
-        .post(
-          `${serverUrl}/mypurchase${loca.search}`,
-          {},
-          { withCredentials: true }
-        )
+        .post(`${serverUrl}/mypurchase${loca.search}`, {}, { withCredentials: true })
         .then((data: AxiosResponse) => {
           const res: IProductRes = data.data;
           const products: IProduct[] = res.product.rows;
@@ -95,11 +87,7 @@ const SellComp = ({ value }: IProps) => {
   return (
     <div>
       <div
-        className={
-          isdesktop
-            ? `mt-4 p-3 w-[100%] min-w-[35rem] h-[90%] border overflow-auto`
-            : ""
-        }
+        className={isdesktop ? `mt-4 p-3 w-[100%] min-w-[35rem] h-[90%] border overflow-auto` : ""}
       >
         {/* 탭 */}
         <div className={`flex justify-between overflow-auto`}>
@@ -124,8 +112,7 @@ const SellComp = ({ value }: IProps) => {
           {!notitem && (
             <div
               className={`${
-                isdesktop &&
-                "flex grid grid-cols-5 overflow-auto h-[33rem] min-w-[70rem] "
+                isdesktop && "flex grid grid-cols-5 overflow-auto h-[33rem] min-w-[70rem] "
               } ${ismobile && "grid grid-cols-2 overflow-auto  h-[35rem]"}`}
               style={{ scrollbarWidth: "none" }}
             >

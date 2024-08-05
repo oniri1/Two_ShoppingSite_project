@@ -9,7 +9,6 @@ import Product from "../../page/product/product";
 import MyStore from "../../page/mystore/mystore";
 import LoginPage from "../../page/account/login/loginpage";
 import ProductWrite from "../../page/sell/ProductWrite";
-import { List } from "../list";
 import NotLogin from "../../Component/LoginInfo/NotLogin";
 import Maneger from "../../Component/LoginInfo/Maneger";
 import Login from "../../Component/LoginInfo/Login";
@@ -22,20 +21,18 @@ import { CgAdd } from "react-icons/cg";
 import { MdOutlineShoppingBag } from "react-icons/md";
 import { IoAccessibility } from "react-icons/io5";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import MobileModal from "../../Component/Modal/ModalBox/Modal";
 import { box, center } from "../styles";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { Modal } from "../../Context/Modal";
 import Regist from "../../page/account/regist/registpage";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { IUserDatas } from "../interFace";
 import { GoogleCallback } from "../../Component/OAuth/GoogleOAuth";
 import { NaverCallback } from "../../Component/OAuth/NaverOAuth";
 import { IListData } from "../../App";
 import { IList } from "../../Component/List/ListItem";
-import { Modalcontent, Modalstate } from "../../Context/SystemModal/Modal";
+import { Modalstate } from "../../Context/SystemModal/Modal";
 import ModalBox from "../../Component/Modal/SystemModal/ModalBox";
 import FindID from "../../page/account/findid/findID";
 import FindPW from "../../page/account/findpw/findPW";
@@ -102,16 +99,12 @@ const Layout = ({
                 </div>
               )}
               <Link to={"/"}>
-                <img
-                  alt="logo"
-                  src="/imgs/hamster.png"
-                  className="h-[4rem]"
-                ></img>
+                <img alt="logo" src="/imgs/hamster.png" className="h-[4rem]"></img>
               </Link>
               <div
-                className={`${
-                  isdesktop && "text-[2rem] text-white font-bold"
-                } ${ismobile && "text-[1rem] text-white font-bold"}`}
+                className={`${isdesktop && "text-[2rem] text-white font-bold"} ${
+                  ismobile && "text-[1rem] text-white font-bold"
+                }`}
               >
                 햄스터마켓
               </div>
@@ -156,26 +149,18 @@ const Layout = ({
               <Route path={`/search/:id`} element={<Search />}></Route>
               <Route
                 path="/product/:id"
-                element={
-                  <Product mainDataGet={setListDatas} userdata={userDatas} />
-                }
+                element={<Product mainDataGet={setListDatas} userdata={userDatas} />}
               ></Route>
               <Route
                 path="/sell"
                 element={
-                  <ProductWrite
-                    mainDataGet={mainDataGet}
-                    dataCheckIdxValue={dataCheckIdxValue}
-                  />
+                  <ProductWrite mainDataGet={mainDataGet} dataCheckIdxValue={dataCheckIdxValue} />
                 }
               ></Route>
               <Route
                 path="/sell/:id"
                 element={
-                  <ProductWrite
-                    mainDataGet={mainDataGet}
-                    dataCheckIdxValue={dataCheckIdxValue}
-                  />
+                  <ProductWrite mainDataGet={mainDataGet} dataCheckIdxValue={dataCheckIdxValue} />
                 }
               ></Route>
               <Route
@@ -191,10 +176,7 @@ const Layout = ({
                   />
                 }
               ></Route>
-              <Route
-                path="/login"
-                element={<LoginPage setUserLogin={setUserLogin} />}
-              ></Route>
+              <Route path="/login" element={<LoginPage setUserLogin={setUserLogin} />}></Route>
               <Route path="/findID" element={<FindID />}></Route>
               <Route path="/findPW" element={<FindPW />}></Route>
               <Route path="/regist" element={<Regist />}></Route>
@@ -220,9 +202,9 @@ const Layout = ({
             )}
             {systemModal && (
               <div
-                className={`${
-                  isdesktop && "fixed top-[30%] start-[35%]  z-200"
-                } ${ismobile && "fixed top-[30%] start-[10%]  z-200"}`}
+                className={`${isdesktop && "fixed top-[30%] start-[35%]  z-200"} ${
+                  ismobile && "fixed top-[30%] start-[10%]  z-200"
+                }`}
               >
                 <ModalBox />
               </div>

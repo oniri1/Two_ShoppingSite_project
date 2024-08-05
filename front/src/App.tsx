@@ -1,16 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Layout from "./lib/Layout/layout";
-import { List } from "./lib/list";
 
 import axios, { AxiosResponse } from "axios";
-import { IUserDatas, IProduct } from "./lib/interFace";
+import { IUserDatas } from "./lib/interFace";
 import { errUserDatas } from "./lib/errors";
-import {
-  useMutation,
-  useQueries,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { IData } from "./page/main/main";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { mainobserver } from "./Context/Modal";
@@ -27,8 +21,7 @@ export interface IListData {
 
 const App = (): JSX.Element => {
   const serverUrl = process.env.REACT_APP_SERVER_URL;
-  const [main, setMain] = useState<List[]>([]);
-  const [ListDatas, setListDatas] = useState<IListData[]>([]);
+  const [, setListDatas] = useState<IListData[]>([]);
 
   const [userlogin, setUserLogin] = useState<boolean>(false);
   const [userDatas, setUserDatas] = useState<IUserDatas>(errUserDatas);
@@ -66,8 +59,7 @@ const App = (): JSX.Element => {
             : "/imgs/hamster.png",
           price: item.price,
           createdAt: Math.floor(
-            (+new Date() - +new Date(item.createdAt || new Date() + "")) /
-              (1000 * 60 * 60 * 24)
+            (+new Date() - +new Date(item.createdAt || new Date() + "")) / (1000 * 60 * 60 * 24)
           ),
         };
         return listdata;

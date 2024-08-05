@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { box, center } from "../../lib/styles";
 import axios, { AxiosResponse } from "axios";
 import { IData, IAdress, IAdressData } from "../../Component/Modal/Buy/Buy";
@@ -6,8 +6,7 @@ import AdressItem from "../../Component/Modal/Buy/UserAdressItem";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IData as IDataProduct } from "../product/product";
 import { IProductPage } from "../../lib/interFace";
-import { productPageDataErr } from "../../lib/errors";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { Modal } from "../../Context/Modal";
 import { Modalcontent, Modalstate } from "../../Context/SystemModal/Modal";
 
@@ -213,41 +212,6 @@ const ProductWrite = ({ mainDataGet, dataCheckIdxValue }: IProps): JSX.Element =
       })
       .catch(async (err) => {
         console.log(err);
-        // const { image, title, discription, categoryId, Category, price } =
-        //   productPageDataErr;
-
-        // setFormData({
-        //   productName: title,
-        //   description: discription,
-        //   price: price + "",
-        // });
-        // setLastClickCateId(categoryId);
-        // setShowCateValue([Category ? Category.name : "에러"]);
-        // const newImages = Array.from(image);
-        // const newPreviewUrls = newImages.map((file) => `${imgBaseUrl}${file}`);
-        // setPreviewUrls(newPreviewUrls);
-
-        // //files Get
-
-        // const results: File[] = [];
-        // console.log(image);
-
-        // for (const imgName of image) {
-        //   const fileNameFull = imgName;
-        //   const fileType = imgName.slice(imgName.indexOf(".") + 1);
-        //   const fileName = imgName.slice(0, imgName.indexOf("."));
-
-        //   const obj: IFiles = {
-        //     fileName: fileName,
-        //     fileNameFull: fileType,
-        //     fileType: fileNameFull,
-        //   };
-
-        //   const result: File = await asyncOperation(obj);
-        //   results.push(result);
-        // }
-
-        // setImages(results);
       });
   };
 
@@ -367,7 +331,7 @@ const ProductWrite = ({ mainDataGet, dataCheckIdxValue }: IProps): JSX.Element =
   };
 
   const getImgBlob = async (files: IFiles) => {
-    const { fileType, fileName, fileNameFull } = files;
+    const { fileType, fileNameFull } = files;
 
     console.log(`${imgBaseUrl}${fileNameFull}`);
     const response = await fetch(`${imgBaseUrl}${fileNameFull}`);

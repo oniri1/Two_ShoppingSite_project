@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import axios, { AxiosResponse } from "axios";
 import { center } from "../../lib/styles";
 
@@ -135,9 +135,7 @@ const NMap = ({ id }: IProps): JSX.Element => {
   useEffect(() => {
     if (userPosition && riderPosition && map) {
       console.log("bound posi reset");
-      setBoundPosition(
-        new naver.maps.LatLngBounds(riderPosition, userPosition)
-      );
+      setBoundPosition(new naver.maps.LatLngBounds(riderPosition, userPosition));
     }
   }, [userPosition, riderPosition]);
 

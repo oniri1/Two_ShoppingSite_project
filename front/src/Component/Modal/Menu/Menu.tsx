@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 import { Button } from "../../../lib/Button/Button";
 import { TinyButton } from "../../Button/Button";
 import MenuCategory from "./MenuCategory";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { useSetRecoilState } from "recoil";
 import { Modal } from "../../../Context/Modal";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useBreakPoint } from "../../../CustomHook/BreakPoint";
 import { IUserDatas } from "../../../lib/interFace";
 import { errUserDatas } from "../../../lib/errors";
@@ -19,13 +19,8 @@ interface IProps {
   userDataCheck: () => void;
 }
 
-const Menu = ({
-  setUserLogin,
-  userlogin,
-  userDatas,
-  userDataCheck,
-}: IProps): JSX.Element => {
-  const { ismobile, isdesktop } = useBreakPoint();
+const Menu = ({ setUserLogin, userlogin, userDatas, userDataCheck }: IProps): JSX.Element => {
+  const { isdesktop } = useBreakPoint();
   const logoutBtn = new Button("로그아웃", "bg-orange-200");
   const pointBtn = new Button("포인트충전", "bg-orange-200");
   const myStore = new Button("내상점", "bg-orange-200");
@@ -44,9 +39,7 @@ const Menu = ({
       });
   };
 
-  const { admin, delivery, id, nick, point } = userDatas.login
-    ? userDatas.login
-    : errUserDatas.login;
+  const { id, nick, point } = userDatas.login ? userDatas.login : errUserDatas.login;
 
   useEffect(() => {
     if (isdesktop) {

@@ -1,14 +1,8 @@
 import { Link } from "react-router-dom";
-import { useSetRecoilState } from "recoil";
-import { Modal } from "../../Context/Modal";
 
 interface IProps {}
 
 const NotLogin = ({}: IProps): JSX.Element => {
-  const setModal = useSetRecoilState(Modal);
-  const opensearch = () => {
-    setModal("mobilesearch");
-  };
   return (
     <div className="flex me-1 gap-1 ">
       {/* <div>

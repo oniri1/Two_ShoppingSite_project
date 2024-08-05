@@ -18,10 +18,7 @@ const CategoryItem = ({ item }: IProps): JSX.Element => {
     <Link to={`/category/${item.id}`}>
       <div className="flex flex-col items-center">
         <div className="h-[6rem] w-[6rem] rounded-[6rem] border border-gray-500 overflow-hidden ">
-          <img
-            className="h-[100%]"
-            src={`/imgs/category/category${item.id}.png`}
-          ></img>
+          <img className="h-[100%]" src={`/imgs/category/category${item.id}.png`} alt="item"></img>
         </div>
         <div>{item.name}</div>
       </div>

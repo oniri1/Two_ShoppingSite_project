@@ -17,14 +17,7 @@ interface IProps {
   valueChanger: (value: number) => void;
 }
 
-const MyStore = ({
-  userlogin,
-  value,
-  setvalue,
-  isReview,
-  setIsReview,
-  valueChanger,
-}: IProps): JSX.Element => {
+const MyStore = ({ userlogin, value, setvalue, isReview, valueChanger }: IProps): JSX.Element => {
   const [storeName, setStoreName] = useState<string>("오류따봉스터");
   const [storePoint, setStorePoint] = useState<number>(0);
   const [storeIntro, setStoreIntro] = useState<string>(
@@ -34,7 +27,7 @@ const MyStore = ({
   const [storePFImg, setStorePFImg] = useState<string>("good.png");
   const [sellCount, setSellCount] = useState<number>(0);
   const [loginCheck, setLoginCheck] = useState<boolean>(false);
-  const [reCheck, setReCheck] = useState<boolean>(false);
+  const [reCheck] = useState<boolean>(false);
 
   const loca = useLocation();
 
@@ -68,15 +61,7 @@ const MyStore = ({
       sellCount: sellCount,
       loginCheck: loginCheck,
     };
-  }, [
-    storeName,
-    storePoint,
-    storeIntro,
-    storeStar,
-    storePFImg,
-    sellCount,
-    loginCheck,
-  ]);
+  }, [storeName, storePoint, storeIntro, storeStar, storePFImg, sellCount, loginCheck]);
   //
 
   //

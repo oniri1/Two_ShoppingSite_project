@@ -1,5 +1,4 @@
 import { useBreakPoint } from "../../CustomHook/BreakPoint";
-import { List as ListData } from "../../lib/list";
 import { box, center } from "../../lib/styles";
 import Item, { IList } from "./ListItem";
 import Observer from "../Observer/Observer";

@@ -3,17 +3,12 @@ import SearchComp from "../../Component/Search/SearchComp";
 import List from "../../Component/List/List";
 
 import { useBreakPoint } from "../../CustomHook/BreakPoint";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { IProduct } from "../../lib/interFace";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { box, mobilebox } from "../../lib/styles";
-import {
-  useMutation,
-  useQueries,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { categoryobserver } from "../../Context/Modal";
 interface IProps {}
@@ -52,8 +47,7 @@ const Category = ({}: IProps): JSX.Element => {
             : "/imgs/hamster.png",
           price: data.price,
           createdAt: Math.floor(
-            (+new Date() - +new Date(data.createdAt || new Date() + "")) /
-              (1000 * 60 * 60 * 24)
+            (+new Date() - +new Date(data.createdAt || new Date() + "")) / (1000 * 60 * 60 * 24)
           ),
         };
         return listdata;
@@ -126,15 +120,11 @@ const Category = ({}: IProps): JSX.Element => {
             <div>
               <div className="p-[2rem] text-[1.7rem] font-bold flex flex-col items-center">
                 <div>
-                  <span className="pe-2 text-orange-500">
-                    {getcatename.data}
-                  </span>
+                  <span className="pe-2 text-orange-500">{getcatename.data}</span>
                   항목에 해당하는 상품이 없습니다.
                 </div>
                 <div>
-                  <img
-                    src={`${process.env.REACT_APP_IMG_BASE}hamster.png`}
-                  ></img>
+                  <img src={`${process.env.REACT_APP_IMG_BASE}hamster.png`} alt="hamster"></img>
                 </div>
               </div>
             </div>

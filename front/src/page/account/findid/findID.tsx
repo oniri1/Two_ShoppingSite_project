@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import LargeButton from "../../../Component/Button/Button";
 import { Button } from "../../../lib/Button/Button";
@@ -30,7 +30,7 @@ const FindID = ({}: IProps): JSX.Element => {
       );
       return data;
     },
-    onSuccess(data) {
+    onSuccess() {
       setModalcontent("sucsessid");
       setsystemonoff(true);
     },
@@ -50,9 +50,7 @@ const FindID = ({}: IProps): JSX.Element => {
         }`}
       >
         <div className="rounded-lg w-full m">
-          <h2 className="text-2xl font-bold text-center text-orange-500 mt-10">
-            햄스터 마켓
-          </h2>
+          <h2 className="text-2xl font-bold text-center text-orange-500 mt-10">햄스터 마켓</h2>
           <h2 className="text-2xl font-bold text-center mb-10">아이디 찾기</h2>
           <label>
             <div className="p-2 mb-4 static border">
@@ -88,9 +86,7 @@ const FindID = ({}: IProps): JSX.Element => {
               <div className="my-[4rem]">
                 <div className="text-[1.3rem]">
                   유저아이디:
-                  <span className="p-3 text-orange-500">
-                    {response.data?.email}
-                  </span>
+                  <span className="p-3 text-orange-500">{response.data?.email}</span>
                 </div>
                 <span
                   onClick={() => {

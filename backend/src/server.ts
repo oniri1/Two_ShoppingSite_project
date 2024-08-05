@@ -34,15 +34,20 @@ app.use("/api/imgs", express.static("uploads"));
 
 app.use("/api", router);
 
-mongoose.connect(app.get("url"));
+mongoose.connect(app.get("url"), {
+  dbName: "teamhamster",
+});
 mongoose.connection.on("connected", () => {
   console.log("mongoose connection");
 });
-// mongoose.connection.dropCollection("deliveries");
 
 const basicvalue = async () => {
   try {
     if (!(await User.findOne())) {
+      mongoose.connection.dropCollection("deliveries");
+      mongoose.connection.dropCollection("points");
+      mongoose.connection.dropCollection("bankeywords");
+
       DeliveryCost.create({ cost: 3000 });
       point.create({ pointPercent: 1000 });
 

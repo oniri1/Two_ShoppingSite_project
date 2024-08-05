@@ -18,14 +18,18 @@ app.use(cookieParser(process.env.COOKIE || "test"));
 
 app.set("port", process.env.PORT || 3000);
 app.set("url", process.env.MONGURL || "mongodb://localhost:27017");
-sequelize.sync({ force: false });
+sequelize.sync({ force: true });
 
 app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:8000", "http://localhost:8888"],
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:8000",
+      "http://localhost:8888",
+    ],
     credentials: true,
   })
 );
@@ -51,11 +55,19 @@ const basicvalue = async () => {
       DeliveryCost.create({ cost: 3000 });
       point.create({ pointPercent: 1000 });
 
-      const key = crypto.scryptSync("hgaomasttmexrj", `${process.env.KEY || ""}`, 32);
+      const key = crypto.scryptSync(
+        "hgaomasttmexrj",
+        `${process.env.KEY || ""}`,
+        32
+      );
       const iv = process.env.IV || "";
       const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
 
-      const encryptionemail: string = cipher.update(`admin1@admin.com`, "utf-8", "hex");
+      const encryptionemail: string = cipher.update(
+        `admin1@admin.com`,
+        "utf-8",
+        "hex"
+      );
 
       const encryptionpw = crypto
         .createHash("sha512")

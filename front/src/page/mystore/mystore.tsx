@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Intro from "./Intro/Intro";
 import Content from "./Intro/content";
 import { box, center } from "../../lib/styles";
@@ -17,7 +17,13 @@ interface IProps {
   valueChanger: (value: number) => void;
 }
 
-const MyStore = ({ userlogin, value, setvalue, isReview, valueChanger }: IProps): JSX.Element => {
+const MyStore = ({
+  userlogin,
+  value,
+  setvalue,
+  isReview,
+  valueChanger,
+}: IProps): JSX.Element => {
   const [storeName, setStoreName] = useState<string>("오류따봉스터");
   const [storePoint, setStorePoint] = useState<number>(0);
   const [storeIntro, setStoreIntro] = useState<string>(
@@ -31,7 +37,7 @@ const MyStore = ({ userlogin, value, setvalue, isReview, valueChanger }: IProps)
 
   const loca = useLocation();
 
-  const getPageValues = async () => {
+  const getPageValues = useCallback(async () => {
     const serverCall = serverUrl + "/mystore" + loca.search;
     await axios
       .post(serverCall, {}, { withCredentials: true })
@@ -49,7 +55,7 @@ const MyStore = ({ userlogin, value, setvalue, isReview, valueChanger }: IProps)
         setStoreName("앙 에러띠");
         setStoreStar(3.5);
       });
-  };
+  }, [loca]);
 
   const intro = useMemo(() => {
     return {
@@ -61,7 +67,15 @@ const MyStore = ({ userlogin, value, setvalue, isReview, valueChanger }: IProps)
       sellCount: sellCount,
       loginCheck: loginCheck,
     };
-  }, [storeName, storePoint, storeIntro, storeStar, storePFImg, sellCount, loginCheck]);
+  }, [
+    storeName,
+    storePoint,
+    storeIntro,
+    storeStar,
+    storePFImg,
+    sellCount,
+    loginCheck,
+  ]);
   //
 
   //
@@ -69,11 +83,9 @@ const MyStore = ({ userlogin, value, setvalue, isReview, valueChanger }: IProps)
   //mount
   useEffect(() => {
     getPageValues();
-  }, [userlogin, reCheck]);
+  }, [userlogin, reCheck, getPageValues]);
 
-  useEffect(() => {
-    getPageValues();
-  }, []);
+  console.log("마이스토어 무한돌기 체크");
 
   return (
     <div className={`${box} ${center} flex-wrap mt-10 `}>

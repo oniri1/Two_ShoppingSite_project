@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { box, center } from "../../lib/styles";
 import { LargeButton } from "../../Component/Button/Button";
@@ -71,28 +71,32 @@ const Point = ({ points, userDataCheck }: IProps): JSX.Element => {
       pointPercent: number;
     };
   }
-  const pointMultiValueGet = async () => {
+  const pointMultiValueGet = useCallback(async () => {
     await axios
       .post(`${serverUrl}/pointpercent`, {}, { withCredentials: true })
       .then((data: AxiosResponse<IPointRes>) => {
         setPointMulValue(data.data.point.pointPercent / 1000);
       });
-  };
+  }, [serverUrl]);
 
   useEffect(() => {
     pointMultiValueGet();
-  }, []);
+  }, [pointMultiValueGet]);
+
+  console.log("포인터 무한돌기 체크");
 
   return (
     <div className="p-8">
       <div className={`${box} ${center}`}>
         <div className="rounded-lg  w-full m">
-          <h2 className="text-2xl font-bold text-center text-orange-500 mt-10">햄스터 마켓</h2>
+          <h2 className="text-2xl font-bold text-center text-orange-500 mt-10">
+            햄스터 마켓
+          </h2>
 
           <h2 className="text-2xl font-bold text-center mb-10">포인트충전</h2>
-          <p className=" mb-4">
+          <div className=" mb-4">
             현재 보유포인트: <span className="font-bold">{points} 포인트</span>
-          </p>
+          </div>
           <div className="mb-4">
             <label className="flex items-center mb-4">
               <input
@@ -149,11 +153,13 @@ const Point = ({ points, userDataCheck }: IProps): JSX.Element => {
               />
             </div>
           </div>
-          <p className="text-xl font-bold mb-4">
+          <div className="text-xl font-bold mb-4">
             {pointMulValue && (
               <div>
-                포인트 충전 배율: <span className="text-orange-500">1000</span> 포인트 당{" "}
-                <span className="text-orange-500">{pointMulValue * 1000}</span> 원
+                포인트 충전 배율: <span className="text-orange-500">1000</span>{" "}
+                포인트 당{" "}
+                <span className="text-orange-500">{pointMulValue * 1000}</span>{" "}
+                원
               </div>
             )}
 
@@ -165,10 +171,12 @@ const Point = ({ points, userDataCheck }: IProps): JSX.Element => {
                 </span>
               </div>
             )}
-          </p>
+          </div>
 
           <div onClick={handleRecharge}>
-            <LargeButton btn={new Button("결제하기", "bg-amber-300 w-auto")}></LargeButton>
+            <LargeButton
+              btn={new Button("결제하기", "bg-amber-300 w-auto")}
+            ></LargeButton>
           </div>
         </div>
       </div>

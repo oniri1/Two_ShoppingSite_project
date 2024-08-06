@@ -17,6 +17,7 @@ const PickupScan = (): JSX.Element => {
   const changeitem = (e: ChangeEvent<HTMLInputElement>) => {
     SetPickItem(e.target.value);
   };
+  useQueryClient();
 
   const item = Debounce(pickitem, 200);
 

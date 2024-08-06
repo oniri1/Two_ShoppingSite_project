@@ -6,7 +6,7 @@ import { mobilebox } from "../lib/styles";
 import { List } from "../Component/List/List";
 import { ChangeEvent, useEffect, useState } from "react";
 import { PickCheck } from "../Component/List/item/Item";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
 import { useSetRecoilState } from "recoil";
 import { Modalcontent, Modalstate } from "../Context/Modal/Modal";
@@ -37,6 +37,8 @@ const PickupCheck = ({ liststate, checklist }: IProps): JSX.Element => {
   };
   const [isMounted, SetIsMounted] = useState(false);
   const [pickitems, SetPickItems] = useState<string[]>([]);
+
+  useQueryClient();
 
   useQuery({
     queryKey: "pickup",

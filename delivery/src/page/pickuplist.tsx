@@ -6,7 +6,7 @@ import { mobilebox } from "../lib/styles";
 import { List } from "../Component/List/List";
 import { useEffect, useMemo, useState } from "react";
 import { Picklist } from "../Component/List/item/Item";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 
 interface IProduct {
@@ -26,6 +26,7 @@ interface IProps {
 }
 const PickUpList = ({ liststate, checklist }: IProps): JSX.Element => {
   const [lastdata, setlastdata] = useState<Picklist[] | undefined>([]);
+  useQueryClient();
 
   const { mutate } = useMutation({
     mutationKey: ["mypickup"],

@@ -175,8 +175,6 @@ const NMap = ({ id }: IProps): JSX.Element => {
     };
   }, [map, getUserAddress, getRiderLatLng]);
 
-  console.log("무한 돌기 체크321");
-
   //naverMap으로 바뀐 mapRef을 ref로 참조하여 리턴
   return (
     <div className={`h-[740px] w-[500px] ${center}`}>

@@ -88,7 +88,5 @@ export const NaverCallback = ({ setUserLogin }: INCProp): JSX.Element => {
     naver();
   }, [naver]);
 
-  console.log("무한돌기 체크");
-
   return <div>loding</div>;
 };

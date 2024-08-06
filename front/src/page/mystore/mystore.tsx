@@ -85,8 +85,6 @@ const MyStore = ({
     getPageValues();
   }, [userlogin, reCheck, getPageValues]);
 
-  console.log("마이스토어 무한돌기 체크");
-
   return (
     <div className={`${box} ${center} flex-wrap mt-10 `}>
       <Intro intro={intro} getPageValues={getPageValues}></Intro>

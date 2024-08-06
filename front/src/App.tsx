@@ -107,8 +107,6 @@ const App = (): JSX.Element => {
     mainDataGet();
   }, [userDataCheck, mainDataGet]);
 
-  console.log("무한 돌기 체크");
-
   useEffect(() => {
     if (userlogin) userDataCheck();
   }, [userlogin, userDataCheck]);

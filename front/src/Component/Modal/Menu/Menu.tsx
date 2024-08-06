@@ -58,8 +58,6 @@ const Menu = ({
     userDataCheck();
   }, [userDataCheck]);
 
-  console.log("무한 돌기 체크");
-
   return (
     <div className={`${mobilebox}`}>
       {userlogin && (

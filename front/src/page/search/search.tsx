@@ -75,8 +75,6 @@ const Search = (): JSX.Element => {
     DataGet();
   }, [id, DataGet]);
 
-  console.log("서치 무한 체크");
-
   return (
     <div>
       {isdesktop && <SearchComp />}

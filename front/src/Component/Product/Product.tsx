@@ -103,8 +103,6 @@ const ProductInfo = ({ data, userdata, mainDataGet }: IProps): JSX.Element => {
     btnsfunc();
   }, [btnsfunc]);
 
-  console.log("무한 돌기 체크");
-
   return (
     <div className={`flex flex-col my-[5rem]`}>
       <div className={`${center}`}>

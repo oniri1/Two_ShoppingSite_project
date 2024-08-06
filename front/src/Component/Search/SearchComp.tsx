@@ -55,8 +55,6 @@ const SearchComp = (): JSX.Element => {
     }
   }, [search, getcategory]);
 
-  console.log("써치컴프 무한 돌기 체크");
-
   return (
     <div className="h-[15rem] flex justify-center">
       <div className="h-[15rem] w-[100%] flex justify-center absolute">

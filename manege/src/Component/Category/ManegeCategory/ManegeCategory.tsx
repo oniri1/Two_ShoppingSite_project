@@ -89,8 +89,6 @@ const ManegeCategoryList = ({
     setdata3([]);
   }, [selectcate1, data2]);
 
-  console.log("메니지 카테 무한돌기 체크", data2, data3);
-
   return (
     <div className="w-[60rem] h-[30rem] flex border">
       <div className="h-[100%] flex-1 border-e overflow-y-auto scrollbat-hide">

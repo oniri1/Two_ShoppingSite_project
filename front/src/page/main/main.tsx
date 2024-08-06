@@ -111,8 +111,6 @@ const Main = ({
     }
   }, [procookie, data, setrecent]);
 
-  console.log("메인 무한 돌기 체크");
-
   return (
     <div>
       {isdesktop && <SearchComp />}

@@ -20,7 +20,6 @@ export const GoogleOAuth = (): JSX.Element => {
     window.location.href = googleOAuthUrl;
   };
 
-  console.log("무한 돌기 체크");
   //구글 버튼
   return (
     <div
@@ -82,6 +81,5 @@ export const GoogleCallback = ({ setUserLogin }: IGCProp): JSX.Element => {
     google();
   }, [google]);
 
-  console.log("무한 돌기 체크");
   return <div>loding</div>;
 };

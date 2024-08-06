@@ -95,8 +95,6 @@ const SellComp = ({ value }: IProps) => {
     }
   }, [value, products]);
 
-  console.log("마이스토어 판매 무한 돌기 체크");
-
   return (
     <div>
       <div

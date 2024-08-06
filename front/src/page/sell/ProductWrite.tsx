@@ -376,8 +376,6 @@ const ProductWrite = ({
     }
   }, [loca, getProductDatas, idStartIdx, isProductReWrite]);
 
-  console.log("글 작성 무한 체크");
-
   return (
     <div className={`${center} p-8 ${box}`}>
       <div className="rounded-lg w-full">

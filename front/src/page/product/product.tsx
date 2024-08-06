@@ -110,8 +110,6 @@ const Product = ({ userdata, mainDataGet }: IProps): JSX.Element => {
     }
   }, [handleCookie, id, cookies]);
 
-  console.log("프로덕트 무한 돌기 체크");
-
   return (
     <div>
       <div className={`${box} ${center} relative`}>

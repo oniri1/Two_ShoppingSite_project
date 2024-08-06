@@ -74,8 +74,6 @@ const Review = () => {
     getReviews();
   }, [getReviews]);
 
-  console.log("리뷰 무한돌기 체크");
-
   return (
     <div
       className={

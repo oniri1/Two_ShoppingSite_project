@@ -60,7 +60,6 @@ const Buy = ({ userDataCheck }: IProps): JSX.Element => {
     modalstate("addadress");
   }, [modalstate]);
 
-  console.log("무한 돌기 체크");
   //유저 주소 정보 가져오기
   const getUserAddress = useCallback(async () => {
     await axios

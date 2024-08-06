@@ -83,8 +83,6 @@ const Point = ({ points, userDataCheck }: IProps): JSX.Element => {
     pointMultiValueGet();
   }, [pointMultiValueGet]);
 
-  console.log("포인터 무한돌기 체크");
-
   return (
     <div className="p-8">
       <div className={`${box} ${center}`}>

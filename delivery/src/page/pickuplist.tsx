@@ -58,8 +58,6 @@ const PickUpList = ({ liststate, checklist }: IProps): JSX.Element => {
 
   const btn = useMemo(() => new Button("확인", "bg-blue-200"), []);
 
-  console.log("무한돌기 체크");
-
   return (
     <div className={`${mobilebox} flex flex-col items-center h-[41rem]`}>
       <div className="py-3 text-[1.2rem] font-bold">픽업 목록</div>

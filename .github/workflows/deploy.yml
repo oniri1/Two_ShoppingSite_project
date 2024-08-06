@@ -146,6 +146,11 @@ jobs:
       - name: Add SSH known hosts
         run: ssh-keyscan -H ${{secrets.EC2_HOST}} >> ~/.ssh/known_hosts
 
+      - name: Make a Env
+        working-directory: ./front
+        run: |
+          ${{ secrets.FRONT_ENV }}
+
       - name: Install Dependencies of Front
         working-directory: ./front
         run: npm i
@@ -159,9 +164,6 @@ jobs:
           ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
             mkdir /var/www/twoProject/front'
           rsync -avz -e "ssh" ./front/build/ ${{ secrets.EC2_USER}}@${{secrets.EC2_HOST}}:/var/www/twoProject/front
-          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
-            cd /var/www/twoProject/front
-            ${{ secrets.FRONT_ENV }}'
 
       - name: Restart Nginx
         run: ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'sudo service nginx restart'
@@ -268,6 +270,11 @@ jobs:
       - name: Add SSH known hosts
         run: ssh-keyscan -H ${{secrets.EC2_HOST}} >> ~/.ssh/known_hosts
 
+      - name: Make a Env
+        working-directory: ./delivery
+        run: |
+          ${{ secrets.DELIMANE_ENV }}
+
       - name: Install Dependencies of delivery
         working-directory: ./delivery
         run: npm i
@@ -281,9 +288,49 @@ jobs:
           ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
             mkdir /var/www/twoProject/delivery'
           rsync -avz -e "ssh" ./delivery/build/ ${{ secrets.EC2_USER}}@${{secrets.EC2_HOST}}:/var/www/twoProject/delivery
+
+      - name: Restart Nginx
+        run: ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'sudo service nginx restart'
+
+  deploy_manege:
+    runs-on: ubuntu-latest
+    needs:
+      - reset_dir
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{secrets.EC2_KEY}}
+
+      - name: Ensure SSH directory exists
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+      - name: Add SSH known hosts
+        run: ssh-keyscan -H ${{secrets.EC2_HOST}} >> ~/.ssh/known_hosts
+
+      - name: Make a Env
+        working-directory: ./manege
+        run: |
+          ${{ secrets.DELIMANE_ENV }}
+
+      - name: Install Dependencies of manege
+        working-directory: ./manege
+        run: npm i
+
+      - name: Build manege
+        working-directory: ./manege
+        run: npm run build
+
+      - name: Copy Files to EC2
+        run: |
           ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
-            cd /var/www/twoProject/delivery
-            ${{ secrets.DELIMANE_ENV }}'
+            mkdir /var/www/twoProject/manege'
+          rsync -avz -e "ssh" ./manege/build/ ${{ secrets.EC2_USER}}@${{secrets.EC2_HOST}}:/var/www/twoProject/manege
 
       - name: Restart Nginx
         run: ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'sudo service nginx restart'

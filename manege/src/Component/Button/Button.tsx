@@ -6,6 +6,7 @@ interface IProps {
   width?: string;
   text?: string;
   height?: string;
+  rounded?: string;
 }
 // w-[55rem]
 const ButtonComp = ({
@@ -13,10 +14,11 @@ const ButtonComp = ({
   width = "w-[20rem]",
   text = "text-[1.5rem]",
   height = "h-[6rem]",
+  rounded = "rounded-[1rem]",
 }: IProps): JSX.Element => {
   return (
     <div
-      className={`${center} ${height} ${text} text-white border rounded-[1rem] ${btn.getBtnClass()} ${width}`}
+      className={`${center} ${height} ${text} text-white border ${rounded}  ${btn.getBtnClass()} ${width}`}
     >
       <div>{btn.getText()}</div>
     </div>

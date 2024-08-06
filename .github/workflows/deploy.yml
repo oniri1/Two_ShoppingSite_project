@@ -332,5 +332,5 @@ jobs:
             mkdir /var/www/twoProject/manege'
           rsync -avz -e "ssh" ./manege/build/ ${{ secrets.EC2_USER}}@${{secrets.EC2_HOST}}:/var/www/twoProject/manege
 
-      - name: Restart Nginx
+      - name: Restart NginX
         run: ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'sudo service nginx restart'

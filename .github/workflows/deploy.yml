@@ -193,7 +193,6 @@ jobs:
       - name: Make a Folder
         working-directory: ./backend
         run: |
-          mkdir ./login-session
           mkdir ./config
           cd config
           ${{secrets.BACKEND_CONFIGJS}}
@@ -307,7 +306,10 @@ jobs:
 
       - name: Install Dependencies of manege
         working-directory: ./manege
-        run: npm i
+        run: |
+          rm -rf node_modules
+          npm cache clean --force
+          npm i
 
       - name: Build manege
         working-directory: ./manege

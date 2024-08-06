@@ -1,0 +1,295 @@
+name: Deploy Project
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test_node:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{secrets.EC2_KEY}}
+
+      - name: Ensure SSH directory exists
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+      - name: Add SSH known hosts
+        run: ssh-keyscan -H ${{secrets.EC2_HOST}} >> ~/.ssh/known_hosts
+
+      - name: test node
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
+          export NVM_DIR="$HOME/.nvm"
+          if [ -s "$NVM_DIR/nvm.sh" ]; then
+            . "$NVM_DIR/nvm.sh"
+          else
+          echo "nvm.sh not found"
+          exit 1
+          fi
+
+          nvm -v
+          nvm use --lts
+          node -v
+          npm -v'
+
+  test_mysql:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{secrets.EC2_KEY}}
+
+      - name: Ensure SSH directory exists
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+      - name: Add SSH known hosts
+        run: ssh-keyscan -H ${{secrets.EC2_HOST}} >> ~/.ssh/known_hosts
+
+      - name: test mysql
+        run: |
+          ssh ${{secrets.EC2_USER}}@${{secrets.EC2_HOST}} '
+          sudo service mysql status'
+
+      - name: test mysql
+        run: |
+          ssh ${{secrets.EC2_USER}}@${{secrets.EC2_HOST}} '
+          mysql -u ${{ secrets.MYSQL_USER }} -p${{ secrets.MYSQL_PASSWORD }} -e "SHOW DATABASES;"'
+
+  test_mongo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{secrets.EC2_KEY}}
+
+      - name: Ensure SSH directory exists
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+      - name: Add SSH known hosts
+        run: ssh-keyscan -H ${{secrets.EC2_HOST}} >> ~/.ssh/known_hosts
+
+      - name: check mongo
+        run: |
+          ssh ${{secrets.EC2_USER}}@${{secrets.EC2_HOST}} '
+          sudo service mongod status'
+
+      - name: test mysql
+        run: |
+          ssh ${{secrets.EC2_USER}}@${{secrets.EC2_HOST}} '
+          mongosh -u ${{ secrets.MONGO_USER }} -p ${{ secrets.MONGO_PASSWORD }} \
+          --authenticationDatabase admin -eval "db.adminCommand({ listDatabases:1 })"'
+
+  deploy_front:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{secrets.EC2_KEY}}
+
+      - name: Ensure SSH directory exists
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+      - name: Add SSH known hosts
+        run: ssh-keyscan -H ${{secrets.EC2_HOST}} >> ~/.ssh/known_hosts
+
+      - name: Install Dependencies of Front
+        working-directory: ./front
+        run: npm i
+
+      - name: Build Front
+        working-directory: ./front
+        run: npm run build
+
+      - name: Copy Files to EC2
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
+            rm -rf /var/www/twoProject/front
+            mkdir /var/www/twoProject/front'
+          rsync -avz -e "ssh" ./front/build/ ${{ secrets.EC2_USER}}@${{secrets.EC2_HOST}}:/var/www/twoProject/front
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
+            cd /var/www/twoProject/front
+            ${{ secrets.FRONT_ENV }}'
+
+      - name: Restart Nginx
+        run: ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'sudo service nginx restart'
+
+  deploy_back:
+    runs-on: ubuntu-latest
+    needs:
+      - test_node
+      - test_mysql
+      - test_mongo
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{secrets.EC2_KEY}}
+
+      - name: Ensure SSH directory exists
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+      - name: Add SSH known hosts
+        run: ssh-keyscan -H ${{secrets.EC2_HOST}} >> ~/.ssh/known_hosts
+
+      - name: Install Dependencies of Back
+        working-directory: ./backend
+        run: npm i
+
+      - name: Build Front
+        working-directory: ./backend
+        run: npx tsc
+
+      - name: Copy Files to EC2
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
+            rm -rf /var/www/twoProject/backend
+            mkdir /var/www/twoProject/backend'
+          rsync -avz -e "ssh" ./backend/build/ ${{ secrets.EC2_USER}}@${{secrets.EC2_HOST}}:/var/www/twoProject/backend
+          rsync -avz -e "ssh" ./backend/package.json ${{ secrets.EC2_USER}}@${{secrets.EC2_HOST}}:/var/www/twoProject/backend/package.json
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
+            export NVM_DIR="$HOME/.nvm"
+            if [ -s "$NVM_DIR/nvm.sh" ]; then
+              . "$NVM_DIR/nvm.sh"
+            else
+              echo "nvm.sh not found"
+              exit 1
+            fi
+
+            nvm use --lts
+            cd /var/www/twoProject/backend
+            npm i --production
+            ${{secrets.BACKEND_ENV}}
+            mkdir ./login-session
+            mkdir ./config
+            cd /var/www/twoProject/backend/config
+            ${{secrets.BACKEND_CONFIGJS}}
+            '
+
+      - name: Start Server
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
+            export NVM_DIR="$HOME/.nvm"
+            if [ -s "$NVM_DIR/nvm.sh" ]; then
+              . "$NVM_DIR/nvm.sh"
+            else 
+              echo "nvm.sh not found"
+              exit 1
+            fi
+
+            nvm use --lts
+            
+            npm install -g pm2
+            pm2 stop twoPjtBackend
+            pm2 start /var/www/twoProject/backend/index.js --name twoPjtBackend'
+
+  deploy_delivery:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{secrets.EC2_KEY}}
+
+      - name: Ensure SSH directory exists
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+      - name: Add SSH known hosts
+        run: ssh-keyscan -H ${{secrets.EC2_HOST}} >> ~/.ssh/known_hosts
+
+      - name: Install Dependencies of Front
+        working-directory: ./delivery
+        run: npm i
+
+      - name: Build delivery
+        working-directory: ./delivery
+        run: npm run build
+
+      - name: Copy Files to EC2
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
+            rm -rf /var/www/twoProject/delivery
+            mkdir /var/www/twoProject/delivery'
+          rsync -avz -e "ssh" ./delivery/build/ ${{ secrets.EC2_USER}}@${{secrets.EC2_HOST}}:/var/www/twoProject/delivery
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
+            cd /var/www/twoProject/delivery
+            ${{ secrets.DELIMANE_ENV }}'
+
+      - name: Restart Nginx
+        run: ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'sudo service nginx restart'
+
+  deploy_manege:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{secrets.EC2_KEY}}
+
+      - name: Ensure SSH directory exists
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+      - name: Add SSH known hosts
+        run: ssh-keyscan -H ${{secrets.EC2_HOST}} >> ~/.ssh/known_hosts
+
+      - name: Install Dependencies of Front
+        working-directory: ./manege
+        run: npm i
+
+      - name: Build delivery
+        working-directory: ./manege
+        run: npm run build
+
+      - name: Copy Files to EC2
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
+            rm -rf /var/www/twoProject/manege
+            mkdir /var/www/twoProject/manege'
+          rsync -avz -e "ssh" ./manege/build/ ${{ secrets.EC2_USER}}@${{secrets.EC2_HOST}}:/var/www/twoProject/manege
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
+            cd /var/www/twoProject/manege
+            ${{ secrets.DELIMANE_ENV }}'
+
+      - name: Restart Nginx
+        run: ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'sudo service nginx restart'

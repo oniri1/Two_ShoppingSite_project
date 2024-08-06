@@ -194,7 +194,7 @@ jobs:
         working-directory: ./backend
         run: npm i
 
-      - name: Build Front
+      - name: Build Back
         working-directory: ./backend
         run: npx tsc
 

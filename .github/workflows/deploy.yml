@@ -190,6 +190,14 @@ jobs:
       - name: Add SSH known hosts
         run: ssh-keyscan -H ${{secrets.EC2_HOST}} >> ~/.ssh/known_hosts
 
+      - name: Make a Folder
+        working-directory: ./backend
+        run: |
+          mkdir ./login-session
+          mkdir ./config
+          cd config
+          ${{secrets.BACKEND_CONFIGJS}}
+
       - name: Install Dependencies of Back
         working-directory: ./backend
         run: npm i
@@ -216,12 +224,7 @@ jobs:
             nvm use --lts
             cd /var/www/twoProject/backend
             npm i --production
-            ${{secrets.BACKEND_ENV}}
-            mkdir ./login-session
-            mkdir ./config
-            cd /var/www/twoProject/backend/config
-            ${{secrets.BACKEND_CONFIGJS}}
-            '
+            ${{secrets.BACKEND_ENV}}'
 
       - name: Start Server
         run: |

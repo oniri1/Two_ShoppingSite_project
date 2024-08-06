@@ -65,9 +65,9 @@ jobs:
           ssh ${{secrets.EC2_USER}}@${{secrets.EC2_HOST}} '
           sudo service mysql status'
 
-      - name: test mysql
+      - name: test mysql user
         run: |
-          ssh ${{secrets.EC2_USER}}@${{secrets.EC2_HOST}} '
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
           mysql -u ${{ secrets.MYSQL_USER }} -p${{ secrets.MYSQL_PASSWORD }} -e "SHOW DATABASES;"'
 
   test_mongo:
@@ -91,12 +91,12 @@ jobs:
 
       - name: check mongo
         run: |
-          ssh ${{secrets.EC2_USER}}@${{secrets.EC2_HOST}} '
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
           sudo service mongod status'
 
-      - name: test mysql
+      - name: test mongo user
         run: |
-          ssh ${{secrets.EC2_USER}}@${{secrets.EC2_HOST}} '
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
           mongosh -u ${{ secrets.MONGO_USER }} -p ${{ secrets.MONGO_PASSWORD }} \
           --authenticationDatabase admin -eval "db.adminCommand({ listDatabases:1 })"'
 
@@ -261,7 +261,7 @@ jobs:
       - name: Add SSH known hosts
         run: ssh-keyscan -H ${{secrets.EC2_HOST}} >> ~/.ssh/known_hosts
 
-      - name: Install Dependencies of Front
+      - name: Install Dependencies of delivery
         working-directory: ./delivery
         run: npm i
 
@@ -302,11 +302,11 @@ jobs:
       - name: Add SSH known hosts
         run: ssh-keyscan -H ${{secrets.EC2_HOST}} >> ~/.ssh/known_hosts
 
-      - name: Install Dependencies of Front
+      - name: Install Dependencies of manege
         working-directory: ./manege
         run: npm i
 
-      - name: Build delivery
+      - name: Build manege
         working-directory: ./manege
         run: npm run build
 

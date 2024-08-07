@@ -27,18 +27,22 @@ interface IUser {
   delivery: boolean;
 }
 
+const baseIP = process.env.REACT_APP_BASEIP_URL;
+const frontPath = process.env.REACT_APP_FRONT_URL;
+const basePath = process.env.REACT_APP_BASE_URL;
+
 const ManegeLayout = (): JSX.Element => {
   const Modal = useRecoilValue(Modalstate);
   const setUserLogin = useState<boolean>(false)[1];
   useQueryClient();
 
   const onclick = () => {
-    window.location.replace("http://localhost:3000/");
+    window.location.replace(`${baseIP}${frontPath}`);
   };
 
   const onlogout = () => {
     logout.mutate();
-    window.location.replace("http://localhost:8000//manege/login");
+    window.location.replace(`${baseIP}${basePath}/manege/login`);
   };
 
   const serverUrl = process.env.REACT_APP_SERVER_URL;

@@ -18,6 +18,9 @@ interface IProps {
   idx: number;
 }
 
+const baseIP = process.env.REACT_APP_BASEIP_URL;
+const frontPath = process.env.REACT_APP_FRONT_URL;
+
 const Item = ({ item, idx }: IProps): JSX.Element => {
   const setmodalvalue = useSetRecoilState(Modalcontent);
   const setmodalstate = useSetRecoilState(Modalstate);
@@ -41,7 +44,7 @@ const Item = ({ item, idx }: IProps): JSX.Element => {
   });
 
   const onclick = () => {
-    window.location.replace(`http://localhost:3000/product/${item.id}`);
+    window.location.replace(`${baseIP}${frontPath}/product/${item.id}`);
   };
   return (
     <div className="px-5 py-2 flex items-center ">

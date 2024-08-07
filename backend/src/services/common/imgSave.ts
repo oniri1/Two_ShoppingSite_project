@@ -23,7 +23,6 @@ export default [
     const files: any = req.files;
     const fileUrls: string[] = [];
     files.forEach((item: any) => {
-      // fileUrls.push(`http://localhost:3001/api/imgs/${item.filename}`);
       fileUrls.push(`${item.filename}`);
     });
 

@@ -10,6 +10,9 @@ interface IProps {
   setUserLogin: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+const baseIP = process.env.REACT_APP_BASEIP_URL;
+const basePath = process.env.REACT_APP_BASE_URL;
+
 const AdminLoginPage = ({ setUserLogin }: IProps): JSX.Element => {
   const modalvalue = useSetRecoilState(Modalcontent);
   const onoffModal = useSetRecoilState(Modalstate);
@@ -45,7 +48,7 @@ const AdminLoginPage = ({ setUserLogin }: IProps): JSX.Element => {
           setLoginCheck(false);
           setUserLogin(true);
           console.log("로그인성공, 이메일주소:" + result.email);
-          window.location.replace("http://localhost:8000/manege/report"); // 로그인 성공시 홈으로 이동합니다.
+          window.location.replace(`${baseIP}${basePath}/manege/report`); // 로그인 성공시 홈으로 이동합니다.
         } else {
           setLoginCheck(true);
         }

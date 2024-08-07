@@ -202,7 +202,7 @@ jobs:
       - name: Make a Env
         working-directory: ./delivery
         run: |
-          ${{ secrets.DELIMANE_ENV }}
+          ${{ secrets.DELIVERY_ENV }}
 
       - name: Install Dependencies of delivery
         working-directory: ./delivery
@@ -251,7 +251,7 @@ jobs:
       - name: Make a Env
         working-directory: ./manege
         run: |
-          ${{ secrets.DELIMANE_ENV }}
+          ${{ secrets.MANAGE_ENV }}
 
       - name: Install Dependencies of manege
         working-directory: ./manege

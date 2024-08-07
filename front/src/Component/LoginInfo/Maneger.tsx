@@ -7,9 +7,12 @@ interface IProps {
   userDatas: IUserDatas;
 }
 
+const baseIP = process.env.REACT_APP_BASEIP_URL;
+const manegePath = process.env.REACT_APP_MANEGE_URL;
+
 const Maneger = ({ userDatas }: IProps): JSX.Element => {
   const manege = () => {
-    window.location.replace("http://localhost:8000/manege/report");
+    window.location.replace(`${baseIP}${manegePath}/manege/report`);
   };
   const btn = new Button("관리자 페이지", "bg-orange-400");
   return (

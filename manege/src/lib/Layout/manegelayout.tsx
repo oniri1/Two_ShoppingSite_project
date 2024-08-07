@@ -1,4 +1,4 @@
-import { Link, Route, Routes, useParams } from "react-router-dom";
+import { Link, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import ManegeReport from "../../page/manege/report";
 import ManegeCategory from "../../page/manege/category";
 import ManegeBenKeyword from "../../page/manege/benkeyword";
@@ -29,12 +29,13 @@ interface IUser {
 
 const baseIP = process.env.REACT_APP_BASEIP_URL;
 const frontPath = process.env.REACT_APP_FRONT_URL;
-const basePath = process.env.REACT_APP_BASE_URL;
 
 const ManegeLayout = (): JSX.Element => {
   const Modal = useRecoilValue(Modalstate);
   const setUserLogin = useState<boolean>(false)[1];
   useQueryClient();
+
+  const navigate = useNavigate();
 
   const onclick = () => {
     window.location.replace(`${baseIP}${frontPath}`);
@@ -42,7 +43,7 @@ const ManegeLayout = (): JSX.Element => {
 
   const onlogout = () => {
     logout.mutate();
-    window.location.replace(`${baseIP}${basePath}/manege/login`);
+    navigate(`/manege/login`);
   };
 
   const serverUrl = process.env.REACT_APP_SERVER_URL;

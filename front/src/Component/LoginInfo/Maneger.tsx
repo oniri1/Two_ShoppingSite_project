@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../../lib/Button/Button";
 import { TinyButton } from "../Button/Button";
 import { IUserDatas } from "../../lib/interFace";
@@ -7,12 +7,14 @@ interface IProps {
   userDatas: IUserDatas;
 }
 
-const baseIP = process.env.REACT_APP_BASEIP_URL;
-const manegePath = process.env.REACT_APP_MANEGE_URL;
+// const baseIP = process.env.REACT_APP_BASEIP_URL;
+// const manegePath = process.env.REACT_APP_MANEGE_URL;
 
 const Maneger = ({ userDatas }: IProps): JSX.Element => {
+  const navigate = useNavigate();
+
   const manege = () => {
-    window.location.replace(`${baseIP}${manegePath}/manege/report`);
+    navigate(`/manege/report`);
   };
   const btn = new Button("관리자 페이지", "bg-orange-400");
   return (

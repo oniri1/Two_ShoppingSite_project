@@ -25,17 +25,6 @@ const ManegePoint = (): JSX.Element => {
     setpoint(Number(e.target.value));
   }, []);
 
-  // const submit = async () => {
-  //   await axios.patch(
-  //     `${process.env.REACT_APP_SERVER_URL}/admin/updatepoint`,
-  //     { point: point },
-  //     { withCredentials: true }
-  //   );
-  //   setonclick(onclick + 1);
-  //   console.log(onclick);
-  //   window.location.replace("/manege/point");
-  // };
-
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationKey: ["patchpoint"],

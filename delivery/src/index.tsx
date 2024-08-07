@@ -21,7 +21,7 @@ root.render(
   // <React.StrictMode>
 
   <QueryClientProvider client={queryClient}>
-    <BrowserRouter>
+    <BrowserRouter basename="/twoProject/delivery">
       <RecoilRoot>
         <App />
       </RecoilRoot>

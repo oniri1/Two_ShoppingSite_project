@@ -11,9 +11,6 @@ interface IProps {
   setUserLogin: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const baseIP = process.env.REACT_APP_BASEIP_URL;
-const basePath = process.env.REACT_APP_BASE_URL;
-
 const DeliveryLoginPage = ({ setUserLogin }: IProps): JSX.Element => {
   const setsystemonoff = useSetRecoilState(Modalstate);
   const setModalcontent = useSetRecoilState(Modalcontent);
@@ -50,7 +47,7 @@ const DeliveryLoginPage = ({ setUserLogin }: IProps): JSX.Element => {
           setLoginCheck(false);
           setUserLogin(true);
           console.log("로그인성공, 이메일주소:" + result.email);
-          window.location.replace(`${baseIP}${basePath}/`);
+          window.location.replace(`/`);
         } else {
           setLoginCheck(true);
         }

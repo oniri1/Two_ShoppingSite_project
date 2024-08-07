@@ -96,21 +96,26 @@ const ProductWrite = ({
   }, [loca]);
 
   //funcs
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    console.log(files);
-    if (files) {
-      const newImages = Array.from(files);
-      setImages((prev) => [...prev, ...newImages]);
+  const handleImageChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const files = event.target.files;
+      console.log(files);
+      if (files) {
+        const newImages = Array.from(files);
+        setImages((prev) => [...prev, ...newImages]);
 
-      const newPreviewUrls = newImages.map((file) => URL.createObjectURL(file));
-      setPreviewUrls((prev) => [...prev, ...newPreviewUrls]);
-    }
-  };
-  const handleRemoveImage = (index: number) => {
+        const newPreviewUrls = newImages.map((file) =>
+          URL.createObjectURL(file)
+        );
+        setPreviewUrls((prev) => [...prev, ...newPreviewUrls]);
+      }
+    },
+    []
+  );
+  const handleRemoveImage = useCallback((index: number) => {
     setImages((prev) => prev.filter((_, i) => i !== index));
     setPreviewUrls((prev) => prev.filter((_, i) => i !== index));
-  };
+  }, []);
 
   const getImgBlob = useCallback(async (files: IFiles) => {
     const { fileType, fileNameFull } = files;
@@ -146,26 +151,7 @@ const ProductWrite = ({
     uploaded: boolean;
     url: string[];
   }
-  const imgUploader = (files: File[]) => {
-    const formData: FormData = new FormData();
 
-    for (let i = 0; i < files.length; i++) {
-      formData.append("img", files[i]);
-    }
-
-    axios
-      .post(`${serverUrl}/imgSave`, formData, {
-        withCredentials: true,
-        headers: { "Content-type": "multipart/form-data" },
-      })
-      .then((data: AxiosResponse<IImgUpLoaderRes>) => {
-        console.log(data);
-        writeClick(data.data.url);
-      })
-      .catch(() => {
-        console.error("error");
-      });
-  };
   const firstCateGet = async () => {
     await axios
       .post(`${serverUrl}/catefirst`, {}, {})
@@ -288,7 +274,7 @@ const ProductWrite = ({
     { address: "오류", addressId: 1, detailAddress: "오류" },
   ]);
   //유저 주소 정보 가져오기
-  const getUserAddress = async () => {
+  const getUserAddress = useCallback(async () => {
     await axios
       .post(`${serverUrl}/address`, {}, { withCredentials: true })
       .then((data: AxiosResponse<IData>) => {
@@ -324,47 +310,82 @@ const ProductWrite = ({
           },
         ]);
       });
-  };
+  }, []);
 
-  const writeClick = async (names: string[]) => {
-    await axios
-      .post(
-        `${serverUrl}/write${idPath}`,
-        {
-          title: formData.productName,
-          discription: formData.description,
-          categoryId: lastClickCateId,
-          price: +formData.price || 0,
-          extraAddressId: id,
-          img: names.join(","),
-        },
-        { withCredentials: true }
-      )
-      .then((data) => {
-        console.log(data);
-        if (isProductReWrite) {
-          mainDataGet(dataCheckIdxValue);
-          navigate(`/product${idPath}`);
-        } else {
-          mainDataGet(dataCheckIdxValue);
-          navigate("/");
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        if (isProductReWrite) {
-          navigate(`/product${idPath}`);
-        } else {
-          navigate("/");
-        }
-      });
-  };
+  const writeClick = useCallback(
+    async (names: string[]) => {
+      await axios
+        .post(
+          `${serverUrl}/write${idPath}`,
+          {
+            title: formData.productName,
+            discription: formData.description,
+            categoryId: lastClickCateId,
+            price: +formData.price || 0,
+            extraAddressId: id,
+            img: names.join(","),
+          },
+          { withCredentials: true }
+        )
+        .then((data) => {
+          console.log(data);
+          if (isProductReWrite) {
+            mainDataGet(dataCheckIdxValue);
+            navigate(`/product${idPath}`);
+          } else {
+            mainDataGet(dataCheckIdxValue);
+            navigate("/");
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          if (isProductReWrite) {
+            navigate(`/product${idPath}`);
+          } else {
+            navigate("/");
+          }
+        });
+    },
+    [
+      formData,
+      dataCheckIdxValue,
+      id,
+      idPath,
+      isProductReWrite,
+      lastClickCateId,
+      mainDataGet,
+      navigate,
+    ]
+  );
 
+  const imgUploader = useCallback(
+    (files: File[]) => {
+      const formData: FormData = new FormData();
+
+      for (let i = 0; i < files.length; i++) {
+        formData.append("img", files[i]);
+      }
+
+      axios
+        .post(`${serverUrl}/imgSave`, formData, {
+          withCredentials: true,
+          headers: { "Content-type": "multipart/form-data" },
+        })
+        .then((data: AxiosResponse<IImgUpLoaderRes>) => {
+          console.log(data);
+          writeClick(data.data.url);
+        })
+        .catch(() => {
+          console.error("error");
+        });
+    },
+    [writeClick]
+  );
   //mount
 
   useEffect(() => {
     getUserAddress();
-  }, [modalValue]);
+  }, [modalValue, getUserAddress]);
 
   useEffect(() => {
     firstCateGet();
@@ -374,7 +395,7 @@ const ProductWrite = ({
       setIdPath(loca.pathname.slice(idStartIdx));
       getProductDatas();
     }
-  }, [loca, getProductDatas, idStartIdx, isProductReWrite]);
+  }, [loca, getProductDatas, idStartIdx, isProductReWrite, getUserAddress]);
 
   return (
     <div className={`${center} p-8 ${box}`}>

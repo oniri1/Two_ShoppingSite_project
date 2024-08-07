@@ -121,7 +121,7 @@ const ManegeLayout = (): JSX.Element => {
               <div
                 className={`text-white ${log?.nick ? "w-[7rem]" : "w-[2rem]"} `}
               >
-                {log?.admin && `${log?.nick}`}
+                {userLogin && log?.admin && `${log?.nick}`}
               </div>
               {userLogin ? (
                 <div className="flex gap-2">

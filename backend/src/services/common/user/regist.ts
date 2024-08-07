@@ -24,10 +24,11 @@ export default async (req: Request, res: Response) => {
 
     const key = crypto.scryptSync(
       "hgaomasttmexrj",
-      `${process.env.KEY || ""}`,
+      `${Buffer.from(process.env.KEY || "", "base64")}`,
       32
     );
-    const iv = process.env.IV || "";
+    const iv = Buffer.from(process.env.IV || "", "base64");
+
     const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
 
     const encryptionemail: string = cipher.update(

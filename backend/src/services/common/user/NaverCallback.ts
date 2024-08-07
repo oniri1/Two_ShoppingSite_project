@@ -52,11 +52,19 @@ export default async (req: Request, res: Response) => {
 
     /// 여기부터 회원가입 코드
 
-    const key = crypto.scryptSync("hgaomasttmexrj", `${process.env.KEY || ""}`, 32);
-    const iv = process.env.IV || "";
+    const key = crypto.scryptSync(
+      "hgaomasttmexrj",
+      `${Buffer.from(process.env.KEY || "", "base64")}`,
+      32
+    );
+    const iv = Buffer.from(process.env.IV || "", "base64");
     const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
 
-    const encryptionemail: string = cipher.update(`${userInfoResponse.email}`, "utf-8", "hex");
+    const encryptionemail: string = cipher.update(
+      `${userInfoResponse.email}`,
+      "utf-8",
+      "hex"
+    );
 
     const emailcheck: User | null = await User.findOne({
       where: { email: encryptionemail },
@@ -79,7 +87,10 @@ export default async (req: Request, res: Response) => {
         throw Error("duplication nick");
       }
 
-      const navermobile: string = userInfoResponse.mobile_e164.replace("+82", "0");
+      const navermobile: string = userInfoResponse.mobile_e164.replace(
+        "+82",
+        "0"
+      );
 
       const regist = await User.create(
         {
@@ -116,7 +127,12 @@ export default async (req: Request, res: Response) => {
 
     /// 여기부터 로그인코드
     const usercheck: User | null = await User.findOne({
-      where: { email: encryptionemail, password: encryptionpw, Oauth: "네이버", admin: false },
+      where: {
+        email: encryptionemail,
+        password: encryptionpw,
+        Oauth: "네이버",
+        admin: false,
+      },
     });
 
     if (usercheck) {

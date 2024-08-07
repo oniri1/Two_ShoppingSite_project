@@ -9,8 +9,12 @@ export default async (req: Request, res: Response) => {
 
     const reqbody = req.body;
 
-    const key = crypto.scryptSync("hgaomasttmexrj", `${process.env.KEY || ""}`, 32);
-    const iv = process.env.IV || "";
+    const key = crypto.scryptSync(
+      "hgaomasttmexrj",
+      `${Buffer.from(process.env.KEY || "", "base64")}`,
+      32
+    );
+    const iv = Buffer.from(process.env.IV || "", "base64");
     const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
 
     let encryptionemail = cipher.update(`${reqbody.email}`, "utf-8", "hex");
@@ -21,7 +25,12 @@ export default async (req: Request, res: Response) => {
       .digest("hex");
 
     const usercheck: User | null = await User.findOne({
-      where: { email: encryptionemail, password: encryptionpw, Oauth: "햄스터", admin: true },
+      where: {
+        email: encryptionemail,
+        password: encryptionpw,
+        Oauth: "햄스터",
+        admin: true,
+      },
     });
 
     if (usercheck) {

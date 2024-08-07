@@ -47,7 +47,7 @@ mongoose.connection.on("connected", () => {
 });
 
 const checkFirstStart = async () => {
-  return (await User.findOne()) == null;
+  return (await User.findOne()) === null;
 };
 
 const basicvalue = async () => {
@@ -62,10 +62,10 @@ const basicvalue = async () => {
 
       const key = crypto.scryptSync(
         "hgaomasttmexrj",
-        `${process.env.KEY || ""}`,
+        `${Buffer.from(process.env.KEY || "", "base64")}`,
         32
       );
-      const iv = process.env.IV || "";
+      const iv = Buffer.from(process.env.IV || "", "base64");
       const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
 
       const encryptionemail: string = cipher.update(

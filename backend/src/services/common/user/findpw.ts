@@ -9,22 +9,14 @@ export default async (req: Request, res: Response) => {
 
     const reqbody = req.body;
 
-    const key = crypto.scryptSync(
-      "hgaomasttmexrj",
-      `${Buffer.from(process.env.KEY || "", "base64")}`,
-      32
-    );
-    const iv = Buffer.from(process.env.IV || "", "base64");
-    const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
+    const key: Buffer = crypto.scryptSync("hgaomasttmexrj", `${process.env.KEY || ""}`, 32);
+    const iv: Buffer = Buffer.from(`${process.env.IV}`, "base64");
+    const cipher: crypto.CipherGCM = crypto.createCipheriv("aes-256-gcm", key, iv);
 
-    let encryptionemail = cipher.update(`${reqbody.email}`, "utf-8", "hex");
+    let encryptionemail: string = cipher.update(`${reqbody.email}`, "utf-8", "hex");
 
     const usercheck: User | null = await User.findOne({
-      where: {
-        email: encryptionemail,
-        mobile: reqbody.mobile,
-        Oauth: "햄스터",
-      },
+      where: { email: encryptionemail, mobile: reqbody.mobile, Oauth: "햄스터" },
       attributes: ["id", "email", "nameId"],
     });
 
@@ -32,7 +24,7 @@ export default async (req: Request, res: Response) => {
       throw Error("not find user");
     }
 
-    const namecheck = await Name.findOne({
+    const namecheck: Name | null = await Name.findOne({
       where: { id: usercheck.nameId, name: reqbody.name },
     });
 

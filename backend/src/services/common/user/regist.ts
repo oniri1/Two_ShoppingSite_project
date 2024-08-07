@@ -22,20 +22,11 @@ export default async (req: Request, res: Response) => {
       throw Error("duplication nick");
     }
 
-    const key = crypto.scryptSync(
-      "hgaomasttmexrj",
-      `${Buffer.from(process.env.KEY || "", "base64")}`,
-      32
-    );
-    const iv = Buffer.from(process.env.IV || "", "base64");
+    const key: Buffer = crypto.scryptSync("hgaomasttmexrj", `${process.env.KEY || ""}`, 32);
+    const iv: Buffer = Buffer.from(`${process.env.IV}`, "base64");
+    const cipher: crypto.CipherGCM = crypto.createCipheriv("aes-256-gcm", key, iv);
 
-    const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
-
-    const encryptionemail: string = cipher.update(
-      `${reqbody.email}`,
-      "utf-8",
-      "hex"
-    );
+    const encryptionemail: string = cipher.update(`${reqbody.email}`, "utf-8", "hex");
 
     const emailcheck: User | null = await User.findOne({
       where: { email: encryptionemail },
@@ -44,14 +35,14 @@ export default async (req: Request, res: Response) => {
       throw Error("duplication email");
     }
 
-    const encryptionpw = crypto
+    const encryptionpw: string = crypto
       .createHash("sha512")
       .update(`${reqbody.pw + process.env.SALT}`)
       .digest("hex");
 
     const nowmobile = reqbody.mobile.replaceAll("-", "");
 
-    const regist = await User.create(
+    const regist: User = await User.create(
       {
         email: encryptionemail,
         password: encryptionpw,
@@ -60,7 +51,7 @@ export default async (req: Request, res: Response) => {
       { transaction }
     );
 
-    const store = await Store.create(
+    const store: Store = await Store.create(
       {
         nick: reqbody.nick,
         mobile: nowmobile,
@@ -72,7 +63,7 @@ export default async (req: Request, res: Response) => {
       await transaction.commit();
       await name.addUser(regist);
     } else {
-      const newname = await Name.create({
+      const newname: Name = await Name.create({
         name: reqbody.name,
       });
       await transaction.commit();

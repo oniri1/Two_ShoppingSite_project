@@ -12,8 +12,8 @@ export default async (req: Request, res: Response) => {
   const state: string = req.query.state as string;
   const redirectUrl = req.body.callbackUrl;
 
-  const client_id = process.env.CLIENT_N_ID;
-  const client_secret = process.env.CLIENT_N_SECRET;
+  const client_id: string | undefined = process.env.CLIENT_N_ID;
+  const client_secret: string | undefined = process.env.CLIENT_N_SECRET;
 
   const tokenEndpoint = "https://nid.naver.com/oauth2.0/token";
   const transaction: Transaction = await sequelize.transaction();
@@ -52,24 +52,16 @@ export default async (req: Request, res: Response) => {
 
     /// 여기부터 회원가입 코드
 
-    const key = crypto.scryptSync(
-      "hgaomasttmexrj",
-      `${Buffer.from(process.env.KEY || "", "base64")}`,
-      32
-    );
-    const iv = Buffer.from(process.env.IV || "", "base64");
-    const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
+    const key: Buffer = crypto.scryptSync("hgaomasttmexrj", `${process.env.KEY || ""}`, 32);
+    const iv: Buffer = Buffer.from(`${process.env.IV}`, "base64");
+    const cipher: crypto.CipherGCM = crypto.createCipheriv("aes-256-gcm", key, iv);
 
-    const encryptionemail: string = cipher.update(
-      `${userInfoResponse.email}`,
-      "utf-8",
-      "hex"
-    );
+    const encryptionemail: string = cipher.update(`${userInfoResponse.email}`, "utf-8", "hex");
 
     const emailcheck: User | null = await User.findOne({
       where: { email: encryptionemail },
     });
-    const encryptionpw = crypto
+    const encryptionpw: string = crypto
       .createHash("sha512")
       .update(`${userInfoResponse.id + process.env.SALT}`)
       .digest("hex");
@@ -87,12 +79,9 @@ export default async (req: Request, res: Response) => {
         throw Error("duplication nick");
       }
 
-      const navermobile: string = userInfoResponse.mobile_e164.replace(
-        "+82",
-        "0"
-      );
+      const navermobile: string = userInfoResponse.mobile_e164.replace("+82", "0");
 
-      const regist = await User.create(
+      const regist: User = await User.create(
         {
           email: encryptionemail,
           password: encryptionpw,
@@ -102,7 +91,7 @@ export default async (req: Request, res: Response) => {
         { transaction }
       );
 
-      const store = await Store.create(
+      const store: Store = await Store.create(
         {
           nick: userInfoResponse.nickname,
           mobile: navermobile,
@@ -115,7 +104,7 @@ export default async (req: Request, res: Response) => {
         await transaction.commit();
         await name.addUser(regist);
       } else {
-        const newname = await Name.create({
+        const newname: Name = await Name.create({
           name: userInfoResponse.name,
         });
         await transaction.commit();
@@ -127,12 +116,7 @@ export default async (req: Request, res: Response) => {
 
     /// 여기부터 로그인코드
     const usercheck: User | null = await User.findOne({
-      where: {
-        email: encryptionemail,
-        password: encryptionpw,
-        Oauth: "네이버",
-        admin: false,
-      },
+      where: { email: encryptionemail, password: encryptionpw, Oauth: "네이버", admin: false },
     });
 
     if (usercheck) {

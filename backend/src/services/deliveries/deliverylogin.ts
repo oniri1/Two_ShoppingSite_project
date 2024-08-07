@@ -9,28 +9,19 @@ export default async (req: Request, res: Response) => {
 
     const reqbody = req.body;
 
-    const key = crypto.scryptSync(
-      "hgaomasttmexrj",
-      `${Buffer.from(process.env.KEY || "", "base64")}`,
-      32
-    );
-    const iv = Buffer.from(process.env.IV || "", "base64");
-    const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
+    const key: Buffer = crypto.scryptSync("hgaomasttmexrj", `${process.env.KEY || ""}`, 32);
+    const iv: Buffer = Buffer.from(`${process.env.IV}`, "base64");
+    const cipher: crypto.CipherGCM = crypto.createCipheriv("aes-256-gcm", key, iv);
 
-    let encryptionemail = cipher.update(`${reqbody.email}`, "utf-8", "hex");
+    let encryptionemail: string = cipher.update(`${reqbody.email}`, "utf-8", "hex");
 
-    const encryptionpw = crypto
+    const encryptionpw: string = crypto
       .createHash("sha512")
       .update(`${reqbody.pw + process.env.SALT}`)
       .digest("hex");
 
     const usercheck: User | null = await User.findOne({
-      where: {
-        email: encryptionemail,
-        password: encryptionpw,
-        Oauth: "햄스터",
-        delivery: true,
-      },
+      where: { email: encryptionemail, password: encryptionpw, Oauth: "햄스터", delivery: true },
     });
 
     if (usercheck) {

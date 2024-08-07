@@ -47,21 +47,16 @@ mongoose.connection.on("connected", () => {
   console.log("mongoose connection");
 });
 
-console.log("test3");
-
-console.log(process.env.KEY);
-
-console.log(process.env.IV);
-
 const basicvalue = async () => {
   try {
     if (!(await User.findOne())) {
-      mongoose.connection.dropCollection("deliveries");
-      mongoose.connection.dropCollection("points");
-      mongoose.connection.dropCollection("bankeywords");
+      console.log("실행함?", await User.findOne());
+      await mongoose.connection.dropCollection("deliveries");
+      await mongoose.connection.dropCollection("points");
+      await mongoose.connection.dropCollection("bankeywords");
 
-      DeliveryCost.create({ cost: 3000 });
-      point.create({ pointPercent: 1000 });
+      await DeliveryCost.create({ cost: 3000 });
+      await point.create({ pointPercent: 1000 });
 
       const key: Buffer = crypto.scryptSync(
         "hgaomasttmexrj",

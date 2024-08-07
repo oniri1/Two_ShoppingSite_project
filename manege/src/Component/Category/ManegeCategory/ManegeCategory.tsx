@@ -50,7 +50,7 @@ const ManegeCategoryList = ({
         {},
         { withCredentials: true }
       );
-      const Children: ICate[] = data.category[0].Children;
+      const Children: ICate[] = data.category[0]?.Children;
       return Children;
     },
     onSuccess(data) {
@@ -66,7 +66,7 @@ const ManegeCategoryList = ({
         { withCredentials: true }
       )
       .then((data: AxiosResponse) => {
-        const Children: ICate[] = data.data.category[0].Children;
+        const Children: ICate[] = data.data.category[0]?.Children;
         setdata3(Children);
       })
       .catch((err) => {

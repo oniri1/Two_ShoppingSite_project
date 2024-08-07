@@ -81,8 +81,8 @@ const ManegePoint = (): JSX.Element => {
           <div>
             <span className="text-orange-500">1000</span> 원 당
             <span className="text-orange-500">
-              {data?.point.pointPercent ? (
-                <span className="p-1">{data?.point.pointPercent}</span>
+              {data?.point?.pointPercent ? (
+                <span className="p-1">{data?.point?.pointPercent}</span>
               ) : (
                 "   "
               )}

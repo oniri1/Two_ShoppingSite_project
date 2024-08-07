@@ -39,7 +39,7 @@ const LayOut = (): JSX.Element => {
   const setModalcontent = useSetRecoilState(Modalcontent);
   const systemModal = useRecoilValue(Modalstate);
   const { isdesktop, ismobile } = useBreakPoint();
-  const setUserLogin = useState<boolean>(false)[1];
+  const [userLogin, setUserLogin] = useState<boolean>(false);
   const [camp, setcamp] = useState<string>("");
   const [workstate, SetWorkState] = useState<boolean>(false);
   const [liststate, SetListState] = useState(0);
@@ -130,13 +130,13 @@ const LayOut = (): JSX.Element => {
     return { data: data, isError: isError, mutate: mutate };
   }, [data, isError, mutate]);
 
-  const logOut = async () => {
+  const logOut = useCallback(async () => {
     await axios
       .post(`${serverUrl}/logout`, {}, { withCredentials: true })
       .then((data) => {
         setsystemonoff(true);
         setModalcontent("logout");
-        console.log(data);
+        console.log(data, "로그아웃");
         setUserLogin(false);
       })
       .catch((err) => {
@@ -144,7 +144,7 @@ const LayOut = (): JSX.Element => {
         setModalcontent("logoutfail");
         console.log("logout err", err);
       });
-  };
+  }, [serverUrl, setModalcontent, setsystemonoff]);
 
   const log: IUser | undefined = useMemo(() => {
     if (logcheck.data?.login !== data) {
@@ -176,6 +176,8 @@ const LayOut = (): JSX.Element => {
     mutate();
   }, [mutate]);
 
+  console.log("무한돌기 체크", userLogin);
+
   return (
     <div className="h-[50rem] ">
       <div className="m-auto max-w-[35rem] h-[6rem] bg-blue-300">
@@ -191,7 +193,7 @@ const LayOut = (): JSX.Element => {
               <div>배송파트너</div>
             </div>
           </div>
-          {log?.delivery ? (
+          {log?.delivery && userLogin ? (
             <div className="flex items-center">
               <div className="text-center text-white">
                 <div>배송파트너</div>
@@ -218,7 +220,7 @@ const LayOut = (): JSX.Element => {
 
       <div>
         <div className="m-auto w-[35rem]">
-          {log?.delivery ? (
+          {userLogin ? (
             <div>
               <Routes>
                 <Route
@@ -248,7 +250,9 @@ const LayOut = (): JSX.Element => {
                 <Route
                   path="/mypage"
                   element={
-                    <MyPage workstate={workstate} camp={camp} user={log} />
+                    log?.delivery && (
+                      <MyPage workstate={workstate} camp={camp} user={log} />
+                    )
                   }
                 ></Route>
               </Routes>

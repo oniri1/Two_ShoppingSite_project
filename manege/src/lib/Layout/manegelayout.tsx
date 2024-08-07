@@ -1,4 +1,4 @@
-import { Link, Route, Routes, useNavigate, useParams } from "react-router-dom";
+import { Link, Route, Routes, useParams } from "react-router-dom";
 import ManegeReport from "../../page/manege/report";
 import ManegeCategory from "../../page/manege/category";
 import ManegeBenKeyword from "../../page/manege/benkeyword";
@@ -32,10 +32,8 @@ const frontPath = process.env.REACT_APP_FRONT_URL;
 
 const ManegeLayout = (): JSX.Element => {
   const Modal = useRecoilValue(Modalstate);
-  const setUserLogin = useState<boolean>(false)[1];
+  const [userLogin, setUserLogin] = useState<boolean>(false);
   useQueryClient();
-
-  const navigate = useNavigate();
 
   const onclick = () => {
     window.location.replace(`${baseIP}${frontPath}`);
@@ -43,7 +41,6 @@ const ManegeLayout = (): JSX.Element => {
 
   const onlogout = () => {
     logout.mutate();
-    navigate(`/manege/login`);
   };
 
   const serverUrl = process.env.REACT_APP_SERVER_URL;
@@ -62,7 +59,14 @@ const ManegeLayout = (): JSX.Element => {
   const logout = useMutation({
     mutationKey: "userlogout",
     mutationFn: async () => {
-      await axios.post(`${serverUrl}/logout`, {}, { withCredentials: true });
+      await axios
+        .post(`${serverUrl}/logout`, {}, { withCredentials: true })
+        .then(() => {
+          setUserLogin(false);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
   });
 
@@ -119,7 +123,7 @@ const ManegeLayout = (): JSX.Element => {
               >
                 {log?.admin && `${log?.nick}`}
               </div>
-              {log?.admin ? (
+              {userLogin ? (
                 <div className="flex gap-2">
                   <div onClick={onclick}>
                     <div className="p-1 border bg-orange-200 rounded">
@@ -140,7 +144,7 @@ const ManegeLayout = (): JSX.Element => {
         </div>
 
         <div>
-          {log?.admin ? (
+          {userLogin ? (
             <div>
               <ManegePageCategory />
               <Routes>

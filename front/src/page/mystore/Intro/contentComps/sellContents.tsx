@@ -67,8 +67,8 @@ const SellContent = ({ data, isBuyTap = false, getData, value }: IProps) => {
     }
   };
 
-  const confirmation = () => {
-    axios
+  const confirmation = async () => {
+    await axios
       .post(
         `${serverUrl}/purchaseCheck/${data.id}`,
         {},

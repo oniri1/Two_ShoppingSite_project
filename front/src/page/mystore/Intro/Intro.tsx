@@ -58,7 +58,7 @@ const Intro = ({ intro, getPageValues }: IIntro): JSX.Element => {
 
   const imgChangeToServer = async (name: string) => {
     if (id !== null) {
-      axios
+      await axios
         .post(
           `${serverUrl}/myStoreProfileImg?id=${id}`,
           { profileimg: name },

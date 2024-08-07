@@ -33,7 +33,7 @@ const ReviewWrite = ({ id, img }: IProps): JSX.Element => {
     contentValue: string | undefined
   ) => {
     if (contentValue) {
-      axios
+      await axios
         .post(
           `${serverUrl}/reviewWrite/${id}`,
           {

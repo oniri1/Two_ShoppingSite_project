@@ -6,99 +6,99 @@ on:
       - main
 
 jobs:
-  # test_node:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: checkout repository
-  #       uses: actions/checkout@v4
+  test_node:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
 
-  #     - name: Add SSH key
-  #       uses: webfactory/ssh-agent@v0.5.4
-  #       with:
-  #         ssh-private-key: ${{secrets.EC2_KEY}}
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{secrets.EC2_KEY}}
 
-  #     - name: Ensure SSH directory exists
-  #       run: |
-  #         mkdir -p ~/.ssh
-  #         chmod 700 ~/.ssh
+      - name: Ensure SSH directory exists
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
 
-  #     - name: Add SSH known hosts
-  #       run: ssh-keyscan -H ${{secrets.EC2_HOST}} >> ~/.ssh/known_hosts
+      - name: Add SSH known hosts
+        run: ssh-keyscan -H ${{secrets.EC2_HOST}} >> ~/.ssh/known_hosts
 
-  #     - name: test node
-  #       run: |
-  #         ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
-  #         export NVM_DIR="$HOME/.nvm"
-  #         if [ -s "$NVM_DIR/nvm.sh" ]; then
-  #           . "$NVM_DIR/nvm.sh"
-  #         else
-  #         echo "nvm.sh not found"
-  #         exit 1
-  #         fi
+      - name: test node
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
+          export NVM_DIR="$HOME/.nvm"
+          if [ -s "$NVM_DIR/nvm.sh" ]; then
+            . "$NVM_DIR/nvm.sh"
+          else
+          echo "nvm.sh not found"
+          exit 1
+          fi
 
-  #         nvm -v
-  #         nvm use --lts
-  #         node -v
-  #         npm -v'
+          nvm -v
+          nvm use --lts
+          node -v
+          npm -v'
 
-  # test_mysql:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: checkout repository
-  #       uses: actions/checkout@v4
+  test_mysql:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
 
-  #     - name: Add SSH key
-  #       uses: webfactory/ssh-agent@v0.5.4
-  #       with:
-  #         ssh-private-key: ${{secrets.EC2_KEY}}
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{secrets.EC2_KEY}}
 
-  #     - name: Ensure SSH directory exists
-  #       run: |
-  #         mkdir -p ~/.ssh
-  #         chmod 700 ~/.ssh
+      - name: Ensure SSH directory exists
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
 
-  #     - name: Add SSH known hosts
-  #       run: ssh-keyscan -H ${{secrets.EC2_HOST}} >> ~/.ssh/known_hosts
+      - name: Add SSH known hosts
+        run: ssh-keyscan -H ${{secrets.EC2_HOST}} >> ~/.ssh/known_hosts
 
-  #     - name: test mysql
-  #       run: |
-  #         ssh ${{secrets.EC2_USER}}@${{secrets.EC2_HOST}} '
-  #         sudo service mysql status'
+      - name: test mysql
+        run: |
+          ssh ${{secrets.EC2_USER}}@${{secrets.EC2_HOST}} '
+          sudo service mysql status'
 
-  #     - name: test mysql user
-  #       run: |
-  #         ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
-  #         mysql -u ${{ secrets.MYSQL_USER }} -p${{ secrets.MYSQL_PASSWORD }} -e "SHOW DATABASES;"'
+      - name: test mysql user
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
+          mysql -u ${{ secrets.MYSQL_USER }} -p${{ secrets.MYSQL_PASSWORD }} -e "SHOW DATABASES;"'
 
-  # test_mongo:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: checkout repository
-  #       uses: actions/checkout@v4
+  test_mongo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
 
-  #     - name: Add SSH key
-  #       uses: webfactory/ssh-agent@v0.5.4
-  #       with:
-  #         ssh-private-key: ${{secrets.EC2_KEY}}
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{secrets.EC2_KEY}}
 
-  #     - name: Ensure SSH directory exists
-  #       run: |
-  #         mkdir -p ~/.ssh
-  #         chmod 700 ~/.ssh
+      - name: Ensure SSH directory exists
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
 
-  #     - name: Add SSH known hosts
-  #       run: ssh-keyscan -H ${{secrets.EC2_HOST}} >> ~/.ssh/known_hosts
+      - name: Add SSH known hosts
+        run: ssh-keyscan -H ${{secrets.EC2_HOST}} >> ~/.ssh/known_hosts
 
-  #     - name: check mongo
-  #       run: |
-  #         ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
-  #         sudo service mongod status'
+      - name: check mongo
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
+          sudo service mongod status'
 
-  #     - name: test mongo user
-  #       run: |
-  #         ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
-  #         mongosh -u ${{ secrets.MONGO_USER }} -p ${{ secrets.MONGO_PASSWORD }} \
-  #         --authenticationDatabase admin -eval "db.adminCommand({ listDatabases:1 })"'
+      - name: test mongo user
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
+          mongosh -u ${{ secrets.MONGO_USER }} -p ${{ secrets.MONGO_PASSWORD }} \
+          --authenticationDatabase admin -eval "db.adminCommand({ listDatabases:1 })"'
 
   reset_dir:
     runs-on: ubuntu-latest
@@ -159,7 +159,6 @@ jobs:
         working-directory: ./front
         run: npm i
 
-      # 추가부분
       - name: Build Front
         working-directory: ./front
         run: |
@@ -174,11 +173,195 @@ jobs:
           rsync -avz -e "ssh" ./front/build/ ${{ secrets.EC2_USER}}@${{secrets.EC2_HOST}}:/var/www/twoProject/front
           ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
             mv /var/www/twoProject/front/static/css/* /var/www/twoProject/static/css
-            rm -rf /var/www/twoProject/front/static/css
             mv /var/www/twoProject/front/static/js/* /var/www/twoProject/static/js
-            rm -rf /var/www/twoProject/front/static/js
+            rm -rf /var/www/twoProject/front/static
             mv -f /var/www/twoProject/front/imgs/* /var/www/twoProject/imgs
             rm -rf /var/www/twoProject/front/imgs'
 
       - name: Restart Nginx
         run: ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'sudo service nginx restart'
+
+  deploy_delivery:
+    runs-on: ubuntu-latest
+    needs:
+      - reset_dir
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{secrets.EC2_KEY}}
+
+      - name: Ensure SSH directory exists
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+      - name: Add SSH known hosts
+        run: ssh-keyscan -H ${{secrets.EC2_HOST}} >> ~/.ssh/known_hosts
+
+      - name: Make a Env
+        working-directory: ./delivery
+        run: |
+          ${{ secrets.DELIMANE_ENV }}
+
+      - name: Install Dependencies of delivery
+        working-directory: ./delivery
+        run: npm i
+
+      - name: Build delivery
+        working-directory: ./delivery
+        run: |
+          npm run build
+          find build/static/css -type f -name '*.map' -delete
+          find build/static/js -type f -name '*.map' -delete
+
+      - name: Copy Files to EC2
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
+            mkdir /var/www/twoProject/delivery'
+          rsync -avz -e "ssh" ./delivery/build/ ${{ secrets.EC2_USER}}@${{secrets.EC2_HOST}}:/var/www/twoProject/delivery
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
+            mv /var/www/twoProject/delivery/static/css/* /var/www/twoProject/static/css
+            mv /var/www/twoProject/delivery/static/js/* /var/www/twoProject/static/js
+            rm -rf /var/www/twoProject/delivery/static
+            mv -f /var/www/twoProject/delivery/imgs/* /var/www/twoProject/imgs
+            rm -rf /var/www/twoProject/delivery/imgs'
+
+      - name: Restart Nginx
+        run: ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'sudo service nginx restart'
+
+  deploy_manege:
+    runs-on: ubuntu-latest
+    needs:
+      - reset_dir
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{secrets.EC2_KEY}}
+
+      - name: Ensure SSH directory exists
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+      - name: Add SSH known hosts
+        run: ssh-keyscan -H ${{secrets.EC2_HOST}} >> ~/.ssh/known_hosts
+
+      - name: Make a Env
+        working-directory: ./manege
+        run: |
+          ${{ secrets.DELIMANE_ENV }}
+
+      - name: Install Dependencies of manege
+        working-directory: ./manege
+        run: npm i
+
+      - name: Build manege
+        working-directory: ./manege
+        run: |
+          npm run build
+          find build/static/css -type f -name '*.map' -delete
+          find build/static/js -type f -name '*.map' -delete
+
+      - name: Copy Files to EC2
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
+            mkdir /var/www/twoProject/manege'
+          rsync -avz -e "ssh" ./manege/build/ ${{ secrets.EC2_USER}}@${{secrets.EC2_HOST}}:/var/www/twoProject/manege
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
+            mv /var/www/twoProject/manege/static/css/* /var/www/twoProject/static/css
+            mv /var/www/twoProject/manege/static/js/* /var/www/twoProject/static/js
+            rm -rf /var/www/twoProject/manege/static
+            mv -f /var/www/twoProject/manege/imgs/* /var/www/twoProject/imgs
+            rm -rf /var/www/twoProject/manege/imgs'
+
+      - name: Restart NginX
+        run: ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'sudo service nginx restart'
+
+  deploy_back:
+    runs-on: ubuntu-latest
+    needs:
+      - test_node
+      - test_mysql
+      - test_mongo
+      - reset_dir
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{secrets.EC2_KEY}}
+
+      - name: Ensure SSH directory exists
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+      - name: Add SSH known hosts
+        run: ssh-keyscan -H ${{secrets.EC2_HOST}} >> ~/.ssh/known_hosts
+
+      - name: Make a Folder
+        working-directory: ./backend
+        run: |
+          ${{secrets.BACKEND_ENV}}
+          mkdir ./config
+          cd config
+          ${{secrets.BACKEND_CONFIGJS}}
+
+      - name: Install Dependencies of Back
+        working-directory: ./backend
+        run: npm i
+
+      - name: Build Back
+        working-directory: ./backend
+        run: npx tsc
+
+      - name: Copy Files to EC2
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
+            mkdir /var/www/twoProject/backend'
+          rsync -avz -e "ssh" ./backend/build/ ${{ secrets.EC2_USER}}@${{secrets.EC2_HOST}}:/var/www/twoProject/backend
+
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
+            mkdir /var/www/twoProject/backend/login-session
+            mkdir /var/www/twoProject/backend/uploads'
+
+          rsync -avz -e "ssh" ./backend/package.json ${{ secrets.EC2_USER}}@${{secrets.EC2_HOST}}:/var/www/twoProject/backend/package.json
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
+            export NVM_DIR="$HOME/.nvm"
+            if [ -s "$NVM_DIR/nvm.sh" ]; then
+              . "$NVM_DIR/nvm.sh"
+            else
+              echo "nvm.sh not found"
+              exit 1
+            fi
+
+            nvm use --lts
+            cd /var/www/twoProject/backend
+            npm i --production'
+
+      - name: Start Server
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
+            export NVM_DIR="$HOME/.nvm"
+            if [ -s "$NVM_DIR/nvm.sh" ]; then
+              . "$NVM_DIR/nvm.sh"
+            else 
+              echo "nvm.sh not found"
+              exit 1
+            fi
+
+            nvm use --lts
+            
+            npm install -g pm2
+            pm2 stop 0
+            pm2 start /var/www/twoProject/backend/src/server.js --name twoPjtBackend'

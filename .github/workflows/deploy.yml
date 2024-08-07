@@ -341,23 +341,6 @@ jobs:
             cd /var/www/twoProject/backend
             npm i --production'
 
-      - name: Start Server
-        run: |
-          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
-            export NVM_DIR="$HOME/.nvm"
-            if [ -s "$NVM_DIR/nvm.sh" ]; then
-              . "$NVM_DIR/nvm.sh"
-            else 
-              echo "nvm.sh not found"
-              exit 1
-            fi
-
-            nvm use --lts
-            
-            npm install -g pm2
-            pm2 stop 0
-            pm2 start /var/www/twoProject/backend/src/server.js --name twoPjtBackend'
-
   restart_nginx:
     runs-on: ubuntu-latest
     needs:
@@ -382,5 +365,28 @@ jobs:
       - name: Restart NginX
         run: |
           ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
-          sudo service nginx restart
-          pm2 restart all'
+          sudo service nginx restart'
+
+  start_server:
+    runs-on: ubuntu-latest
+    needs:
+      - restart_nginx
+      - deploy_back
+
+    steps:
+      - name: Start Server
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
+            export NVM_DIR="$HOME/.nvm"
+            if [ -s "$NVM_DIR/nvm.sh" ]; then
+              . "$NVM_DIR/nvm.sh"
+            else 
+              echo "nvm.sh not found"
+              exit 1
+            fi
+
+            nvm use --lts
+            
+            npm install -g pm2
+            pm2 stop 0
+            pm2 start /var/www/twoProject/backend/src/server.js --name twoPjtBackend'

@@ -359,14 +359,14 @@ const ProductWrite = ({
   );
 
   const imgUploader = useCallback(
-    (files: File[]) => {
+    async (files: File[]) => {
       const formData: FormData = new FormData();
 
       for (let i = 0; i < files.length; i++) {
         formData.append("img", files[i]);
       }
 
-      axios
+      await axios
         .post(`${serverUrl}/imgSave`, formData, {
           withCredentials: true,
           headers: { "Content-type": "multipart/form-data" },

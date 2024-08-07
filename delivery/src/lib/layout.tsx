@@ -176,8 +176,6 @@ const LayOut = (): JSX.Element => {
     mutate();
   }, [mutate]);
 
-  console.log("무한돌기 체크", userLogin);
-
   return (
     <div className="h-[50rem] ">
       <div className="m-auto max-w-[35rem] h-[6rem] bg-blue-300">
@@ -205,7 +203,6 @@ const LayOut = (): JSX.Element => {
               <div
                 onClick={() => {
                   logOut();
-                  window.location.reload();
                 }}
                 className="ms-2 p-1 border text-white rounded bg-blue-400"
               >

@@ -99,8 +99,7 @@ const NMap = ({ id }: IProps): JSX.Element => {
           position: userPosition,
           map: map,
           icon: {
-            content:
-              '<img src="./imgs/HamsterWaiter.png" alt="" style="margin: 0px; padding: 0px; border: 2px solid red; border-radius: 100%; display: block; max-width: none; max-height: none; -webkit-user-select: none; position: absolute; width: 35px; height: 35px; left: 0px; top: 0px; overflow: hidden;">',
+            content: `<img src="${process.env.REACT_APP_SERVER_URL}/imgs/HamsterWaiter.png" alt="" style="margin: 0px; padding: 0px; border: 2px solid red; border-radius: 100%; display: block; max-width: none; max-height: none; -webkit-user-select: none; position: absolute; width: 35px; height: 35px; left: 0px; top: 0px; overflow: hidden;">`,
             size: new naver.maps.Size(22, 35),
             anchor: new naver.maps.Point(11, 35),
           },
@@ -118,8 +117,7 @@ const NMap = ({ id }: IProps): JSX.Element => {
             position: riderPosition,
             map: map,
             icon: {
-              content:
-                '<img src="./imgs/HamsterRider.png" alt="" style="margin: 0px; padding: 0px; border: 2px solid blue; border-radius: 100%; display: block; max-width: none; max-height: none; -webkit-user-select: none; position: absolute; width: 35px; height: 35px; left: 0px; top: 0px; overflow: hidden;">',
+              content: `<img src="${process.env.REACT_APP_SERVER_URL}/imgs/HamsterRider.png" alt="" style="margin: 0px; padding: 0px; border: 2px solid blue; border-radius: 100%; display: block; max-width: none; max-height: none; -webkit-user-select: none; position: absolute; width: 35px; height: 35px; left: 0px; top: 0px; overflow: hidden;">`,
               size: new naver.maps.Size(22, 35),
               anchor: new naver.maps.Point(11, 35),
             },

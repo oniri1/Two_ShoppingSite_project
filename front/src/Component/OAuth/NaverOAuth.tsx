@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useMemo } from "react";
 import axios from "axios";
 
-const callBackUrl: string = `${process.env.REACT_APP_BASE_URL}/NaverLoding`;
+const callBackUrl: string = `${process.env.REACT_APP_BASE_OAUTH_URL}/NaverLoding`;
 const serverOAuthCallbackUrl = process.env.REACT_APP_SERVER_OAUTH_CALLBACK_URL;
 const clientId: string | undefined = process.env.REACT_APP_N_CLIENT_ID;
 
